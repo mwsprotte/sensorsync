@@ -1,15 +1,32 @@
 package com.mws.sensorsync.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Entity
+@Table(name = "datapackage")
 public class DataPackage implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column(length = 100)
     private String description;
-    private double data0,data1,data2;
+
+    @Column
+//For a different name in DB table, use: name = "NAME_IN_DB", and use nullable = false to restring null values, length = 100 limit to 100 char.
+    private double data0;
+
+    @Column
+    private double data1;
+
+    @Column
+    private double data2;
 
     public DataPackage() {
     }
