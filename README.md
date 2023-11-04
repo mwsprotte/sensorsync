@@ -2,9 +2,9 @@
 
 Sumário:
 
-[Subir a Stack para testes em ambiente Windows](#subir_a_stack_para_testes_em_ambiente_windows)
+[Subir a Stack para testes em ambiente Windows](#subir-a-stack-para-testes-em-ambiente-de-desenvolvimento-windows)
 
-[Subir a Stack em Raspberry PI com Ubunbtu Server](#subir_a_stack_em_raspberry_pi_com_ubunbtu_server)
+[Subir a Stack em Raspberry PI com Ubunbtu Server](#subir-a-stack-em-raspberry-pi-com-ubunbtu-server)
 
 
 
