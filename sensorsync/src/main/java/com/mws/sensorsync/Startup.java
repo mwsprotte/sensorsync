@@ -25,6 +25,7 @@ public class Startup {
 			MqttClient client = new MqttClient(broker, clientid, new MemoryPersistence());
 			// connect options
 			MqttConnectOptions options = new MqttConnectOptions();
+//		Como nos testes preliminares não há senha, não são necessárias essas etapas de autenticação
 //			options.setUserName(username);
 //			options.setPassword(password.toCharArray());
 			options.setConnectionTimeout(60);
