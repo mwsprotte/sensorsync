@@ -2,9 +2,9 @@
 
 Sumário:
 
-[Subir a Stack para testes em ambiente Windows](##subir_a_stack_para_testes_em_ambiente_windows)
+[Subir a Stack para testes em ambiente Windows](#subir_a_stack_para_testes_em_ambiente_windows)
 
-[Subir a Stack para em Raspberry PI com Ubunbtu Server](##Subir_a_Stack_para_em_Raspberry_PI_com_Ubunbtu_Server)
+[Subir a Stack em Raspberry PI com Ubunbtu Server](#subir_a_stack_em_raspberry_pi_com_ubunbtu_server)
 
 
 
@@ -35,6 +35,6 @@ mosquitto_pub -t NOME_DO_TOPICO -m "MENSAGEM"
 ```
 O segundo prompt aberto (subscribe) retornará a mensagem passada.
 
-## Subir a Stack para em Raspberry PI com Ubunbtu Server
+## Subir a Stack em Raspberry PI com Ubunbtu Server
 
 - A desenvolver.
