@@ -14,14 +14,10 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 @SpringBootApplication
 public class Startup {
 
-	
-	
 	public static void main(String[] args) {
-
 		SpringApplication.run(Startup.class, args);
 		MQTTClientInit mqtt = new MQTTClientInit();
 		mqtt.init();
-
 	}
 
 }

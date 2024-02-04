@@ -38,27 +38,20 @@ public class DataPackageServices {
     }
 
     public DataPackage save(DataPackage dataPackage) {
-
-        logger.info("Saving the data package...");
-
+        logger.info("Salvando o pacote de dados envidado pelo nó " + String.valueOf(dataPackage.getNodeIndex()) + " No projeto " + dataPackage.getProjectID());
         return repository.save(dataPackage);
     }
 
     public DataPackage update(DataPackage dataPackage) {
 
         logger.info("Updating one data package...");
-
         var entity = repository.findById(dataPackage.getId()).orElseThrow(() -> new ResourceNotFoundException("No records for this id!"));
-
         return repository.save(dataPackage);
     }
 
     public void delete(Long id) {
-
         logger.info("Deleting one data package...");
-
         var entity =  repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records for this id!"));
-
         repository.delete(entity);
     }
 

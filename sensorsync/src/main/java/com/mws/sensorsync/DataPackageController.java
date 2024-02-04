@@ -26,22 +26,22 @@ public class DataPackageController {
         return service.findById(id);
     }
 
-    //TO SAVE A VALUE DIRECTLY BY A REQUEST
-    @GetMapping(value = "/save/{description}/{data0}/{data1}/{data2}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DataPackage saveByGet(@PathVariable(value = "description") String description,
-                                 @PathVariable(value = "data0") Double data0,
-                                 @PathVariable(value = "data1") Double data1,
-                                 @PathVariable(value = "data2") Double data2) {
-
-        DataPackage dataPackage = new DataPackage();
-
-        dataPackage.setDescription(description);
-        dataPackage.setData0(data0);
-        dataPackage.setData1(data1);
-        dataPackage.setData2(data2);
-
-        return save(dataPackage);
-    }
+//    //Método para salvar os dados a partir de uma get request [DEPRECIADO, PREFERÍVEL POST]
+//    @GetMapping(value = "/save/{description}/{data0}/{data1}/{data2}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public DataPackage saveByGet(@PathVariable(value = "description") String description,
+//                                 @PathVariable(value = "data0") Double data0,
+//                                 @PathVariable(value = "data1") Double data1,
+//                                 @PathVariable(value = "data2") Double data2) {
+//
+//        DataPackage dataPackage = new DataPackage();
+//
+//        dataPackage.setDescription(description);
+//        dataPackage.setData0(data0);
+//        dataPackage.setData1(data1);
+//        dataPackage.setData2(data2);
+//
+//        return save(dataPackage);
+//    }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataPackage save(@RequestBody DataPackage dataPackage) {
