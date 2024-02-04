@@ -18,23 +18,14 @@ public class DataPackageServices {
     DataPackageRepository repository;
 
     public List<DataPackage> findAll() {
-        logger.info("Finding all data packages...");
+        logger.info("Buscando todos os pacotes de dados");
         return repository.findAll();
     }
 
 
     public DataPackage findById(Long id) {
-
-        logger.info("Finding the data...");
-
-//        DataPackage dataPackage = new DataPackage();
-//        dataPackage.setId(counter.incrementAndGet());
-//        dataPackage.setDescription("Sensor 1");
-//        dataPackage.setData1(123);
-//        dataPackage.setData1(456);
-//        dataPackage.setData2(789);
-
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records for this id!"));
+        logger.info("Buscando o pacote de dados de ID " + id);
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado um pacote de dados correspondente ao ID " + id));
     }
 
     public DataPackage save(DataPackage dataPackage) {
@@ -43,15 +34,14 @@ public class DataPackageServices {
     }
 
     public DataPackage update(DataPackage dataPackage) {
-
-        logger.info("Updating one data package...");
-        var entity = repository.findById(dataPackage.getId()).orElseThrow(() -> new ResourceNotFoundException("No records for this id!"));
+        logger.info("Atualizando o pacote de dados de ID " + dataPackage.getId());
+        var entity = repository.findById(dataPackage.getId()).orElseThrow(() -> new ResourceNotFoundException("Não encontrado um pacote de dados para o ID " + dataPackage.getId()));
         return repository.save(dataPackage);
     }
 
     public void delete(Long id) {
-        logger.info("Deleting one data package...");
-        var entity =  repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records for this id!"));
+        logger.info("Deletando pacote de dados de ID " + id);
+        var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado o pacote de dados de ID " + id));
         repository.delete(entity);
     }
 
