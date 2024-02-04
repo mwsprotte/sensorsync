@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/Startup.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/Startup.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataPackageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataPackageRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,8 +19,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -89,7 +90,8 @@
       <workItem from="1692101685944" duration="94000" />
       <workItem from="1692101899000" duration="12555000" />
       <workItem from="1706961952045" duration="3928000" />
-      <workItem from="1707051404655" duration="4765000" />
+      <workItem from="1707051404655" duration="8245000" />
+      <workItem from="1707063803573" duration="4410000" />
     </task>
     <servers />
   </component>
