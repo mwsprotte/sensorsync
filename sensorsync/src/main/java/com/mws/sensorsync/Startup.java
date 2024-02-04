@@ -1,5 +1,10 @@
 package com.mws.sensorsync;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mws.sensorsync.model.DataPackage;
+import com.mws.sensorsync.services.DataPackageServices;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,7 +14,10 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 @SpringBootApplication
 public class Startup {
 
+	
+	
 	public static void main(String[] args) {
+
 		SpringApplication.run(Startup.class, args);
 
 //		String broker = "tcp://broker.emqx.io:1883";
@@ -42,21 +50,26 @@ public class Startup {
 					System.out.println("Qos: " + message.getQos());
 					System.out.println("message content: " + new String(message.getPayload()));
 
-				}
+                    ObjectMapper mapper = new ObjectMapper();
 
+                    // De-serialize to an object
+                    DataPackage dataPackage = null;
+
+                    try {dataPackage = mapper.readValue(new String(message.getPayload()).replace("'","\""), DataPackage.class);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println(dataPackage.getData0());
+                }
 				public void deliveryComplete(IMqttDeliveryToken token) {
 					System.out.println("deliveryComplete---------" + token.isComplete());
 				}
-
 			});
 			client.connect(options);
 			client.subscribe(topic, qos);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-
-
 	}
 
 }
