@@ -59,4 +59,9 @@ public class DataPackageController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(value = "/project/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DataPackage> findByProject(@PathVariable(value = "projectID") Long projectID) {
+        return service.findByProject(projectID);
+    }
+
 }

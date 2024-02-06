@@ -45,4 +45,9 @@ public class DataPackageServices {
         repository.delete(entity);
     }
 
+    public List<DataPackage> findByProject(Long projectId) {
+        logger.info("Buscando os pacotes de dados para o projeto de ID " + projectId);
+        return repository.findByProject(projectId);
+    }
+
 }
