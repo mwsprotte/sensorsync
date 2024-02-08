@@ -50,4 +50,9 @@ public class DataPackageServices {
         return repository.findByProject(projectId);
     }
 
+    public List<DataPackage> findByProjectAndNode(Long projectId, Long nodeID) {
+        logger.info("Buscando os pacotes de dados para o projeto de ID " + projectId + " e nó: " + nodeID);
+        return repository.findByProjectAndNode(projectId, nodeID);
+    }
+
 }

@@ -14,7 +14,7 @@ public interface DataPackageRepository extends JpaRepository<DataPackage, Long> 
     @Query(value = "SELECT * FROM datapackage WHERE projectid = :projectid", nativeQuery = true)
     List<DataPackage> findByProject(@Param("projectid") Long projectId);
 
-//    @Query(value = "SELECT * FROM product_ttp WHERE productid = :productID", nativeQuery = true)
-//    List<ProductTTP> findByProductID(@Param("productID") String pot);
+    @Query(value = "SELECT * FROM datapackage WHERE projectid = :projectid and node_index = :nodeid", nativeQuery = true)
+    List<DataPackage> findByProjectAndNode(@Param("projectid") Long projectId, @Param("nodeid") Long nodeId);
 
 }

@@ -7,6 +7,8 @@
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataPackageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataPackageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectMetadataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectMetadataController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/ProjectMetadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/ProjectMetadata.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataPackageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataPackageRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataPackageServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataPackageServices.java" afterDir="false" />
     </list>
@@ -94,7 +96,10 @@
       <workItem from="1706961952045" duration="3928000" />
       <workItem from="1707051404655" duration="8245000" />
       <workItem from="1707063803573" duration="11458000" />
-      <workItem from="1707184352767" duration="1996000" />
+      <workItem from="1707184352767" duration="2219000" />
+      <workItem from="1707262589272" duration="4320000" />
+      <workItem from="1707348335011" duration="1863000" />
+      <workItem from="1707357103266" duration="2018000" />
     </task>
     <servers />
   </component>
