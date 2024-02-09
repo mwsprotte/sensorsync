@@ -22,4 +22,8 @@ public class ProjectMetadataController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public  ProjectMetadata save(@RequestBody ProjectMetadata projectMetadata){return services.save(projectMetadata);}
 
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProjectMetadata findByID(@PathVariable(value = "id") Long id){
+        return services.findById(id);
+    }
 }

@@ -8,9 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataPackageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataPackageController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectMetadataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectMetadataController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/ProjectMetadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/ProjectMetadata.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataPackageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataPackageRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataPackageServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataPackageServices.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +97,9 @@
       <workItem from="1707184352767" duration="2219000" />
       <workItem from="1707262589272" duration="4320000" />
       <workItem from="1707348335011" duration="1863000" />
-      <workItem from="1707357103266" duration="2018000" />
+      <workItem from="1707357103266" duration="2343000" />
+      <workItem from="1707434262725" duration="1939000" />
+      <workItem from="1707438446914" duration="3065000" />
     </task>
     <servers />
   </component>

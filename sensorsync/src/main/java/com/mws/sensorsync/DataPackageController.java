@@ -59,16 +59,17 @@ public class DataPackageController {
         return ResponseEntity.noContent().build();
     }
 
-//    Recebendo todos os valores de um ID de projeto específico [ex: http://localhost:8080/datapackage/project/1]
+//    Retornando todos os valores de um ID de projeto específico [ex: http://localhost:8080/datapackage/project/1]
     @GetMapping(value = "/project/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataPackage> findByProject(@PathVariable(value = "projectID") Long projectID) {
         return service.findByProject(projectID);
     }
 
-//    Recebendo todos os valores de um ID de projeto específico e de um nó específico [ex: http://localhost:8080/datapackage/project/1/node/2]
+//    Retornando todos os valores de um ID de projeto específico e de um nó específico [ex: http://localhost:8080/datapackage/project/1/node/2]
     @GetMapping(value = "/project/{projectID}/node/{nodeID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataPackage> findByProjectAndNode(@PathVariable(value = "projectID") Long projectID, @PathVariable(value = "nodeID") Long nodeID) {
         return service.findByProjectAndNode(projectID, nodeID);
     }
 
+//    todo: refornar o último pacote de dados recebido [SELECT LAST_INSERT_ID]
 }

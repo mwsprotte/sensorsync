@@ -17,4 +17,7 @@ public interface DataPackageRepository extends JpaRepository<DataPackage, Long> 
     @Query(value = "SELECT * FROM datapackage WHERE projectid = :projectid and node_index = :nodeid", nativeQuery = true)
     List<DataPackage> findByProjectAndNode(@Param("projectid") Long projectId, @Param("nodeid") Long nodeId);
 
+    @Query(value = "SELECT LAST_INSERT_ID * FROM datapackage WHERE projectid = :projectid and node_index = :nodeid", nativeQuery = true)
+    List<DataPackage> findByProjectAndNodeLast(@Param("projectid") Long projectId, @Param("nodeid") Long nodeId);
+
 }
