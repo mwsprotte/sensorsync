@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -59,17 +60,32 @@ public class DataPackageController {
         return ResponseEntity.noContent().build();
     }
 
-//    Retornando todos os valores de um ID de projeto específico [ex: http://localhost:8080/datapackage/project/1]
+    //    Retornando todos os valores de um ID de projeto específico [ex: http://localhost:8080/datapackage/project/1]
     @GetMapping(value = "/project/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataPackage> findByProject(@PathVariable(value = "projectID") Long projectID) {
         return service.findByProject(projectID);
     }
 
-//    Retornando todos os valores de um ID de projeto específico e de um nó específico [ex: http://localhost:8080/datapackage/project/1/node/2]
+    //    Retornando todos os valores de um ID de projeto específico e de um nó específico [ex: http://localhost:8080/datapackage/project/1/node/2]
     @GetMapping(value = "/project/{projectID}/node/{nodeID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataPackage> findByProjectAndNode(@PathVariable(value = "projectID") Long projectID, @PathVariable(value = "nodeID") Long nodeID) {
         return service.findByProjectAndNode(projectID, nodeID);
     }
 
-//    todo: refornar o último pacote de dados recebido [SELECT LAST_INSERT_ID]
+    //    todo: refornar o último pacote de dados recebido [SELECT LAST_INSERT_ID]
+//    Retornando todos os valores de um ID de projeto específico e de um nó específico [ex: http://localhost:8080/datapackage/project/1/node/2/last]
+    @GetMapping(value = "/project/{projectID}/node/{nodeID}/last", produces = MediaType.APPLICATION_JSON_VALUE)
+    public DataPackage findByProjectAndNodeLast(@PathVariable(value = "projectID") Long projectID, @PathVariable(value = "nodeID") Long nodeID) {
+        return service.findByProjectAndNodeLast(projectID, nodeID);
+    }
+
+ //    Retornando todos os valores de um ID de projeto específico e para todos os nós [ex: http://localhost:8080/datapackage/project/2/lastNodes/2]
+    @GetMapping(value = "/project/{projectID}/lastNodes/{nodeNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DataPackage> findByProjectAndNodeLastAllNodes(@PathVariable(value = "projectID") Long projectID, @PathVariable(value = "nodeNumber") Long nodeNumber) {
+        List<DataPackage> dataPackages = new ArrayList<>();
+        for (Long i = 1L; i < nodeNumber + 1; i++) {
+            dataPackages.add(service.findByProjectAndNodeLast(projectID, i));
+        }
+        return dataPackages;
+    }
 }
