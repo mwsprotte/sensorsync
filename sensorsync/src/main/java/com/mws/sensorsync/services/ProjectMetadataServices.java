@@ -28,7 +28,7 @@ public class ProjectMetadataServices {
     }
 
     public ProjectMetadata save(ProjectMetadata projectMetadata) {
-        logger.info("Salvando o projeto de ID " + projectMetadata.getId());
+        logger.info("Salvando novo projeto ");
         return repository.save(projectMetadata);
     }
 

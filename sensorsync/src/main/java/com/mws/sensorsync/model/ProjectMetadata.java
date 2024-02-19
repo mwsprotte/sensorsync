@@ -25,64 +25,64 @@ public class ProjectMetadata implements Serializable {
     @Column
     private long dataNumber;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data0Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data1Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data2Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data3Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data4Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data5Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data6Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data7Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data8Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data9Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data10Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data11Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data12Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data13Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data14Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data15Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data16Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data17Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data18Desc;
 
-    @Column(length = 15)
+    @Column(length = 254)
     private String data19Desc;
 
     @Column
