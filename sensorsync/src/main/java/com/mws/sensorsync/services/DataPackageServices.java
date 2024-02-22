@@ -28,6 +28,23 @@ public class DataPackageServices {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado um pacote de dados correspondente ao ID " + id));
     }
 
+
+    public List<DataPackage> findByProject(Long projectId) {
+        logger.info("Buscando os pacotes de dados para o projeto de ID " + projectId);
+        return repository.findByProject(projectId);
+    }
+
+    public List<DataPackage> findByProjectAndNode(Long projectId, Long nodeID) {
+        logger.info("Buscando os pacotes de dados para o projeto de ID " + projectId + " e nó: " + nodeID);
+        return repository.findByProjectAndNode(projectId, nodeID);
+    }
+
+    public DataPackage findByProjectAndNodeLast(Long projectId, Long nodeID) {
+        logger.info("Buscando os pacotes de dados para o projeto de ID " + projectId + " e nó: " + nodeID);
+        return repository.findByProjectAndNodeLast(projectId, nodeID);
+    }
+
+
     public DataPackage save(DataPackage dataPackage) {
         logger.info("Salvando o pacote de dados envidado pelo nó " + String.valueOf(dataPackage.getNodeIndex()) + " No projeto " + dataPackage.getProjectID());
         return repository.save(dataPackage);
@@ -45,19 +62,9 @@ public class DataPackageServices {
         repository.delete(entity);
     }
 
-    public List<DataPackage> findByProject(Long projectId) {
-        logger.info("Buscando os pacotes de dados para o projeto de ID " + projectId);
-        return repository.findByProject(projectId);
-    }
-
-    public List<DataPackage> findByProjectAndNode(Long projectId, Long nodeID) {
-        logger.info("Buscando os pacotes de dados para o projeto de ID " + projectId + " e nó: " + nodeID);
-        return repository.findByProjectAndNode(projectId, nodeID);
-    }
-
-    public DataPackage findByProjectAndNodeLast(Long projectId, Long nodeID) {
-        logger.info("Buscando os pacotes de dados para o projeto de ID " + projectId + " e nó: " + nodeID);
-        return repository.findByProjectAndNodeLast(projectId, nodeID);
+    public void deleteAll(Long id) {
+        logger.info("Deletando todos os pacote de dados de ID " + id);
+        repository.deleteAlLByProjectID(id);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.mws.sensorsync;
 
 import com.mws.sensorsync.model.ProjectMetadata;
+import com.mws.sensorsync.services.DataPackageServices;
 import com.mws.sensorsync.services.ProjectMetadataServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -16,6 +17,9 @@ public class ProjectMetadataController {
 
     @Autowired
     private ProjectMetadataServices services;
+
+    @Autowired
+    private DataPackageServices dataPackageServices;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ProjectMetadata> findAll() {
@@ -38,6 +42,16 @@ public class ProjectMetadataController {
         return ResponseEntity.noContent().build();
     }
 
+    //todo: testa esse endpoint [deletar tanto o projeto quanto seus dados gravados]
+    @DeleteMapping(value = "/deleteAll/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public boolean deleteAll(@PathVariable(value = "id") Long projectID) {
+
+        services.delete(projectID);
+
+        dataPackageServices.deleteAll(projectID);
+
+        return true;
+    }
 
 }
 

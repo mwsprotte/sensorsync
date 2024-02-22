@@ -20,4 +20,8 @@ public interface DataPackageRepository extends JpaRepository<DataPackage, Long> 
     @Query(value = "SELECT * FROM datapackage WHERE projectid = :projectid and node_index = :nodeid order by id DESC LIMIT 0, 1", nativeQuery = true)
     DataPackage findByProjectAndNodeLast(@Param("projectid") Long projectId, @Param("nodeid") Long nodeId);
 
+
+    @Query(value = "DELETE FROM datapackage WHERE projectid = :projectid", nativeQuery = true)
+    DataPackage deleteAlLByProjectID(@Param("projectid") Long projectId);
+
 }
