@@ -45,11 +45,8 @@ public class ProjectMetadataController {
     //todo: testa esse endpoint [deletar tanto o projeto quanto seus dados gravados]
     @DeleteMapping(value = "/deleteAll/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean deleteAll(@PathVariable(value = "id") Long projectID) {
-
         services.delete(projectID);
-
-        dataPackageServices.deleteAll(projectID);
-
+        dataPackageServices.deleteAll(projectID.intValue());
         return true;
     }
 

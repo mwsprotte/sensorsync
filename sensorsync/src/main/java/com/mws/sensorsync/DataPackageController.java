@@ -61,6 +61,12 @@ public class DataPackageController {
         return ResponseEntity.noContent().build();
     }
 
+//    @DeleteMapping(value = "/deleteAll/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public boolean deleteAll(@PathVariable(value = "id") int projectID) {
+//        service.deleteAll(projectID);
+//        return true;
+//    }
+
     //    Retornando todos os valores de um ID de projeto específico [ex: http://localhost:8080/datapackage/project/1]
     @GetMapping(value = "/project/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataPackage> findByProject(@PathVariable(value = "projectID") Long projectID) {

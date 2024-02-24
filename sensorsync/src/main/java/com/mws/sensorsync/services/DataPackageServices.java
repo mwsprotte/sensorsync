@@ -4,7 +4,9 @@ import com.mws.sensorsync.exceptions.ResourceNotFoundException;
 import com.mws.sensorsync.model.DataPackage;
 import com.mws.sensorsync.repositories.DataPackageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -62,7 +64,7 @@ public class DataPackageServices {
         repository.delete(entity);
     }
 
-    public void deleteAll(Long id) {
+    public void deleteAll(int id) {
         logger.info("Deletando todos os pacote de dados de ID " + id);
         repository.deleteAlLByProjectID(id);
     }
