@@ -87,6 +87,10 @@ public class DataPackage implements Serializable {
     private double data19;
 
 
+    @Column
+    private String readTime;
+
+
     public DataPackage() {
     }
 
@@ -282,16 +286,24 @@ public class DataPackage implements Serializable {
         this.data19 = data19;
     }
 
+    public String getReadTime() {
+        return readTime;
+    }
+
+    public void setReadTime(String readTime) {
+        this.readTime = readTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DataPackage that = (DataPackage) o;
-        return id == that.id && projectID == that.projectID && nodeIndex == that.nodeIndex && Double.compare(data0, that.data0) == 0 && Double.compare(data1, that.data1) == 0 && Double.compare(data2, that.data2) == 0 && Double.compare(data3, that.data3) == 0 && Double.compare(data4, that.data4) == 0 && Double.compare(data5, that.data5) == 0 && Double.compare(data6, that.data6) == 0 && Double.compare(data7, that.data7) == 0 && Double.compare(data8, that.data8) == 0 && Double.compare(data9, that.data9) == 0 && Double.compare(data10, that.data10) == 0 && Double.compare(data11, that.data11) == 0 && Double.compare(data12, that.data12) == 0 && Double.compare(data13, that.data13) == 0 && Double.compare(data14, that.data14) == 0 && Double.compare(data15, that.data15) == 0 && Double.compare(data16, that.data16) == 0 && Double.compare(data17, that.data17) == 0 && Double.compare(data18, that.data18) == 0 && Double.compare(data19, that.data19) == 0 && Objects.equals(description, that.description);
+        return id == that.id && projectID == that.projectID && nodeIndex == that.nodeIndex && Double.compare(data0, that.data0) == 0 && Double.compare(data1, that.data1) == 0 && Double.compare(data2, that.data2) == 0 && Double.compare(data3, that.data3) == 0 && Double.compare(data4, that.data4) == 0 && Double.compare(data5, that.data5) == 0 && Double.compare(data6, that.data6) == 0 && Double.compare(data7, that.data7) == 0 && Double.compare(data8, that.data8) == 0 && Double.compare(data9, that.data9) == 0 && Double.compare(data10, that.data10) == 0 && Double.compare(data11, that.data11) == 0 && Double.compare(data12, that.data12) == 0 && Double.compare(data13, that.data13) == 0 && Double.compare(data14, that.data14) == 0 && Double.compare(data15, that.data15) == 0 && Double.compare(data16, that.data16) == 0 && Double.compare(data17, that.data17) == 0 && Double.compare(data18, that.data18) == 0 && Double.compare(data19, that.data19) == 0 && Objects.equals(description, that.description) && Objects.equals(readTime, that.readTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, projectID, nodeIndex, data0, data1, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data12, data13, data14, data15, data16, data17, data18, data19);
+        return Objects.hash(id, description, projectID, nodeIndex, data0, data1, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data12, data13, data14, data15, data16, data17, data18, data19, readTime);
     }
 }
