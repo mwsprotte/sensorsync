@@ -101,5 +101,23 @@ public class DataPackageController {
         return dataPackages;
     }
 
+//    todo: retornar uma array list ao invés de retornar uma lista de objetos
+    //    Retornando todos os n últimos valores de um ID de projeto específico e para todos os nós [ex: http://localhost:8080/datapackage/project/2/lastNodes/2/size/3]
+    @GetMapping(value = "/project/{projectID}/lastNodes/{nodeNumber}/dataNumber/{dataNumber}/size/{size}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ArrayList<String[]> findByProjectAndNodeLastAllNodes(@PathVariable(value = "projectID") Long projectID, @PathVariable(value = "nodeNumber") Long nodeNumber, @PathVariable(value = "dataNumber") int dataNumber, @PathVariable(value = "size") int size) {
+        ArrayList<String[]> dataCharts = new ArrayList<>();
+        String[] dataArray = new String[0];
+        List<DataPackage> dataPackages = new ArrayList<>();
+        for (Long i = 1L; i < nodeNumber + 1; i++) {
+            dataPackages = service.findByProjectAndNodeForChart(projectID, i, size);
+            dataCharts.clear();
+            for (int j = 0; j < dataNumber; j ++) {
+                dataArray[j] = String.valueOf(dataPackages.get(j).getData0());
+            }
+
+        }
+        return dataCharts;
+    }
+
 
 }

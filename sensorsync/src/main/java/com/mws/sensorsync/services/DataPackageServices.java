@@ -46,6 +46,11 @@ public class DataPackageServices {
         return repository.findByProjectAndNodeLast(projectId, nodeID);
     }
 
+    public List<DataPackage> findByProjectAndNodeForChart(Long projectId, Long nodeID, int size) {
+        logger.info("Buscando os últimos " + size + " pacotes de dados para o projeto de ID " + projectId + " e nó: " + nodeID);
+        return repository.findByProjectAndNodeForChart(projectId, nodeID, size);
+    }
+
 
     public DataPackage save(DataPackage dataPackage) {
         logger.info("Salvando o pacote de dados envidado pelo nó " + String.valueOf(dataPackage.getNodeIndex()) + " No projeto " + dataPackage.getProjectID());
