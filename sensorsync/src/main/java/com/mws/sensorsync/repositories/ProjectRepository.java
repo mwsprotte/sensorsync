@@ -1,9 +1,9 @@
 package com.mws.sensorsync.repositories;
 
-import com.mws.sensorsync.model.ProjectMetadata;
+import com.mws.sensorsync.model.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProjectMetadataRepository extends JpaRepository<ProjectMetadata, Long> {
+public interface ProjectRepository extends JpaRepository<Project,Long> {
 }
