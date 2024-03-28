@@ -11,14 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface DataRepository extends JpaRepository<Data,Long> {
+public interface DataRepository extends JpaRepository<Data, Long> {
 
     //QUERY para resgatar a última gravação de um dado a partir do projeto, seu sensor e seu index
     @Query(value = "SELECT * FROM data WHERE projectid = :projectid and sensor_index = :sensorIndex and data_index = :dataIndex order by id DESC LIMIT 1", nativeQuery = true)
     Data findByProjectAndNodeForCard(@Param("projectid") Long projectId, @Param("sensorIndex") Long sensorIndex, @Param("dataIndex") Long dataIndex);
 
+
+    @Query(value = "SELECT * FROM data WHERE projectid = :projectid and sensor_index = :sensorIndex and data_index = :dataIndex order by id DESC LIMIT :length", nativeQuery = true)
+    List<Data> findByProjectAndDeviceForChart(@Param("projectid") Long projectId, @Param("sensorIndex") Long sensorIndex, @Param("dataIndex") Long dataIndex, @Param("length") Long length);
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM data WHERE projectid = :projectid", nativeQuery = true)
     void deleteAlLByProjectID(@Param("projectid") int projectId);
+
 }

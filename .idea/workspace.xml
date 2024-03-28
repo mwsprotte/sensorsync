@@ -5,29 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MetadataController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/Data.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/Metadata.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/Project.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/MetadataRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/ProjectRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataServices.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/MetadataService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/ProjectService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/views/CardView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataPackageController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectMetadataController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/DataPackage.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/ProjectMetadata.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataPackageRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/ProjectMetadataRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataPackageServices.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/ProjectMetadataServices.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/MetadataRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/MetadataRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataServices.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/MetadataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/MetadataService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,9 +51,9 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Startup.executor&quot;: &quot;Debug&quot;,
+    &quot;Spring Boot.Startup.executor&quot;: &quot;Run&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;refactor__no__restrict&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;chart__support__add&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Development/sensorsync/sensorsync/src/main/resources/templates&quot;,
@@ -178,6 +161,15 @@
       <workItem from="1710862095302" duration="1617000" />
       <workItem from="1710892629141" duration="2883000" />
       <workItem from="1710948513147" duration="1060000" />
+      <workItem from="1711035511450" duration="216000" />
+      <workItem from="1711035763340" duration="797000" />
+      <workItem from="1711192644617" duration="11135000" />
+      <workItem from="1711381861745" duration="376000" />
+      <workItem from="1711400705641" duration="3401000" />
+      <workItem from="1711467188712" duration="1445000" />
+      <workItem from="1711501732223" duration="634000" />
+      <workItem from="1711503053922" duration="1485000" />
+      <workItem from="1711553230140" duration="1167000" />
     </task>
     <servers />
   </component>

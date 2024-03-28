@@ -51,6 +51,10 @@ public class MetadataService {
         return metadataRepository.findByProjectAndIndexForCard(projectID,dataIndex);
     }
 
+    public List<Metadata> findByProjectId(Long projectID) {
+        return metadataRepository.findByProject(projectID);
+    }
+
     //Método para deletar todos os metadados para um id de projeto
     public void deleteAllMetadata(Long projectID){
         metadataRepository.deleteAlLByProjectID(Math.toIntExact(projectID));

@@ -52,6 +52,11 @@ public class DataServices {
         return dataRepository.findByProjectAndNodeForCard(projectID, sensorIndex, dataIndex);
     }
 
+    public List<Data> findForChart(Long projectID, Long sensorIndex, Long dataIndex, Long length) {
+        logger.info("Buscando os dados para o projeto " + projectID + " correspondente ao sensor " + sensorIndex);
+        return dataRepository.findByProjectAndDeviceForChart(projectID, sensorIndex, dataIndex, length);
+    }
+
     //Método para deletar dodos os dados para um respectivo projeto
     public void deleteAllData(Long projectID) {
         dataRepository.deleteAlLByProjectID(Math.toIntExact(projectID));
