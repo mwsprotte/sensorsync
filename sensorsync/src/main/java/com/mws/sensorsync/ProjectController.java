@@ -1,7 +1,7 @@
 package com.mws.sensorsync;
 
 import com.mws.sensorsync.model.Project;
-import com.mws.sensorsync.services.DataServices;
+import com.mws.sensorsync.services.DataService;
 import com.mws.sensorsync.services.MetadataService;
 import com.mws.sensorsync.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +22,10 @@ public class ProjectController {
     private MetadataService metadataService;
 
     @Autowired
-    private DataServices dataServices;
+    private DataService dataServices;
 
 
-    //    *********************************************************************************************
+//    *********************************************************************************************
 //    Endpoints do Crud básico
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

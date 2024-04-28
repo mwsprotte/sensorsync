@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/UserHumanController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/UserHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/UserThing.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/UserHumanRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/UserHumanService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +57,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.Startup.executor": "Debug",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "chart__support__add",
+    "git-widget-placeholder": "user__add",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Development/sensorsync/sensorsync/src/main/resources/templates",
@@ -176,6 +183,7 @@
       <workItem from="1712245157496" duration="654000" />
       <workItem from="1713821984833" duration="654000" />
       <workItem from="1714243926319" duration="3830000" />
+      <workItem from="1714315802735" duration="2218000" />
     </task>
     <servers />
   </component>
@@ -194,6 +202,15 @@
     </option>
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/UserHumanController.java</url>
+          <line>60</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="SpringBootApplicationConfigurationType">
         <watch expression="gson" />

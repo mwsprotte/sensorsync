@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 
 @Service
 
-public class DataServices {
+public class DataService {
 
-    private Logger logger = Logger.getLogger(DataServices.class.getName());
+    private Logger logger = Logger.getLogger(DataService.class.getName());
 
     @Autowired
     DataRepository dataRepository;

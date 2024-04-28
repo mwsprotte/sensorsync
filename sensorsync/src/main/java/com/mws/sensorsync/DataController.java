@@ -1,7 +1,7 @@
 package com.mws.sensorsync;
 
 import com.mws.sensorsync.model.Data;
-import com.mws.sensorsync.services.DataServices;
+import com.mws.sensorsync.services.DataService;
 import com.mws.sensorsync.services.MetadataService;
 import com.mws.sensorsync.services.ProjectService;
 import com.mws.sensorsync.views.CardView;
@@ -15,14 +15,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/data")
 public class DataController {
 
     @Autowired
-    private DataServices dataServices;
+    private DataService dataServices;
 
     @Autowired
     private MetadataService metadataService;

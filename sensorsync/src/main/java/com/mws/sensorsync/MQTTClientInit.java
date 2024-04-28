@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.mws.sensorsync.model.Data;
-import com.mws.sensorsync.services.DataServices;
+import com.mws.sensorsync.services.DataService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -27,9 +27,9 @@ import java.util.logging.Logger;
 //Essa classe faz a API virar um subscribe do tópico sensorsync
 public class MQTTClientInit {
 
-    private DataServices dataServices;
+    private DataService dataServices;
 
-    private Logger logger = Logger.getLogger(DataServices.class.getName());
+    private Logger logger = Logger.getLogger(DataService.class.getName());
 
 
     public void init() {
