@@ -65,4 +65,9 @@ public class ProjectController {
     }
 
 
+//    https://github.com/arduino/library-registry/blob/main/FAQ.md#how-can-i-add-a-library-to-library-manager
+//todo Endpoint para gerar microcódigo
+
+
+
 }

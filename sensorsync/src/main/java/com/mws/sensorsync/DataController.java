@@ -77,6 +77,7 @@ public class DataController {
         }
     }
 
+//    RETORNA TODOS OS CARDS PARA UM PROJETO
     @GetMapping(value = "/cards/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CardView> findDataCards(@PathVariable(value = "projectID") Long id) {
         List<CardView> cards = new ArrayList<>();
@@ -95,6 +96,25 @@ public class DataController {
         return cards;
     }
 
+    //    RETORNA TODOS OS CARDS PARA UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO
+    @GetMapping(value = "/cards/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CardView> findDataCardsByDevice(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device) {
+        List<CardView> cards = new ArrayList<>();
+            for (Long j = 0L; j < (projectService.findById(id).getDataNumber()); j++) {
+                var entity = dataServices.findForCard(id, device, j);
+                CardView dataToAdd = new CardView();
+                dataToAdd.setData(entity.getData());
+                dataToAdd.setReadTime(entity.getReadTime());
+                dataToAdd.setSensorDescription(entity.getSensorDescription());
+                dataToAdd.setSensorIndex(entity.getSensorIndex());
+                dataToAdd.setDataDesc(metadataService.findByProjectIdAndDataIndex(id, j).getDataDesc());
+                cards.add(dataToAdd);
+        }
+        return cards;
+    }
+
+
+    //    RETORNA OS DADOS PARA O GRÁFICO DE UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO
     @GetMapping(value = "/charts/{projectID}/device/{device}/length/{length}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<List<String>> findDataCharts(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device, @PathVariable(value = "length") Long length) {
         List<List<String>> dataForCharts = new ArrayList<>();
@@ -108,7 +128,7 @@ public class DataController {
             }
         }
 
-        Collections.reverse(labels);
+//        Collections.reverse(labels);
         dataForCharts.add(labels);
 
 //      Iterando para carregar o eixo x

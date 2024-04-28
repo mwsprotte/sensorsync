@@ -7,10 +7,7 @@
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DataRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/MetadataRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/MetadataRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataServices.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/MetadataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/MetadataService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,34 +39,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Startup.executor&quot;: &quot;Run&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;chart__support__add&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Development/sensorsync/sensorsync/src/main/resources/templates&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;5a8d846313b6505a23403ea9634d0bee&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.Startup.executor": "Debug",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "chart__support__add",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Development/sensorsync/sensorsync/src/main/resources/templates",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "proofread",
+    "spring.configuration.checksum": "5a8d846313b6505a23403ea9634d0bee",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\templates" />
@@ -170,6 +167,15 @@
       <workItem from="1711501732223" duration="634000" />
       <workItem from="1711503053922" duration="1485000" />
       <workItem from="1711553230140" duration="1167000" />
+      <workItem from="1711639588802" duration="1539000" />
+      <workItem from="1711718402703" duration="1128000" />
+      <workItem from="1711802220317" duration="2221000" />
+      <workItem from="1711839221756" duration="724000" />
+      <workItem from="1711986512853" duration="518000" />
+      <workItem from="1712072198014" duration="646000" />
+      <workItem from="1712245157496" duration="654000" />
+      <workItem from="1713821984833" duration="654000" />
+      <workItem from="1714243926319" duration="3830000" />
     </task>
     <servers />
   </component>
