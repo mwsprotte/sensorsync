@@ -5,16 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/UserHumanController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/UserHuman.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/model/UserThing.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/UserHumanRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/UserHumanService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ScreenController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/generator.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/img/index/1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/img/index/2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/img/index/3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/img/logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/management.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/dark_mode.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/dashboard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/generator.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/management.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,12 +60,12 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.Startup.executor": "Debug",
+    "Spring Boot.Startup.executor": "Run",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "user__add",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Development/sensorsync/sensorsync/src/main/resources/templates",
+    "last_opened_file_path": "C:/Development/sensorsync/sensorsync/src/main/resources/static",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -76,6 +81,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\templates" />
       <recent name="C:\Projetos\sensorsync\sensorsync\src\main\java\com\mws\sensorsync\exceptions" />
     </key>
@@ -183,7 +189,7 @@
       <workItem from="1712245157496" duration="654000" />
       <workItem from="1713821984833" duration="654000" />
       <workItem from="1714243926319" duration="3830000" />
-      <workItem from="1714315802735" duration="2218000" />
+      <workItem from="1714315802735" duration="4016000" />
     </task>
     <servers />
   </component>
@@ -202,15 +208,6 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/UserHumanController.java</url>
-          <line>60</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="SpringBootApplicationConfigurationType">
         <watch expression="gson" />
