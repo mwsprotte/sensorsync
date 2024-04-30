@@ -57,12 +57,19 @@ public class DataService {
         return dataRepository.findByProjectAndDeviceForChart(projectID, sensorIndex, dataIndex, length);
     }
 
+    public List<Data> findAllForReport(Long projectID, Long sensorIndex, Long dataIndex){
+        logger.info("Buscando os dados para o projeto " + projectID + " correspondente ao sensor " + sensorIndex);
+        return dataRepository.findAllByProjectAndNode(projectID, sensorIndex, dataIndex);
+    }
+
     //Método para deletar dodos os dados para um respectivo projeto
     public void deleteAllData(Long projectID) {
         dataRepository.deleteAlLByProjectID(Math.toIntExact(projectID));
     }
 
 //    *********************************************************************************************
+
+
 
 
 }

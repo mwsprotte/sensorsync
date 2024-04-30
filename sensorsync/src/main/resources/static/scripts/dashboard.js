@@ -1,7 +1,7 @@
 // ***************************************************************************************************
 // Constantes de uso no código
 
-const HOST = "http://192.168.100.166";
+const HOST = "http://localhost";
 
 // ***************************************************************************************************
 
@@ -11,8 +11,6 @@ function verifyAndOpenDashboard() {
         constructDevicesSelector();
         prepareCharts();
     } else {
-        // window.alert("Não há um projeto selecionado!");
-        // window.location.href = "./index.html";
         console.log('Não foi encontrado projeto na memória!');
     }
 }
@@ -20,22 +18,16 @@ function verifyAndOpenDashboard() {
 
 function constructDevicesSelector() {
 
-    // SELEÇÃO MOVIDA PARA OUTRA TELA
-    // var devices = ""
-    // for (let index = 0; index < Number(localStorage.getItem('sensorNumber')); index++) {
-    //     devices = devices + "<div class='form-check'><input class='form-check-input' type='checkbox' value='' id='device" + index + "' checked><label class='form-check-label' for='device" + index + "'>Dispositivo " + index + "</label></div>"
-    // }
-    // document.getElementById('devicesSelector').innerHTML = devices;
-
-
     var devicesMainScreen = "<select id='deviceSelected' class=form-select>"
     for (let index = 0; index < Number(localStorage.getItem('sensorNumber')); index++) {
         devicesMainScreen = devicesMainScreen + "<option value='" + index + "'>Dispositivo " + index + "</option>"
     }
 
-    var devicesMainScreen = devicesMainScreen + "</select>";
+    devicesMainScreen = devicesMainScreen + "</select>";
     document.getElementById('deviceSelector').innerHTML = devicesMainScreen;
 
+    (localStorage.getItem('deviceSelected') == null) ? device = 0 : device = localStorage.getItem('deviceSelected');
+    document.querySelector('#deviceSelected').value = device;
 
 }
 
@@ -48,9 +40,11 @@ function closeProject() {
     localStorage.removeItem('projectID');
     localStorage.removeItem('sensorNumber');
     localStorage.removeItem('dataNumber');
+    localStorage.removeItem('deviceSelected');
 
     window.location.href = HOST + ":8080/";
 }
+
 // Number(document.querySelector('#deviceSelected').value)
 
 function generateCards() {
@@ -184,15 +178,10 @@ function updateCharts() {
                     })
                 }
             }
-        };
-
+        }
+        ;
         myBarChart.update();
-        // myBarChart._doResize();
-
-
     }
-
-
 }
 
 function updateViews() {
@@ -202,20 +191,26 @@ function updateViews() {
 
 
 // ***************************************************************************************************
+// Atualizando a guia de exportação dos dados
+
+function openExportTab() {
+    alert("Será aberta uim nova guia com o relatório dos dados");
+    window.open("./export.html", '_blank').focus();
+}
+
+// ***************************************************************************************************
 // Atualizando os dados a cada segundo
 
 function getTimeInterval() {
-
     var setTimeInterval = 1000;
-
     if (document.getElementById('setTime5').checked) {
         setTimeInterval = 5000;
     } else if (document.getElementById('setTime10').checked) {
         setTimeInterval = 10000;
     }
-
     return setTimeInterval;
 }
+
 
 setInterval(function () {
 
@@ -226,11 +221,13 @@ setInterval(function () {
 }, getTimeInterval()); //300000 is 5minutes in ms
 
 
+// ***************************************************************************************************
+// Configurando a vizualização para o dispositivo escolhido
+
 deviceField = document.querySelector("#deviceSelector");
 
 deviceField.addEventListener("change", (event) => {
-
-    // document.getElementById('dataCharts').innerHTML = '';
+    localStorage.setItem('deviceSelected', Number(document.querySelector('#deviceSelected').value));
     updateViews();
 });
 
