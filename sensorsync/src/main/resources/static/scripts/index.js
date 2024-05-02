@@ -50,7 +50,7 @@ function loadProjectData(projectID) {
             localStorage.setItem('sensorNumber', project.sensorNumber);
 
             window.alert("Você serrá direcionado para o projeto " + projectID + " (" + project.name + ")");
-            window.location.href ="./dashboard.html"
+            window.location.href = "./dashboard.html"
         }
     };
 }
@@ -62,4 +62,70 @@ function verifyAndOpen() {
         window.location.href = "./dashboard.html"
     }
 
+
+}
+
+// ***************************************************************************************************
+
+function generetaDeleteList() {
+
+    const xhr = new XMLHttpRequest();
+
+    var request = HOST + ":8080/user/check/login/" + document.querySelector("#login").value + "/password/" + document.querySelector("#password").value;
+    // var request = HOST + ":8080/user/check/login/tese/password/senhawe";
+
+    xhr.open('GET', request);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var check = JSON.parse(xhr.response);
+
+            if (check === true) {
+
+                var request = HOST + ":8080/project";
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', request);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var allProjects = JSON.parse(xhr.response);
+                        let projectsList = "<div class='list-group'>";
+                        for (let index = 0; index < allProjects.length; index++) {
+                            const element = allProjects[index];
+                            projectsList = projectsList + "<a href='#' class='list-group-item list-group-item-action' onclick='return deleteProject(" + element.id + ");'> Projeto: " + element.id + " - " + element.name + "</a>";
+                        }
+                        projectsList = projectsList + "</div>";
+                        document.getElementById('projectListToDelete').innerHTML = projectsList;
+
+                    }
+                }
+            } else {
+                alert("Senha incorreta!")
+                window.location.reload();
+            }
+        }
+    }
+}
+
+function deleteProject(projectID) {
+
+
+    // var resultado = confirm("Deseja excluir o projeto " + projectID + "?");
+
+    if (resultado == true) {
+
+        var request = HOST + ":8080/project/deleteAll/" + projectID;
+        const xhr = new XMLHttpRequest();
+        xhr.open('DELETE', request);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send();
+        alert("Projeto excluido!");
+        window.location.href = "./index.html";
+
+    } else {
+        alert("O projeto não foi excluído");
+    }
 }

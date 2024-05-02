@@ -34,7 +34,7 @@ public class UserHumanController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public boolean save(@RequestBody UserHuman user) {
-        if (userHumanService.getUserByLogin(user.getLogin()) == null && !user.getPassword().isEmpty()){
+        if (userHumanService.getUserByLogin(user.getLogin()) == null && !user.getPassword().isEmpty()) {
             userHumanService.save(user);
             return true;
         } else {
@@ -53,16 +53,25 @@ public class UserHumanController {
         return ResponseEntity.noContent().build();
     }
 
-//  *********************************************************************************************
+    //  *********************************************************************************************
 //  Endpoint para checar o login
     @GetMapping(value = "/check/login/{login}/password/{password}", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean checkUser(@PathVariable(value = "login") String login, @PathVariable(value = "password") String password) {
         var entity = userHumanService.getUserByLogin(login);
-        if (Objects.equals(entity.getPassword(), password)) {
-            return true;
-        } else {
+
+        try {
+            boolean verify = (Objects.equals(entity.getPassword(), password));
+
+            if (verify) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
             return false;
         }
+
+
     }
 
 }

@@ -7,7 +7,13 @@ const HOST = "http://localhost";
 
 function generateTable() {
 
+
     (localStorage.getItem('deviceSelected') == null) ? device = 0 : device = localStorage.getItem('deviceSelected');
+
+    var title = "Relatório de dados - Dispositivo " + device;
+
+    document.getElementById('reportTitle').innerHTML = title;
+
 
     var request = HOST + ":8080/data/report/" + localStorage.getItem('projectID') + "/device/" + device;
     const xhr = new XMLHttpRequest();
@@ -25,7 +31,7 @@ function generateTable() {
                     if (i == 0) {
                         table += "    <th class=\"text-center\">\n" + dataToGenerate[j] + "</th>\n";
                     } else {
-                        table += "    <td class=\"text-center\">\n" + dataToGenerate[j] + "</td>\n";
+                        table += "    <td class=\"text-center\">\n" + dataToGenerate[j].replace(".", ",") + "</td>\n";
                     }
                 }
                 table += "  </tr>\n";
