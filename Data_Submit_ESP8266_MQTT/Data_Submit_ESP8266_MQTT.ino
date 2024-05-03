@@ -80,6 +80,8 @@ void loop() {
 
     long data0 = random(0, 99);
     long data1 = random(0, 99);
+    // Exemplo de nova requisição 
+    // mosquitto_pub -t sensorsync -m "[{'sensorDescription':'Teste 1 MQTT','projectID': 1,'sensorIndex': 0,'dataIndex': 0,'data':60},{'sensorDescription':'Teste 2 MQTT','projectID': 1,'sensorIndex': 0,'dataIndex': 1,'data': 30}]"
     String t = "{'description':'Teste MQTT ESP','projectID':2,'nodeIndex':1,'data0':" + (String)data0 + ",'data1':" + (String)data1 + "}";
     String temp = String(t);
 

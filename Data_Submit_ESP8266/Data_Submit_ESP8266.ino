@@ -27,6 +27,7 @@ void setup() {
 
 // CONCATENA A STRING PARA MANDAR PARA O SERVIDOR
 void loop() {
+  // os costrutores de dados presisam estar dentro da biblioteca 
   String data = "{\"description\": \"rasp test4\",\"data0\": 3.3,\"data1\": 33.3,\"data2\": 333.3}";
   httpClient.begin(client, URL);
   httpClient.addHeader("Content-Type", "application/json");

@@ -194,7 +194,7 @@ function updateViews() {
 // Atualizando a guia de exportação dos dados
 
 function openExportTab() {
-    alert("Será aberta uim nova guia com o relatório dos dados");
+    alert("Será aberta uma nova guia com o relatório dos dados");
     window.open("./export.html", '_blank').focus();
 }
 

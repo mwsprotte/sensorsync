@@ -1,0 +1,1 @@
+// todo: script para comunicar com o gerador de código

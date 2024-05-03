@@ -117,9 +117,11 @@ function saveMetadata(id) {
     xhr.onload = () => {
         if (xhr.readyState == 4 && xhr.status == 200) {
             window.alert("Criado o projeto " + document.getElementById('projetctName').value);
+            alert("Será aberta uma nova guia com o códiugo do sistema embarcado");
+            window.open("./code.html", '_blank').focus();
             window.location.href = "./index.html";
         } else {
-            window.alert(`Não foi possível cirar o projeto! Erro ${xhr.status}`);
+            window.alert(`Não foi possível criar o projeto! Erro ${xhr.status}`);
 
             // console.log(`Error: ${xhr.status}`);
         }

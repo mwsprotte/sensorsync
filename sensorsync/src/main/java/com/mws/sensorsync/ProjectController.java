@@ -4,12 +4,14 @@ import com.mws.sensorsync.model.Project;
 import com.mws.sensorsync.services.DataService;
 import com.mws.sensorsync.services.MetadataService;
 import com.mws.sensorsync.services.ProjectService;
+import com.mws.sensorsync.services.UserHumanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("project")
@@ -23,6 +25,9 @@ public class ProjectController {
 
     @Autowired
     private DataService dataServices;
+
+    @Autowired
+    private UserHumanService userHumanService;
 
 
 //    *********************************************************************************************
@@ -56,18 +61,22 @@ public class ProjectController {
 //    *********************************************************************************************
 
     //Endpoint para deletar todos os dados relacionados a um id específico
-    @DeleteMapping(value = "/deleteAll/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean deleteAll(@PathVariable(value = "id") Long projectID) {
-        projectService.delete(projectID);
-        metadataService.deleteAllMetadata(projectID);
-        dataServices.deleteAllData(projectID);
-        return true;
+    @DeleteMapping(value = "/deleteAll/{id}/user/{user}/password/{password}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public boolean deleteAll(@PathVariable(value = "id") Long projectID, @PathVariable(value = "user") String user, @PathVariable(value = "password") String password) {
+
+        if (Objects.equals(userHumanService.getUserByLogin(user).getPassword(), password)) {
+            projectService.delete(projectID);
+            metadataService.deleteAllMetadata(projectID);
+            dataServices.deleteAllData(projectID);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
 //    https://github.com/arduino/library-registry/blob/main/FAQ.md#how-can-i-add-a-library-to-library-manager
 //todo Endpoint para gerar microcódigo
-
 
 
 }
