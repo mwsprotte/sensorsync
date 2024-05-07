@@ -24,7 +24,6 @@ public class ProjectService {
 //    private MetadataService metadataService;
 
 
-
 //    *********************************************************************************************
 //    Crud básico
 
@@ -37,7 +36,19 @@ public class ProjectService {
     }
 
     public Project save(Project project) {
-        return projectRepository.save(project);
+        boolean isNew = true;
+        List<Project> projects = projectRepository.findAll();
+        for (Project value : projects) {
+            if (value.getName().equals(project.getName())) {
+                isNew = false;
+                break;
+            }
+        }
+        if (isNew) {
+            return projectRepository.save(project);
+        } else {
+            return null;
+        }
     }
 
     public Project update(Project project) {
@@ -45,7 +56,7 @@ public class ProjectService {
         return save(project);
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         var entity = projectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foram encontrados dados correspondente ao ID " + id));
         projectRepository.delete(entity);
     }

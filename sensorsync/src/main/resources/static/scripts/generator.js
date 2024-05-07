@@ -13,7 +13,7 @@ function loadDataInput() {
         var ref = index + 1;
         cards = cards +
             "<div class='col-md-12'><p class='text-center fw-semibold'>Dado " + ref + "</p></div>" +
-            "<div class='col-md-6'><label class='form-label'>Descrição</label><input type='text' class='form-control' id='cardDesc" + index + "'></div>" +
+            "<div class='col-md-6'><label class='form-label'>Descrição</label><input type='text' class='form-control' id='cardDesc" + index + "'  value='Unidade " + ref + "'></div>" +
             "<div class='col-md-6'><br>" +
             "<div class='form-check form-check-inline'><input class='form-check-input' type='checkbox' id='useCard" + index + "'value='' checked><label class='form-check-label' for='inlineCheckbox1'>Card</label></div>" +
             "<div class='form-check form-check-inline'><input class='form-check-input' type='checkbox' id='useChart" + index + "'value=''><label class='form-check-label' for='inlineCheckbox2'>Gráfico</label></div>" +
@@ -78,22 +78,34 @@ function saveProject() {
     xhr.open("POST", HOST + ":8080/project");
     xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
 
-    const body = JSON.stringify({
-        name: document.getElementById('projetctName').value,
-        sensorNumber: parseInt(document.getElementById('sensorNumber').value),
-        dataNumber: parseInt(document.getElementById('dataNumber').value),
-    });
+    if (document.getElementById('projetctName').value != "") {
 
-    xhr.onload = () => {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText)
-            console.log(`Projeto: ` + response.id);
-            saveMetadata(response.id)
-        } else {
-            console.log(`Error: ${xhr.status}`);
-        }
-    };
-    xhr.send(body);
+        const body = JSON.stringify({
+            name: document.getElementById('projetctName').value,
+            sensorNumber: parseInt(document.getElementById('sensorNumber').value),
+            dataNumber: parseInt(document.getElementById('dataNumber').value),
+        });
+
+        xhr.onload = () => {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+
+                try {
+                    var response = JSON.parse(xhr.responseText)
+                    console.log(`Projeto: ` + response.id);
+                    saveMetadata(response.id);
+                } catch (e) {
+                    alert("Esse projeto já existe!")
+                    window.location.reload();
+                }
+
+            } else {
+                console.log(`Error: ${xhr.status}`);
+            }
+        };
+        xhr.send(body);
+    } else {
+        window.alert("Insira um nome para o projeto!")
+    }
 }
 
 function saveMetadata(id) {

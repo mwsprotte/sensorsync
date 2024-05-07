@@ -18,11 +18,14 @@ function generateCode() {
 
             code = JSON.parse(xhr.response);
 
-            var codeESP8266 = code[0];
-
-            document.getElementById('codeGenerated').innerHTML = codeESP8266;
-
-
+            if (code.length > 1) {
+                document.getElementById('codeGenerated').innerHTML = "<h3>Código Arduino</h3><br>";
+                document.getElementById('codeGenerated').innerHTML += code[0];
+                document.getElementById('codeGenerated').innerHTML += "<hr><br><h3>Código ESP</h3><br>"
+                document.getElementById('codeGenerated').innerHTML += code[1];
+            } else {
+                document.getElementById('codeGenerated').innerHTML = code[0];
+            }
         }
     }
 }

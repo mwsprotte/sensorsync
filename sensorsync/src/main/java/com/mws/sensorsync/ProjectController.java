@@ -197,6 +197,181 @@ public class ProjectController {
                 break;
             case 2: //ESP8266 e arduino
 
+                String dataToSendArduino = "";
+                for (int i = 0; i < p.getDataNumber(); i++) {
+
+                    dataToSendArduino = dataToSendArduino +
+                            "\ndata[" + i + "] = random(0, 99)";
+                }
+
+
+//                Código no arduino será o mesmo para os dois protocolos
+                String arduinoCode = "" +
+                        "#include \"SoftwareSerial.h\"\n" +
+                        "#include \"ArduinoJson.h\"\n" +
+                        "\n" +
+                        "//*************************************************************************************************\n" +
+                        "// DESIGNANDO UM PAR DE PINOS PARA O ENVIO DE DADOS VIA SERIAL\n" +
+                        "SoftwareSerial ESP(10, 11); //(RX, TX)\n" +
+                        "\n" +
+                        "float data[]\n" +
+                        "\n" +
+                        "void setup() {\n" +
+                        "  Serial.begin(9600);\n" +
+                        "  ESP.begin(9600);\n" +
+                        "  delay(1000);\n" +
+                        "\n" +
+                        "\n" +
+                        "// **********************************************************************************************\n" +
+                        "// Espaço destinado para inicialização dos sensores\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "// **********************************************************************************************\n" +
+                        "\n" +
+                        "}\n" +
+                        "\n" +
+                        "\n" +
+                        "void loop() {\n" +
+                        "\n" +
+                        "  StaticJsonBuffer<1000> jsonBuffer;\n" +
+                        "  JsonObject& data = jsonBuffer.createObject();\n" +
+                        "\n" +
+                        "// **********************************************************************************************\n" +
+                        "// Espaço destinado para aquisição dos dados a serem enviados\n" +
+                        "\n" +
+                        dataToSendArduino +
+                        "\n" +
+                        "// **********************************************************************************************\n" +
+                        "\n" +
+                        "  data.printTo(ESP);\n" +
+                        "  jsonBuffer.clear();\n" +
+                        "\n" +
+                        "  // delay(10000);\n" +
+                        "}";
+
+                codes.add(arduinoCode);
+
+                if (protocol == 0) {
+
+                    String dataToSend = "";
+                    for (int i = 0; i < p.getDataNumber(); i++) {
+
+                        dataToSend = dataToSend +
+                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99)";
+                    }
+
+                    String esp8266Code = "#include \"Arduino.h\"\n" +
+                            "#include \"ESP8266WiFi.h\"\n" +
+                            "#include \"ESP8266HTTPClient.h\"\n" +
+                            "#include \"sensor_sync.h\"\n" +
+                            "#include \"blink.h\"\n" +
+                            "#define project 1\n" +
+                            "#define device 0 //atualiza para o índice do dispositivo caso exista mais de um para o projeto\n" +
+                            "\n" +
+                            "const char *WIFI_SSID = \"Rede_IoT_Matheus\";\n" +
+                            "const char *WIFI_PASSWORD = \"senhasenha\";\n" +
+                            "const char *URL = \"http://192.168.0.100:8080/datapackage\"\n" +
+                            "String desc[2];\n" +
+                            "String data[2];\n" +
+                            "\n" +
+                            "WiFiClient client;\n" +
+                            "HTTPClient httpClient;\n" +
+                            "\n" +
+                            "void setup () {\n" +
+                            "    Serial.begin(9600);\n" +
+                            "setup_wifi(WIFI_SSID, WIFI_PASSWORD);\n" +
+                            "\n" +
+                            "// **********************************************************************************************\n" +
+                            "// Espaço destinado para inicialização das bibliotecas dos sensores\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "// **********************************************************************************************\n" +
+                            "\n" +
+                            "}\n" +
+                            "\n" +
+                            "void loop() {\n" +
+                            "\n" +
+                            "  StaticJsonBuffer<1000> jsonBuffer;\n" +
+                            "  JsonObject& data = jsonBuffer.parseObject(Serial);\n" +
+                            "\n" +
+                            "  if (data == JsonObject::invalid()) {\n" +
+                            "   jsonBuffer.clear();\n" +
+                            "    return;\n" +
+                            "  }\n" +
+                            "\n" +
+                            dataToSend +
+                            "\n" +
+                            "// **********************************************************************************************\n" +
+                            "\n" +
+                            "send_HTTP_data(project, 0, desc, data, URL);\n" +
+                            "\n" +
+                            "}";
+
+                    codes.add(esp8266Code);
+                } else {
+                    String dataToSend = "";
+                    for (int i = 0; i < p.getDataNumber(); i++) {
+
+                        dataToSend = dataToSend +
+                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99)";
+                    }
+
+                    String esp8266Code = "#include <Arduino.h>\n" +
+                            "#include <ESP8266WiFi.h>\n" +
+                            "#include <ESP8266HTTPClient.h>\n" +
+                            "#include <PubSubClient.h>\n" +
+                            "#include \"sensor_sync.h\"\n" +
+                            "#include \"blink.h\"\n" +
+                            "#define project 1\n" +
+                            "#define device 0 //atualiza para o índice do dispositivo caso exista mais de um para o projeto\n" +
+                            "\n" +
+                            "const char *WIFI_SSID = \"Rede_IoT_Matheus\";\n" +
+                            "const char *WIFI_PASSWORD = \"senhasenha\";\n" +
+                            "const char *URL = \"http://192.168.0.100:8080/datapackage\"\n" +
+                            "String desc[2];\n" +
+                            "String data[2];\n" +
+                            "\n" +
+                            "WiFiClient client;\n" +
+                            "HTTPClient httpClient;\n" +
+                            "\n" +
+                            "void setup () {\n" +
+                            "    Serial.begin(57600);//when you open serial terminal, chnge 9600\n" +
+                            "    client.setServer(server, 1883);\n" +
+                            "    client.setCallback(callback);\n" +
+                            "    Serial.begin(9600);\n" +
+                            "    setup_wifi(WIFI_SSID, WIFI_PASSWORD);\n" +
+                            "\n" +
+                            "// **********************************************************************************************\n" +
+                            "// Espaço destinado para inicialização das bibliotecas dos sensores\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "// **********************************************************************************************\n" +
+                            "\n" +
+                            "}\n" +
+                            "\n" +
+                            "void loop() {\n" +
+                            "\n" +
+                            "  StaticJsonBuffer<1000> jsonBuffer;\n" +
+                            "  JsonObject& data = jsonBuffer.parseObject(Serial);\n" +
+                            "\n" +
+                            "  if (data == JsonObject::invalid()) {\n" +
+                            "   jsonBuffer.clear();\n" +
+                            "    return;\n" +
+                            "  }\n" +
+                            "\n" +
+                            dataToSend +
+                            "\n" +
+                            "// **********************************************************************************************\n" +
+                            "\n" +
+                            "send_MQTT_data(project, device, desc, data, URL);\n" +
+                            "\n" +
+                            "}";
+                    codes.add(esp8266Code);
+                }
+
 
                 break;
             default:
