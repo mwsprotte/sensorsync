@@ -15,7 +15,7 @@
 
 </head>
 
-<body onload="generateTable()">
+<body onload="generateCode()">
 
 <div class="container">
     <div>
@@ -27,46 +27,15 @@
     </div>
 
 
-    <div id="codeGenerated">
+    <div>
 
 
     <pre>
         <code>
-            <!--    &lt;p&gt;Sample text here...&lt;/p&gt;-->
-            <!--&lt;p&gt;And another line of sample text here...&lt;/p&gt;-->
-            #include <Arduino.h>
-            #include <ESP8266WiFi.h>
-            #include <ESP8266HTTPClient.h>
-            #include "sensor_sync.h"
-            #include "blink.h"
+            <div id="codeGenerated">
 
-            // const char *WIFI_SSID = "Rede_IoT_Matheus";
-            // const char *WIFI_PASSWORD = "senhasenha";
-            // const char *URL = "http://192.168.0.100:8080/datapackage";
-            const char *WIFI_SSID = "Matheus_191";
-            const char *WIFI_PASSWORD = "johnnycash2023";
-            const char *URL = "http://192.168.100.166:8080/datapackage";
-            String desc[2];
-            String data[2];
 
-            WiFiClient client;
-            HTTPClient httpClient;
-
-            void setup() {
-              setup_wifi(WIFI_SSID, WIFI_PASSWORD);
-            }
-
-            // CONCATENA A STRING PARA MANDAR PARA O SERVIDOR
-            void loop() {
-
-              desc[0] = "Teste 1";
-              desc[1] = "Teste 2";
-
-              data[0] = random(10, 50);
-              data[1] = random(0, 1000);
-
-              send_HTTP_data(1, 0, desc, data, URL);
-            }
+            </div>
         </code>
     </pre>
 
@@ -79,6 +48,6 @@
         crossorigin="anonymous"></script>
 </body>
 
-<script src="scripts/export.js"></script>
+<script src="scripts/code.js"></script>
 
 </html>

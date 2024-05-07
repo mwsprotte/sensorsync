@@ -123,7 +123,6 @@ function generetaDeleteList() {
 
 function deleteProject(projectID) {
 
-
     var resultado = confirm("Deseja excluir o projeto " + projectID + "?");
 
     if (resultado == true) {
@@ -134,7 +133,7 @@ function deleteProject(projectID) {
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send();
         alert("Projeto excluído!");
-        // window.location.href = "./index.html";
+        window.location.reload();
 
     } else {
         alert("O projeto não foi excluído");

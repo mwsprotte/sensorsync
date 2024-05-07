@@ -117,7 +117,8 @@ function saveMetadata(id) {
     xhr.onload = () => {
         if (xhr.readyState == 4 && xhr.status == 200) {
             window.alert("Criado o projeto " + document.getElementById('projetctName').value);
-            alert("Será aberta uma nova guia com o códiugo do sistema embarcado");
+            alert("Será aberta uma nova guia com o código do sistema embarcado");
+            saveEmbeddedCodeInfos(id);
             window.open("./code.html", '_blank').focus();
             window.location.href = "./index.html";
         } else {
@@ -128,6 +129,24 @@ function saveMetadata(id) {
     };
     xhr.send(body);
 
+}
+
+function saveEmbeddedCodeInfos(projectID) {
+    var device = 0;
+    if (document.querySelector("#ESP32Device").checked == true) {
+        device = 1;
+    } else if (document.querySelector("#ArduinoDevice").checked == true) {
+        device = 2;
+    }
+    localStorage.setItem("device", device);
+
+    var protocol = 0;
+    if (document.querySelector("#MQTTSelect").checked == true) {
+        protocol = 1;
+    }
+    localStorage.setItem("protocol", protocol);
+
+    localStorage.setItem("projectGenerated", projectID);
 }
 
 // ***************************************************************************************************
