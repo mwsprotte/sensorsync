@@ -11,9 +11,9 @@
     <title>SensorSync</title>
     <link rel="icon" type="image/x-icon" href="img/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="scripts/dark_mode.js"></script>
 
 
@@ -22,143 +22,150 @@
 <body onload="verifyAndOpenDashboard()">
 
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-semibold" href="#" id="projectTitle">...</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-semibold" href="#" id="projectTitle">...</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
 
-                    <div id="deviceSelector">
-                        <!-- <select id="deviceSelected" class="form-select">
-                            <option value="0">Sensor 0</option>
-                            <option value="1">Sensor 1</option>
-                            <option value="2">Sensor 2</option>
-                            <option value="3">Sensor 3</option>
-                          </select> -->
-                          ...
-                    </div>
-
-
-
-                    <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
-                    <!-- <a class="nav-link" href="#">Criar</a>
-                    <a class="nav-link" href="#">Dashboard</a> -->
-                    <!-- <a class="nav-link" aria-disabled="true" href="#">Opções</a> -->
-                    <a class="nav-link" aria-disabled="true" href="#" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop">
-                        Opções
-                    </a>
-                    <!-- <a class="nav-link" aria-disabled="true" href="#">Sobre</a> -->
-                    <!-- <a class="nav-link" aria-disabled="true" href="#">Documentação Avançada (Swagger)</a> -->
-                    <a class="nav-link" aria-disabled="true" href="#" onclick="closeProject()">Sair</a>
+                <div id="deviceSelector">
+                    <!-- <select id="deviceSelected" class="form-select">
+                        <option value="0">Sensor 0</option>
+                        <option value="1">Sensor 1</option>
+                        <option value="2">Sensor 2</option>
+                        <option value="3">Sensor 3</option>
+                      </select> -->
+                    ...
                 </div>
-            </div>
-        </div>
-    </nav>
-    <br>
 
 
-    <div class="container" id="dataCards">
-
-        <div class="d-flex justify-content-center">
-            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-
-    </div>
-
-    <br>
-    <div class="container">
-        <hr>
-    </div>
-    <br>
-    <div class="container-xxl">
-        <div id="dataCharts">
-
-
-            <!-- <div>
-                    <canvas id="dataChart1">
-
-                    </canvas>
-                </div> -->
-
-
-        </div>
-    </div>
-
-    <div class="container">
-        <div>
-            <br>
-            <br>
-            <br>
-        </div>
-
-    </div>
-
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Ajustes</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Atualização automática dos dados
-                    <br>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="setTime1"
-                            value="1" checked>
-                        <label class="form-check-label" for="setTime1">
-                            A cada 1 s
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="setTime5"
-                            value="5">
-                        <label class="form-check-label" for="setTime5">
-                            A cada 5 s
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="setTime10"
-                            value="10">
-                        <label class="form-check-label" for="setTime10">
-                            A cada 10 s
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="setTimeOff"
-                            value="0">
-                        <label class="form-check-label" for="setTimeOff">
-                            Desativado
-                        </label>
-                    </div>
-
-                    <hr>
-                    Range para exibição dos gráficos
-                    <br>
-                    <br>
-                    <input type="number" class="form-control" placeholder="Insira a quantidade de itens" aria-label="Insira a quantidade de itens" id="length" name="length" min="3" max="100" value="5">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="updateViews()">Aplicar</button>
-                    <button type="button" class="btn btn-success" onclick="openExportTab()">Gerar Relatório</button>
-                </div>
+                <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
+                <!-- <a class="nav-link" href="#">Criar</a>
+                <a class="nav-link" href="#">Dashboard</a> -->
+                <!-- <a class="nav-link" aria-disabled="true" href="#">Opções</a> -->
+                <a class="nav-link" aria-disabled="true" href="#" data-bs-toggle="modal"
+                   data-bs-target="#staticBackdrop">
+                    Opções
+                </a>
+                <!-- <a class="nav-link" aria-disabled="true" href="#">Sobre</a> -->
+                <!-- <a class="nav-link" aria-disabled="true" href="#">Documentação Avançada (Swagger)</a> -->
+                <a class="nav-link" aria-disabled="true" href="#" onclick="closeProject()">Sair</a>
             </div>
         </div>
     </div>
+</nav>
+<br>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+
+<div class="container" id="dataCards">
+
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+</div>
+
+<br>
+<div class="container">
+    <hr>
+</div>
+<br>
+<div class="container-xxl">
+    <div id="dataCharts">
+
+
+        <!-- <div>
+                <canvas id="dataChart1">
+
+                </canvas>
+            </div> -->
+
+
+    </div>
+</div>
+
+<br>
+<br>
+<br>
+<hr>
+<br>
+<footer class="text-center">
+    <div class="text-center p-3">
+        IFSC RAU 2024 | SensorSync - API de Integração IoT escalável e multiprotocolo
+    </div>
+</footer>
+<br>
+<br>
+
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Ajustes</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Atualização automática dos dados
+                <br>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="setTime1"
+                           value="1" checked>
+                    <label class="form-check-label" for="setTime1">
+                        A cada 1 s
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="setTime5"
+                           value="5">
+                    <label class="form-check-label" for="setTime5">
+                        A cada 5 s
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="setTime10"
+                           value="10">
+                    <label class="form-check-label" for="setTime10">
+                        A cada 10 s
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="setTimeOff"
+                           value="0">
+                    <label class="form-check-label" for="setTimeOff">
+                        Desativado
+                    </label>
+                </div>
+
+                <hr>
+                Range para exibição dos gráficos
+                <br>
+                <br>
+                <input type="number" class="form-control" placeholder="Insira a quantidade de itens"
+                       aria-label="Insira a quantidade de itens" id="length" name="length" min="3" max="100" value="5">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="updateViews()">Aplicar
+                </button>
+                <button type="button" class="btn btn-success" onclick="openExportTab()">Gerar Relatório</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 </body>
 
 <script src="scripts/dashboard.js"></script>
 
-</html
+</html>

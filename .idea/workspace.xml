@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/img/if_logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/img/jaragua_rau_horizontal_marca2015_CMYK.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/generator.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/generator.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +61,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Development/sensorsync/sensorsync/src/main/resources/static/img/index&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Development/sensorsync/sensorsync/src/main/resources/static/img&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -72,12 +77,15 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img\index" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\templates" />
       <recent name="C:\Projetos\sensorsync\sensorsync\src\main\java\com\mws\sensorsync\exceptions" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img" />
+      <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img\index" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -203,7 +211,9 @@
       <workItem from="1714749958701" duration="1887000" />
       <workItem from="1714944465362" duration="5273000" />
       <workItem from="1715009235319" duration="1792000" />
-      <workItem from="1715037400034" duration="8819000" />
+      <workItem from="1715037400034" duration="9259000" />
+      <workItem from="1715095745293" duration="1602000" />
+      <workItem from="1715116448731" duration="1761000" />
     </task>
     <servers />
   </component>

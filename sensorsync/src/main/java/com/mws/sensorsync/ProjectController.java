@@ -328,7 +328,7 @@ public class ProjectController {
                         "// DESIGNANDO UM PAR DE PINOS PARA O ENVIO DE DADOS VIA SERIAL\n" +
                         "SoftwareSerial ESP(10, 11); //(RX, TX)\n" +
                         "\n" +
-                        "float data[]\n" +
+                        "float data[" + p.getDataNumber() + "]\n" +
                         "\n" +
                         "void setup() {\n" +
                         "  Serial.begin(9600);\n" +
@@ -381,14 +381,14 @@ public class ProjectController {
                             "#include \"ESP8266HTTPClient.h\"\n" +
                             "#include \"sensor_sync.h\"\n" +
                             "#include \"blink.h\"\n" +
-                            "#define project 1\n" +
-                            "#define device 0 //atualiza para o índice do dispositivo caso exista mais de um para o projeto\n" +
+                            "#define project " + p.getId() + "\n" +
+                            "#define device 0 //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
                             "\n" +
                             "const char *WIFI_SSID = \"Rede_IoT_Matheus\";\n" +
                             "const char *WIFI_PASSWORD = \"senhasenha\";\n" +
                             "const char *URL = \"http://192.168.0.100:8080/datapackage\"\n" +
-                            "String desc[2];\n" +
-                            "String data[2];\n" +
+                            "String desc[" + p.getDataNumber() + "];\n" +
+                            "String data[" + p.getDataNumber() + "];\n" +
                             "\n" +
                             "WiFiClient client;\n" +
                             "HTTPClient httpClient;\n" +
@@ -420,7 +420,7 @@ public class ProjectController {
                             "\n" +
                             "// **********************************************************************************************\n" +
                             "\n" +
-                            "send_HTTP_data(project, 0, desc, data, URL);\n" +
+                            "send_HTTP_data(project, device, desc, data, URL);\n" +
                             "\n" +
                             "}";
 
