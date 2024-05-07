@@ -95,17 +95,48 @@ public class ProjectController {
                     for (int i = 0; i < p.getDataNumber(); i++) {
 
                         dataToSend = dataToSend +
-                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99)";
+                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99);";
                     }
 
-                    String esp8266Code = "#include <Arduino.h>\n#include <ESP8266WiFi.h>\n#include <ESP8266HTTPClient.h>\n#include \"sensor_sync.h\"\n#include\"blink.h\"\n" +
-                            "\nconst char *WIFI_SSID = \"Rede_IoT_Matheus\";\nconst char *WIFI_PASSWORD = \"senhasenha\";\nconst char *URL = \"http://192.168.0.100:8080/datapackage\"" +
-                            "\nString desc[2];\nString data[2];\n" +
-                            "\nWiFiClient client;\nHTTPClient httpClient;\n" +
-                            "\n\nvoid setup () {\nsetup_wifi(WIFI_SSID, WIFI_PASSWORD);\n}\n" +
-                            "\nvoid loop() {\n" +
-                            dataToSend + "\n" +
-                            "\nsend_HTTP_data(1, 0, desc, data, URL);\n}";
+                    String esp8266Code = "// CÓDIGO ESP8266 - HTTP | TEMPLATE GERADO VIA API SENSORSYNC\n" +
+                            "\n" +
+                            "#include \"Arduino.h\"\n" +
+                            "#include \"ESP8266WiFi.h\"\n" +
+                            "#include \"ESP8266HTTPClient.h\"\n" +
+                            "#include \"sensor_sync.h\"\n" +
+                            "\n" +
+                            "const char *WIFI_SSID = \"Matheus_191\";\n" +
+                            "const char *WIFI_PASSWORD = \"johnnycash2023\";\n" +
+                            "#define project " + p.getId() + "\n" +
+                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "\n" +
+                            "char *URL = \"http://192.168.100.166:8080/datapackage\";\n" +
+                            "String desc[" + p.getDataNumber() + "];\n" +
+                            "float data[" + p.getDataNumber() + "];\n" +
+                            "\n" +
+                            "void setup() {\n" +
+                            "  setup_wifi(WIFI_SSID, WIFI_PASSWORD);\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "  // ESPAÇO DESTINADO PARA INICIALIZAÇÃO DOS SENSORES\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "}\n" +
+                            "\n" +
+                            "void loop() {\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "  // ESPAÇO DESTINADO PARA AQUISIÇÃO DOS DADOS" +
+                            "\n" +
+                            dataToSend +
+                            "\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "\n" +
+                            "  send_HTTP_data(project, device, desc, data, URL);\n" +
+                            "}\n";
 
                     codes.add(esp8266Code);
                 } else {
@@ -113,27 +144,53 @@ public class ProjectController {
                     for (int i = 0; i < p.getDataNumber(); i++) {
 
                         dataToSend = dataToSend +
-                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99)";
+                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99);";
                     }
 
-                    String esp8266Code = "#include <Arduino.h>\n#include <ESP8266WiFi.h>#\ninclude <ESP8266HTTPClient.h>#\ninclude <PubSubClient.h>#\ninclude \"blink.h\"#\ninclude \"sensor_sync.h\"\n" +
-                            "\n#define wifi_ssid \"Matheus_191\"\n#define wifi_password \"johnnycash2023\"\nchar *URL = \"http://192.168.100.166:8080/datapackage\"\n" +
-                            "\nString desc[2];\nfloat data[2];\n" +
-                            "\nvoid setup() {\nSerial.begin(57600);//when you open serial terminal, chnge 9600\nclient.setServer(server, 1883);\nclient.setCallback(callback);\nsetup_wifi(wifi_ssid, wifi_password);\ndelay(1500)\n" +
-                            "\n// **********************************************************************************************\n" +
-                            "// Espaço destinado para inicialização dos sensores\n" +
+                    String esp8266Code = "// CÓDIGO ESP8266 - MQTT | TEMPLATE GERADO VIA API SENSORSYNC\n" +
+                            "\n" +
+                            "#include \"Arduino.h\"\n" +
+                            "#include \"ESP8266WiFi.h\"\n" +
+                            "#include \"ESP8266HTTPClient.h\"\n" +
+                            "#include \"PubSubClient.h\"\n" +
+                            "#include \"blink.h\"\n" +
+                            "#include \"sensor_sync.h\"\n" +
+                            "\n" +
+                            "#define wifi_ssid \"Matheus_191\"\n" +
+                            "#define wifi_password \"johnnycash2023\"\n" +
+                            "#define project " + p.getId() + "\n" +
+                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "\n" +
+                            "char *URL = \"http://192.168.100.166:8080/datapackage\";\n" +
+                            "String desc[" + p.getDataNumber() + "];\n" +
+                            "float data[" + p.getDataNumber() + "];\n" +
+                            "\n" +
+                            "void setup() {\n" +
+                            "  Serial.begin(57600);  //when you open serial terminal, chnge 9600\n" +
+                            "  client.setServer(server, 1883);\n" +
+                            "  client.setCallback(callback);\n" +
+                            "  setup_wifi(wifi_ssid, wifi_password);\n" +
+                            "  delay(1500);\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "  // ESPAÇO DESTINADO PARA INICIALIZAÇÃO DOS SENSORES\n" +
                             "\n" +
                             "\n" +
                             "\n" +
-                            "// **********************************************************************************************\n" +
+                            "  // **********************************************************************************************\n" +
                             "}\n" +
-                            "\nvoid loop() {\n" +
-                            "// **********************************************************************************************\n" +
-                            "// Espaço destinado para aquisisção dos dados a serem enviados\n" +
-                            dataToSend +
-                            "\n\n// **********************************************************************************************\n" +
                             "\n" +
-                            "send_MQTT_data(1,0,desc,data,URL);\n" +
+                            "void loop() {\n" +
+                            "  \n" +
+                            "  // **********************************************************************************************\n" +
+                            "  // ESPAÇO DESTINADO PARA AQUISIÇÃO DOS DADOS" +
+                            "\n" +
+                            dataToSend +
+                            "\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "\n" +
+                            "  send_MQTT_data(project,device,desc,data,URL);\n" +
                             "}\n";
                     codes.add(esp8266Code);
                 }
@@ -150,17 +207,48 @@ public class ProjectController {
                     for (int i = 0; i < p.getDataNumber(); i++) {
 
                         dataToSend = dataToSend +
-                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99)";
+                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99);";
                     }
 
-                    String esp32Code = "#include <Arduino.h>\n#include <WiFi.h.h>\n#include <ESP8266HTTPClient.h>\n#include \"sensor_sync.h\"\n#include\"blink.h\"\n" +
-                            "\nconst char *WIFI_SSID = \"Rede_IoT_Matheus\";\nconst char *WIFI_PASSWORD = \"senhasenha\";\nconst char *URL = \"http://192.168.0.100:8080/datapackage\"" +
-                            "\nString desc[2];\nString data[2];\n" +
-                            "\nWiFiClient client;\nHTTPClient httpClient;\n" +
-                            "\n\nvoid setup () {\nsetup_wifi(WIFI_SSID, WIFI_PASSWORD);\n}\n" +
-                            "\nvoid loop() {\n" +
-                            dataToSend + "\n" +
-                            "\nsend_HTTP_data(1, 0, desc, data, URL);\n}";
+                    String esp32Code = "// CÓDIGO ESP32 - HTTP | TEMPLATE GERADO VIA API SENSORSYNC\n" +
+                            "\n" +
+                            "#include \"Arduino.h\"\n" +
+                            "#include \"WiFi.h\"\n" +
+                            "#include \"ESP8266HTTPClient.h\"\n" +
+                            "#include \"sensor_sync.h\"\n" +
+                            "\n" +
+                            "const char *WIFI_SSID = \"Matheus_191\";\n" +
+                            "const char *WIFI_PASSWORD = \"johnnycash2023\";\n" +
+                            "#define project " + p.getId() + "\n" +
+                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "\n" +
+                            "char *URL = \"http://192.168.100.166:8080/datapackage\";\n" +
+                            "String desc[" + p.getDataNumber() + "];\n" +
+                            "float data[" + p.getDataNumber() + "];\n" +
+                            "\n" +
+                            "void setup() {\n" +
+                            "  setup_wifi(WIFI_SSID, WIFI_PASSWORD);\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "  // ESPAÇO DESTINADO PARA INICIALIZAÇÃO DOS SENSORES\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "}\n" +
+                            "\n" +
+                            "void loop() {\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "  // ESPAÇO DESTINADO PARA AQUISIÇÃO DOS DADOS" +
+                            "\n" +
+                            dataToSend +
+                            "\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "\n" +
+                            "  send_HTTP_data(project, device, desc, data, URL);\n" +
+                            "}\n";
 
                     codes.add(esp32Code);
                 } else {
@@ -168,27 +256,53 @@ public class ProjectController {
                     for (int i = 0; i < p.getDataNumber(); i++) {
 
                         dataToSend = dataToSend +
-                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99)";
+                                "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99);";
                     }
 
-                    String esp32Code = "#include <Arduino.h>\n#include <WiFi.h.h>#\ninclude <ESP8266HTTPClient.h>#\ninclude <PubSubClient.h>#\ninclude \"blink.h\"#\ninclude \"sensor_sync.h\"\n" +
-                            "\n#define wifi_ssid \"Matheus_191\"\n#define wifi_password \"johnnycash2023\"\nchar *URL = \"http://192.168.100.166:8080/datapackage\"\n" +
-                            "\nString desc[2];\nfloat data[2];\n" +
-                            "\nvoid setup() {\nSerial.begin(57600);//when you open serial terminal, chnge 9600\nclient.setServer(server, 1883);\nclient.setCallback(callback);\nsetup_wifi(wifi_ssid, wifi_password);\ndelay(1500)\n" +
-                            "\n// **********************************************************************************************\n" +
-                            "// Espaço destinado para inicialização dos sensores\n" +
+                    String esp32Code = "// CÓDIGO ESP32 - MQTT | TEMPLATE GERADO VIA API SENSORSYNC\n" +
+                            "\n" +
+                            "#include \"Arduino.h\"\n" +
+                            "#include \"WiFi.h\"\n" +
+                            "#include \"ESP8266HTTPClient.h\"\n" +
+                            "#include \"PubSubClient.h\"\n" +
+                            "#include \"blink.h\"\n" +
+                            "#include \"sensor_sync.h\"\n" +
+                            "\n" +
+                            "#define wifi_ssid \"Matheus_191\"\n" +
+                            "#define wifi_password \"johnnycash2023\"\n" +
+                            "#define project " + p.getId() + "\n" +
+                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "\n" +
+                            "char *URL = \"http://192.168.100.166:8080/datapackage\";\n" +
+                            "String desc[" + p.getDataNumber() + "];\n" +
+                            "float data[" + p.getDataNumber() + "];\n" +
+                            "\n" +
+                            "void setup() {\n" +
+                            "  Serial.begin(57600);  //when you open serial terminal, chnge 9600\n" +
+                            "  client.setServer(server, 1883);\n" +
+                            "  client.setCallback(callback);\n" +
+                            "  setup_wifi(wifi_ssid, wifi_password);\n" +
+                            "  delay(1500);\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "  // ESPAÇO DESTINADO PARA INICIALIZAÇÃO DOS SENSORES\n" +
                             "\n" +
                             "\n" +
                             "\n" +
-                            "// **********************************************************************************************\n" +
+                            "  // **********************************************************************************************\n" +
                             "}\n" +
-                            "\nvoid loop() {\n" +
-                            "// **********************************************************************************************\n" +
-                            "// Espaço destinado para aquisisção dos dados a serem enviados\n" +
-                            dataToSend +
-                            "\n\n// **********************************************************************************************\n" +
                             "\n" +
-                            "send_MQTT_data(1,0,desc,data,URL);\n" +
+                            "void loop() {\n" +
+                            "  \n" +
+                            "  // **********************************************************************************************\n" +
+                            "  // ESPAÇO DESTINADO PARA AQUISIÇÃO DOS DADOS" +
+                            "\n" +
+                            dataToSend +
+                            "\n" +
+                            "\n" +
+                            "  // **********************************************************************************************\n" +
+                            "\n" +
+                            "  send_MQTT_data(project,device,desc,data,URL);\n" +
                             "}\n";
                     codes.add(esp32Code);
                 }
@@ -261,7 +375,8 @@ public class ProjectController {
                                 "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99)";
                     }
 
-                    String esp8266Code = "#include \"Arduino.h\"\n" +
+                    String esp8266Code = "" +
+                            "#include \"Arduino.h\"\n" +
                             "#include \"ESP8266WiFi.h\"\n" +
                             "#include \"ESP8266HTTPClient.h\"\n" +
                             "#include \"sensor_sync.h\"\n" +
@@ -318,10 +433,11 @@ public class ProjectController {
                                 "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99)";
                     }
 
-                    String esp8266Code = "#include <Arduino.h>\n" +
-                            "#include <ESP8266WiFi.h>\n" +
-                            "#include <ESP8266HTTPClient.h>\n" +
-                            "#include <PubSubClient.h>\n" +
+                    String esp8266Code = "" +
+                            "#include \"Arduino.h\"\n" +
+                            "#include \"ESP8266WiFi.h\"\n" +
+                            "#include \"ESP8266HTTPClient.h\"\n" +
+                            "#include \"PubSubClient.h\"\n" +
                             "#include \"sensor_sync.h\"\n" +
                             "#include \"blink.h\"\n" +
                             "#define project 1\n" +

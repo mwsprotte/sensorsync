@@ -7,9 +7,6 @@
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/ProjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/ProjectService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/code.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/code.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/generator.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/generator.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -206,7 +203,7 @@
       <workItem from="1714749958701" duration="1887000" />
       <workItem from="1714944465362" duration="5273000" />
       <workItem from="1715009235319" duration="1792000" />
-      <workItem from="1715037400034" duration="7367000" />
+      <workItem from="1715037400034" duration="8819000" />
     </task>
     <servers />
   </component>
