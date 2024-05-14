@@ -59,7 +59,12 @@ public class DataService {
 
     public List<Data> findAllForReport(Long projectID, Long sensorIndex, Long dataIndex){
         logger.info("Buscando os dados para o projeto " + projectID + " correspondente ao sensor " + sensorIndex);
-        return dataRepository.findAllByProjectAndNode(projectID, sensorIndex, dataIndex);
+        return dataRepository.findAllByProjectAndDeviceAndIndex(projectID, sensorIndex, dataIndex);
+    }
+
+    public List<Data> findAllByProjectAndSensor(Long projectID, Long sensorIndex){
+        logger.info("Buscando os dados para o projeto " + projectID + " correspondente ao sensor " + sensorIndex);
+        return dataRepository.findAllByProjectAndDeviceAndIndex(projectID, sensorIndex);
     }
 
     //Método para deletar dodos os dados para um respectivo projeto

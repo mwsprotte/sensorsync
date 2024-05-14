@@ -28,6 +28,10 @@ public interface DataRepository extends JpaRepository<Data, Long> {
 
     //QUERY para resgatar a última gravação de um dado a partir do projeto, seu sensor e seu index
     @Query(value = "SELECT * FROM data WHERE projectid = :projectid and sensor_index = :sensorIndex and data_index = :dataIndex order by id DESC", nativeQuery = true)
-    List<Data> findAllByProjectAndNode(@Param("projectid") Long projectId, @Param("sensorIndex") Long sensorIndex, @Param("dataIndex") Long dataIndex);
+    List<Data> findAllByProjectAndDeviceAndIndex(@Param("projectid") Long projectId, @Param("sensorIndex") Long sensorIndex, @Param("dataIndex") Long dataIndex);
+
+    @Query(value = "SELECT * FROM data WHERE projectid = :projectid and sensor_index = :sensorIndex order by id DESC", nativeQuery = true)
+    List<Data> findAllByProjectAndDeviceAndIndex(@Param("projectid") Long projectId, @Param("sensorIndex") Long sensorIndex);
+
 
 }

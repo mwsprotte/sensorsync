@@ -1,7 +1,7 @@
 // ***************************************************************************************************
 // Constantes de uso no código
 
-const HOST = "http://192.168.0.100";
+const HOST = "http://localhost";
 
 // ***************************************************************************************************
 
@@ -209,6 +209,7 @@ function getTimeInterval() {
         setTimeInterval = 10000;
     }
     return setTimeInterval;
+    //todo: tratar isso em web storage
 }
 
 

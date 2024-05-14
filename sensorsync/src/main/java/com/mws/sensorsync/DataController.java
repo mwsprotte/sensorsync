@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/data")
@@ -160,6 +158,8 @@ public class DataController {
 
         List<String> labels = new ArrayList<>();
         labels.add("Instante");
+
+        var projectInfo = projectService.findById(id);
         var entityDesc = metadataService.findByProjectId(id);
         for (int i = 0; i < entityDesc.size(); i++) {
             labels.add(entityDesc.get(i).getDataDesc());
@@ -167,19 +167,21 @@ public class DataController {
 
         dataForReport.add(labels);
 
-        int dataSize = dataServices.findAllForReport(id, 0L, 0L).size();
+        List<Data> allData = dataServices.findAllByProjectAndSensor(id, device);
 
-        for (int j = 0; j < dataSize; j++) {
-            var entity = dataServices.findAllForReport(id, device, (long) j);
-            for (int i = 0; i < entity.size(); i++) {
-                if (j == 0) {
-                    List<String> columns = new ArrayList<>();
-                    columns.add(String.valueOf(entity.get(i).getReadTime()));
-                    dataForReport.add(columns);
+        for (int i = 0; i < allData.size(); i++) {
+            HashMap<Integer, String> map = new HashMap<>();
+            map.put(0, allData.get(i).getReadTime());
+            for (int j = i; j < allData.size(); j++) {
+                map.put((int) allData.get(j).getDataIndex() + 1, String.valueOf(allData.get(j).getData()));
+                if (map.size() == projectInfo.getDataNumber() + 1) {
+                    i = j;
+                    break;
                 }
-                dataForReport.get(i + 1).add(String.valueOf(entity.get(i).getData()));
             }
+            dataForReport.add(map.values().stream().toList());
         }
+
         return dataForReport;
     }
 
