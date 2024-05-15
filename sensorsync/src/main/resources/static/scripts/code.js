@@ -1,4 +1,4 @@
-const HOST = "http://localhost";
+const HOST = "http://10.0.0.103";
 
 
 function generateCode() {

@@ -5,6 +5,7 @@
 
 <script src="scripts/imports/chart.umd.min.js"></script>
 <script src="scripts/imports/chart.js"></script>
+<script src="scripts/imports/jquery-1.11.0.js"></script>
 
 <html lang="pt-BR">
 
@@ -113,34 +114,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Atualização automática dos dados
-                <br>
+
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exampleRadios" id="setTime1"
-                           value="1" checked>
-                    <label class="form-check-label" for="setTime1">
-                        A cada 1 s
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exampleRadios" id="setTime5"
-                           value="5">
-                    <label class="form-check-label" for="setTime5">
-                        A cada 5 s
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exampleRadios" id="setTime10"
-                           value="10">
-                    <label class="form-check-label" for="setTime10">
-                        A cada 10 s
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exampleRadios" id="setTimeOff"
-                           value="0">
+                    <input class="form-check-input" type="checkbox" name="exampleRadios" id="setTimeOff"
+                           value="" checked>
                     <label class="form-check-label" for="setTimeOff">
-                        Desativado
+                        Atualização automática dos dados
                     </label>
                 </div>
 

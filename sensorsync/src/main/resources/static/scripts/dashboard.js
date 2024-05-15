@@ -1,7 +1,7 @@
 // ***************************************************************************************************
 // Constantes de uso no código
 
-const HOST = "http://localhost";
+const HOST = "http://10.0.0.103";
 
 // ***************************************************************************************************
 
@@ -77,6 +77,9 @@ function generateCards() {
 }
 
 function prepareCharts() {
+
+    generateCards();
+
     // construindo o espaço para alocação dos gráficos
     var chartSpace = "<div style='position-relative'>"
 
@@ -189,7 +192,6 @@ function updateViews() {
     prepareCharts();
 }
 
-
 // ***************************************************************************************************
 // Atualizando a guia de exportação dos dados
 
@@ -198,28 +200,13 @@ function openExportTab() {
     window.open("./export.html", '_blank').focus();
 }
 
-// ***************************************************************************************************
-// Atualizando os dados a cada segundo
-
-function getTimeInterval() {
-    var setTimeInterval = 1000;
-    if (document.getElementById('setTime5').checked) {
-        setTimeInterval = 5000;
-    } else if (document.getElementById('setTime10').checked) {
-        setTimeInterval = 10000;
-    }
-    return setTimeInterval;
-    //todo: tratar isso em web storage
-}
-
-
 setInterval(function () {
 
-    if (!document.getElementById('setTimeOff').checked) {
+    if (document.getElementById('setTimeOff').checked) {
         generateCards();
         updateCharts();
     }
-}, getTimeInterval()); //300000 is 5minutes in ms
+}, 1000); //300000 is 5minutes in ms
 
 
 // ***************************************************************************************************
@@ -234,3 +221,12 @@ deviceField.addEventListener("change", (event) => {
 
 
 // ***************************************************************************************************
+//Alualiza o estado da vizualização com enter
+materialField = document.querySelector("#length");
+materialField.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+            updateViews();
+            $('#staticBackdrop').modal('toggle');
+        }
+    }
+);
