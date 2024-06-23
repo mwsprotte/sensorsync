@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Data_Submit_ESP8266/Data_Submit_ESP8266.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Submit_ESP8266/blink.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Submit_ESP8266_MQTT/Data_Submit_ESP8266_MQTT.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Submit_ESP8266_MQTT/blink.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +56,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Development/sensorsync/img",
+    "last_opened_file_path": "C:/Development/sensorsync/Integration_library",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -75,11 +72,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Development\sensorsync\Integration_library" />
       <recent name="C:\Development\sensorsync\img" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\scripts\imports" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img\index" />
-      <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Development\sensorsync\img" />
@@ -237,7 +234,7 @@
       <workItem from="1718473533899" duration="2964000" />
       <workItem from="1719063941710" duration="641000" />
       <workItem from="1719143258700" duration="637000" />
-      <workItem from="1719143908516" duration="4481000" />
+      <workItem from="1719143908516" duration="8569000" />
     </task>
     <servers />
   </component>

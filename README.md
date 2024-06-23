@@ -1,12 +1,27 @@
 # sensorsync - API REST para integração MQTT/REST de microcontroladores a Banco de Dados MySQL
 
-Sumário:
+Este projeto é uma plataforma de desenvolvimento IoT de fácil uso que possibilita a criação de projetos IoT
+via automatização da geração de microcódigo, geração de dashboard e realiza integração com base de dados MySQL.
+Múltiplos projetos IoT são suportados, vinculados a múltiplos controladores conectados, 
+que submetem e leem múltiplos dados (via protocolos HTTP e MQTT, inclusive simultaneamente). 
+
+Essa plataforma é implementada sob a seguinte stack: Java 21, Banco de dados MySQL e Mosquitto Broker. 
+A seguir, é apresentada um documentação a respeito do uso desse sistema em ambiente de produção (Raspberry PI 3 com Ubuntu Server embarcado, na rede do laboratório de pesquisa do IFSC - Rau)
+e da implementação do mesmo e sua stack em demais ambientes. 
+
+<hr>
+
+#### Sumário:
 
 [Uso em ambiente de produção](#uso-do-sistema-em-ambiente-de-produção-laboratório-de-pesquisa-do-ifsc-rau)
 
-[Subir a Stack em Raspberry PI com Ubunbtu Server (ambiente de produção)](#subir-a-stack-em-raspberry-pi-com-ubunbtu-server)
+[Inicializar o sistema no ambiente de produção](#inicializar-o-sistema-no-ambiente-de-produção)
 
-[Subir a Stack para testes em ambiente Windows](#subir-a-stack-para-testes-em-ambiente-de-desenvolvimento-windows)
+[Implementar a Stack em Raspberry PI com Ubunbtu Server](#subir-a-stack-em-raspberry-pi-com-ubunbtu-server)
+
+[Implementar a Stack em Computador Windows](#subir-a-stack-para-testes-em-ambiente-de-desenvolvimento-windows)
+
+<hr>
 
 ## Uso do sistema em ambiente de produção (Laboratório de pesquisa do IFSC Rau)
 
@@ -61,9 +76,64 @@ Uma vez que o projeto foi criado, é possível acessar seu dashboard conforme o 
 
 - É possível excluir projetos IoT através ao clicar no botão 3 ("Gerenciar") destacado na figura da tela inicial. Somente administradores podem acessar essa janela.   
 
+<hr>
+
+
+## Inicializar o sistema no ambiente de produção
+
+- Para inicializar o sistema e sua stack, é necessário acessar o servidor Raspberry PI 3. Isso pode
+ser feito de duas maneiras: acessá-lo remotamente via SSH ou diretamente, conectando ao mesmo monitor e teclado.
+
+#### Acesso via SSH
+
+- Acesse a rede do sistema de acordo com os passos iniciais da seção anterior, certifique-se que o Rasberry está ligado e conectado na rede.
+
+> :bulb: **Atenção:** Dentro dessa rede, entre com o comando `ping 10.0.0.103` para saber se o Rasberry está ligado 
+> e conectado ou não. Caso aconteça algum erro, proceda o acesso da outra forma apresentada no próxima subseção
+
+
+- Através de um terminal em seu computador, insira o seguinte comando:
+
+
+```
+ssh ubuntu@10.0.0.103
+```
+- Digite a senha para entrar na conexção:
+
+
+```
+raspberrypi3
+```
+
+A partir de então esse terminal estará representando o acesso no servidor.
+
+#### Acesso direto
+
+- Conecte um monitor e um teclado no Raspberry e então o ligue na tomara. O Ubuntu Server iniciará e será solicitada um senha de usuário. 
+Entre com a senha abaixo:
+
+```
+raspberrypi3
+```
+
+- Digite o comando abaixo para carregar o layout de teclado correto:
+
+```
+sudo loadkeys br
+```
+
+Será solicitada a senha para realizar esse comando. Entre com a senha anterior.
+
+#### Ajustar o relógio e subir a API
+
+- Em desenvolvimento.
+
+<hr>
+
 ## Subir a Stack em Raspberry PI com Ubunbtu Server
 
-- A desenvolver.
+- Em desenvolvimento.
+<hr>
 
 ## Subir a Stack para testes em ambiente de desenvolvimento Windows
 
