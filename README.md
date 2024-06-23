@@ -163,7 +163,7 @@ java jar sensorsync-0.0.1-SNAPSHOT.jar
 
 - Instalar a imagem do Ubuntu server para Raspberry PI 3 através da [ferramenta](https://www.raspberrypi.com/software/) oficial.
 
-- Conectar na internet, instalar o Java 21 e o banco de dados MySQL de acordo com esta [documentação](https://medium.com/geekculture/turn-your-raspberry-pi-into-a-server-to-run-your-java-spring-mvc-app-862214279587) (fazer até a etapa de instalar o banco de dados, atente-se para instalar o Java @1 e não o padrão conforme a documentação faz).
+- Conectar na internet, instalar o Java 21 e o banco de dados MySQL de acordo com esta [documentação](https://medium.com/geekculture/turn-your-raspberry-pi-into-a-server-to-run-your-java-spring-mvc-app-862214279587) (fazer até a etapa de instalar o banco de dados, atente-se para instalar o Java 21 e não o padrão conforme a documentação faz).
 
 > :bulb: **Atenção:** Use `senhasenha` como senha para usuário `root` do banco de dados para que o sistema possa acessá-lo (será feita a configuração da senha no momento de instalação do banco).
 
