@@ -1,13 +1,13 @@
 # sensorsync - API REST para integração MQTT/REST de microcontroladores a Banco de Dados MySQL
 
-Este projeto é uma plataforma de desenvolvimento IoT de fácil uso que possibilita a criação de projetos IoT
-via automatização da geração de microcódigo, geração de dashboard e realiza integração com base de dados MySQL.
-Múltiplos projetos IoT são suportados, vinculados a múltiplos controladores conectados, 
+Este projeto é uma plataforma de desenvolvimento IoT de fácil uso que possibilita automatizar a criação de projetos IoT
+através de geração de microcódigo, geração de dashboard e integração automática com banco de dados MySQL.
+Ou seja, múltiplos projetos IoT são suportados, vinculados a múltiplos controladores conectados (possuí biblioteca de integração para ESP8266 e ESP32), 
 que submetem e leem múltiplos dados (via protocolos HTTP e MQTT, inclusive simultaneamente). 
 
 Essa plataforma é implementada sob a seguinte stack: Java 21, Banco de dados MySQL e Mosquitto Broker. 
 A seguir, é apresentada um documentação a respeito do uso desse sistema em ambiente de produção (Raspberry PI 3 com Ubuntu Server embarcado, na rede do laboratório de pesquisa do IFSC - Rau)
-e da implementação do mesmo e sua stack em demais ambientes. 
+e da implementação do mesmo e sua stack em Ubuntu Server e Windows. 
 
 <hr>
 
@@ -19,7 +19,7 @@ e da implementação do mesmo e sua stack em demais ambientes.
 
 [Implementar a Stack em Raspberry PI com Ubuntu Server](#implementar-a-stack-em-raspberry-pi-com-ubuntu-server)
 
-[Implementar a Stack em Computador Windows](#subir-a-stack-para-testes-em-ambiente-de-desenvolvimento-windows)
+[Implementar a Stack em Computador Windows](#implementar-a-stack-em-computador-windows)
 
 <hr>
 
