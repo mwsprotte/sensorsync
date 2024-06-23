@@ -17,7 +17,7 @@ e da implementação do mesmo e sua stack em demais ambientes.
 
 [Inicializar o sistema no ambiente de produção](#inicializar-o-sistema-no-ambiente-de-produção)
 
-[Implementar a Stack em Raspberry PI com Ubunbtu Server](#subir-a-stack-em-raspberry-pi-com-ubunbtu-server)
+[Implementar a Stack em Raspberry PI com Ubuntu Server](#implementar-a-stack-em-raspberry-pi-com-ubuntu-server)
 
 [Implementar a Stack em Computador Windows](#subir-a-stack-para-testes-em-ambiente-de-desenvolvimento-windows)
 
@@ -89,7 +89,7 @@ ser feito de duas maneiras: acessá-lo remotamente via SSH ou diretamente, conec
 - Acesse a rede do sistema de acordo com os passos iniciais da seção anterior, certifique-se que o Rasberry está ligado e conectado na rede.
 
 > :bulb: **Atenção:** Dentro dessa rede, entre com o comando `ping 10.0.0.103` para saber se o Rasberry está ligado 
-> e conectado ou não. Caso aconteça algum erro, proceda o acesso da outra forma apresentada no próxima subseção
+> e conectado ou não. Caso aconteça algum erro, proceda o acesso da outra forma apresentada no próxima [subseção](#acesso-direto).
 
 
 - Através de um terminal em seu computador, insira o seguinte comando:
@@ -132,7 +132,7 @@ Será solicitada a senha para realizar esse comando. Entre com a senha anterior.
 
 #### Subir a API
 
-- Primeiramente é necessário dar o comando abaixo para chagar o horário do servidor:
+- Primeiramente é necessário checar o horário do servidor através do comando abaixo:
 
 ```
 date
@@ -157,12 +157,25 @@ java jar sensorsync-0.0.1-SNAPSHOT.jar
 
 <hr>
 
-## Subir a Stack em Raspberry PI com Ubuntu Server
+## Implementar a Stack em Raspberry PI com Ubuntu Server
 
-- Em desenvolvimento.
+> :bulb: **Atenção:** Para isso é necessário um conhecimento básico de bash (essa [documentação](https://github.com/mwsprotte/shell-lessons) apresenta um resumo de comandos que pode ser útil). 
+
+- Instalar a imagem do Ubuntu server para Raspberry PI 3 através da [ferramenta](https://www.raspberrypi.com/software/) oficial.
+
+- Conectar na internet, instalar o Java 21 e o banco de dados MySQL de acordo com esta [documentação](https://medium.com/geekculture/turn-your-raspberry-pi-into-a-server-to-run-your-java-spring-mvc-app-862214279587) (fazer até a etapa de instalar o banco de dados, atente-se para instalar o Java @1 e não o padrão conforme a documentação faz).
+
+> :bulb: **Atenção:** Use `senhasenha` como senha para usuário `root` do banco de dados para que o sistema possa acessá-lo (será feita a configuração da senha no momento de instalação do banco).
+
+- Instalar o serviço Mosquitto MQTT Broker seguindo essa [documentação](https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/) (inclusive até a etapa de desabilitar a autenticação ("Mosquitto Broker Enable Remote Access (No Authentication)", uma vez que a API não usa esse recurso).
+
+- Copiar o arquivo `.jar` do sistema para o servidor (esse arquivo está disponível no seguinte [link](https://1drv.ms/f/s!Aun1_-xL9pS4jY03s0lt3ZXq9kZU0g?e=G1Tx0P)). Isso pode ser feito por meio de [pendrive](https://pt.linux-console.net/?p=9786)) ou via [SSH](https://utilidadenices.com.br/copiar-arquivo-ou-pasta-via-ssh-servidor-local-remoto/).
+
+- Com as serviços da stack já instalados e o arquivo da API no servidor, basta executar o sistema seguindo os passos do [capítulo anterior](#inicializar-o-sistema-no-ambiente-de-produção). 
+
 <hr>
 
-## Subir a Stack para testes em ambiente de desenvolvimento Windows
+## Implementar a Stack em Computador Windows
 
 #### Mosquitto Broker
 
@@ -199,6 +212,26 @@ O segundo prompt aberto (subscribe) retornará a mensagem passada.
 
 #### Banco de dados MSQL
 
-Para subir o banco de dados é necessário primeiramente instalar o mysqlServer, conforme a seguinte documentação 
+- Para subir o banco de dados é necessário primeiramente instalar o [MySQL Server](https://dev.mysql.com/downloads/mysql/). Na instalação, configure a seguinte senha para o usuário `root`: 
 
 
+```
+senhasenha
+```
+
+#### Java
+
+- Instalar o [Java 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
+
+
+
+- Baixar o arquivo `.jar` do sistema (esse arquivo está disponível no seguinte [link](https://1drv.ms/f/s!Aun1_-xL9pS4jY03s0lt3ZXq9kZU0g?e=G1Tx0P)). 
+
+- Abrir um terminal na pasta onde o arquivo foi salvo e executar o seguinte comando:
+
+
+```
+java jar sensorsync-0.0.1-SNAPSHOT.jar
+```
+
+> :bulb: **Atenção:** Use o IP do seu computador como host no código de integração dos microcontroladores nesse caso.
