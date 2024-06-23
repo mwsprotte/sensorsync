@@ -43,38 +43,35 @@ public class DataService {
         dataRepository.delete(entity);
     }
 
-//    *********************************************************************************************
-//todo: métodos específicos para essa classe
 
-    //Método para um dado a partir de seu id de projeto, índice de sensor e índice de dados
+    /**
+     * Método para um dado a partir de seu id de projeto, índice de sensor e índice de dados
+     */
     public Data findForCard(Long projectID, Long sensorIndex, Long dataIndex) {
-        logger.info("Buscando o dado " + dataIndex + " para o projeto " + projectID + " correspondente ao sensor " + sensorIndex);
         return dataRepository.findByProjectAndNodeForCard(projectID, sensorIndex, dataIndex);
     }
 
     public List<Data> findForChart(Long projectID, Long sensorIndex, Long dataIndex, Long length) {
-        logger.info("Buscando os dados para o projeto " + projectID + " correspondente ao sensor " + sensorIndex);
         return dataRepository.findByProjectAndDeviceForChart(projectID, sensorIndex, dataIndex, length);
     }
 
-    public List<Data> findAllForReport(Long projectID, Long sensorIndex, Long dataIndex){
-        logger.info("Buscando os dados para o projeto " + projectID + " correspondente ao sensor " + sensorIndex);
+    public List<Data> findAllForReport(Long projectID, Long sensorIndex, Long dataIndex) {
         return dataRepository.findAllByProjectAndDeviceAndIndex(projectID, sensorIndex, dataIndex);
     }
 
-    public List<Data> findAllByProjectAndSensor(Long projectID, Long sensorIndex){
-        logger.info("Buscando os dados para o projeto " + projectID + " correspondente ao sensor " + sensorIndex);
+    public List<Data> findAllByProjectAndSensor(Long projectID, Long sensorIndex) {
         return dataRepository.findAllByProjectAndDeviceAndIndex(projectID, sensorIndex);
     }
 
-    //Método para deletar dodos os dados para um respectivo projeto
+    /**
+     * Método para deletar dodos os dados para um respectivo projeto
+     */
     public void deleteAllData(Long projectID) {
         dataRepository.deleteAlLByProjectID(Math.toIntExact(projectID));
+        logger.info("Todos os dados para o projeto " + projectID + " removidos!");
     }
 
 //    *********************************************************************************************
-
-
 
 
 }

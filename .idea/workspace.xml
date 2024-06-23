@@ -5,11 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/imports/jquery-1.11.0.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/create.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/dashboard.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/home.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/export.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/export.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/generator.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/generator.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/code.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/code.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/dashboard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/export.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/export.js" afterDir="false" />
@@ -48,45 +54,46 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Maven.sensorsync [clean,package].executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Startup.executor&quot;: &quot;Run&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Development/sensorsync/sensorsync/src/main/resources/static/scripts/imports&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;5a8d846313b6505a23403ea9634d0bee&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Maven.sensorsync [clean,package].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.Startup.executor": "Run",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Development/sensorsync/img",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
+    "spring.configuration.checksum": "5a8d846313b6505a23403ea9634d0bee",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Development\sensorsync\img" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\scripts\imports" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img\index" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static" />
-      <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\templates" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Development\sensorsync\img" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static\img\index" />
       <recent name="C:\Development\sensorsync\sensorsync\src\main\resources\static" />
@@ -227,6 +234,21 @@
       <workItem from="1715683533189" duration="5916000" />
       <workItem from="1715700142788" duration="1266000" />
       <workItem from="1715725446295" duration="3440000" />
+      <workItem from="1715865108467" duration="1405000" />
+      <workItem from="1715873470910" duration="1460000" />
+      <workItem from="1716039969357" duration="6735000" />
+      <workItem from="1716053732963" duration="1074000" />
+      <workItem from="1716305426385" duration="617000" />
+      <workItem from="1716499700510" duration="7416000" />
+      <workItem from="1716513904704" duration="1157000" />
+      <workItem from="1716856336079" duration="385000" />
+      <workItem from="1717358148073" duration="51000" />
+      <workItem from="1717366238454" duration="1510000" />
+      <workItem from="1718072949677" duration="850000" />
+      <workItem from="1718473533899" duration="2964000" />
+      <workItem from="1719063941710" duration="641000" />
+      <workItem from="1719143258700" duration="637000" />
+      <workItem from="1719143908516" duration="4115000" />
     </task>
     <servers />
   </component>

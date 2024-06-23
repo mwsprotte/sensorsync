@@ -27,8 +27,9 @@ public class DataController {
     @Autowired
     private ProjectService projectService;
 
-//    *********************************************************************************************
-//    Endpoints do Crud básico
+    /**
+     * Endpoints do Crud básico
+     * */
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Data> findall() {
@@ -57,9 +58,14 @@ public class DataController {
         dataServices.delete(id);
         return ResponseEntity.noContent().build();
     }
-//    *********************************************************************************************
 
-    //  Recebendo uma lista de dados para salvar no banco
+    @DeleteMapping(value = "cleanProject/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteAll(@PathVariable(value = "id") Long id) {
+        dataServices.deleteAllData(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /** Recebendo uma lista de dados para salvar no banco*/
     @PostMapping(value = "/saveList", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public boolean saveList(@RequestBody List<Data> dataList) {
         try {
@@ -74,7 +80,7 @@ public class DataController {
         }
     }
 
-    //    RETORNA TODOS OS CARDS PARA UM PROJETO
+    /**RETORNA TODOS OS CARDS PARA UM PROJETO*/
     @GetMapping(value = "/cards/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CardView> findDataCards(@PathVariable(value = "projectID") Long id) {
         List<CardView> cards = new ArrayList<>();
@@ -93,7 +99,7 @@ public class DataController {
         return cards;
     }
 
-    //    RETORNA TODOS OS CARDS PARA UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO
+   /**RETORNA TODOS OS CARDS PARA UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO*/
     @GetMapping(value = "/cards/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CardView> findDataCardsByDevice(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device) {
         List<CardView> cards = new ArrayList<>();
@@ -110,8 +116,7 @@ public class DataController {
         return cards;
     }
 
-
-    //    RETORNA OS DADOS PARA O GRÁFICO DE UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO
+    /**RETORNA OS DADOS PARA O GRÁFICO DE UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO*/
     @GetMapping(value = "/charts/{projectID}/device/{device}/length/{length}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<List<String>> findDataCharts(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device, @PathVariable(value = "length") Long length) {
         List<List<String>> dataForCharts = new ArrayList<>();
@@ -125,7 +130,6 @@ public class DataController {
             }
         }
 
-//        Collections.reverse(labels);
         dataForCharts.add(labels);
 
 //      Iterando para carregar o eixo x
@@ -151,7 +155,7 @@ public class DataController {
         return dataForCharts;
     }
 
-    //Retornar todos os dados de determinado projeto para gerar um gráfico -> iterar uma lista de lista de dados para cada linha da tabela
+    /**Retornar todos os dados de determinado projeto para gerar um relatório*/
     @GetMapping(value = "/report/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<List<String>> findAllDataReport(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device) {
         List<List<String>> dataForReport = new ArrayList<>();

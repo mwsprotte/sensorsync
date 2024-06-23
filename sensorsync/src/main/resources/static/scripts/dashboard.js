@@ -1,7 +1,10 @@
 // ***************************************************************************************************
 // Constantes de uso no código
 
-const HOST = "http://10.0.0.103";
+//  const HOST = "http://10.0.0.103";
+// const HOST = "http://10.0.0.104";
+const HOST = "http://localhost";
+// const HOST = "http://192.168.100.100";
 
 // ***************************************************************************************************
 
@@ -29,6 +32,16 @@ function constructDevicesSelector() {
     (localStorage.getItem('deviceSelected') == null) ? device = 0 : device = localStorage.getItem('deviceSelected');
     document.querySelector('#deviceSelected').value = device;
 
+    (localStorage.getItem('dataLength') == null) ? dataLength = 5 : dataLength = localStorage.getItem('dataLength');
+    document.querySelector("#length").value = dataLength;
+
+    if (localStorage.getItem('autoUpdate') == null) {
+        document.getElementById('setTimeOff').checked = true;
+    } else if (localStorage.getItem('autoUpdate') == 'off') {
+        document.getElementById('setTimeOff').checked = false;
+    } else {
+        document.getElementById('setTimeOff').checked = true;
+    }
 }
 
 // verifyAndOpenDashboard();
@@ -188,6 +201,13 @@ function updateCharts() {
 }
 
 function updateViews() {
+    if (document.getElementById('setTimeOff').checked == true) {
+        localStorage.setItem('autoUpdate', 'on');
+    } else {
+        localStorage.setItem('autoUpdate', 'off');
+    }
+
+    localStorage.setItem('dataLength', document.querySelector("#length").value);
     generateCards();
     prepareCharts();
 }
