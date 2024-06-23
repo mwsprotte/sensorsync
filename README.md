@@ -44,9 +44,9 @@ http://10.0.0.103:8080/
 
 - Para criar seu projeto IoT, basta preencher os dados conforme seus requisitos de projeto e então pressione o botão "Criar" destacado na imagem acima. A seguir será aberta uma nova guia com o código do sistema embarcado para o controlador definido. 
 
-> :bulb: **Tip:** Para que a integração funcione, é necessário baixar a biblioteca de integração disponível neste [link](https://1drv.ms/f/s!Aun1_-xL9pS4jY01hmCQVaL5HULldw?e=g9c7Ec). Basta salvá-la no diretório de compilação do seu sistema embarcado.
+> :bulb: **Atenção:** Para que a integração funcione, é necessário baixar a biblioteca de integração disponível neste [link](https://1drv.ms/f/s!Aun1_-xL9pS4jY01hmCQVaL5HULldw?e=g9c7Ec) (link [alternativo](Integration_library/sensor_sync.h)). Basta salvá-la no diretório de compilação do seu sistema embarcado.
 
-Uma vez que o projeto foi xriado, é possível acessar seu dashboard conforme o tópico a seguir. 
+Uma vez que o projeto foi criado, é possível acessar seu dashboard conforme o tópico a seguir. 
 
 #### Acessar Projetos IoT
 
@@ -54,7 +54,7 @@ Uma vez que o projeto foi xriado, é possível acessar seu dashboard conforme o 
 
 ![dashbaord.png](img/dashboard.png)
 
-> :bulb: **Tip:** Ao clicar no botão "Opções", destacado na imagem acima, é aberta uma janela com ajustes para as visualizações dos dados. Como range do gráfico e atualização em tempo real.
+> :bulb: **Atenção:** Ao clicar no botão "Opções", destacado na imagem acima, é aberta uma janela com ajustes para as visualizações dos dados. Como range do gráfico e atualização em tempo real.
 
 
 #### Gerenciar projetos IoT
@@ -85,7 +85,7 @@ mosquitto -v
 ```
 mosquitto_sub -t NOME_DO_TOPICO
 ```
-> :bulb: **Tip:** Fazendo dessa forma ele usará o localhost (IP local) e a porta 1883 como padrão. Para usar outras possibilidades, conulte esta [documentação](https://team-ethernet.github.io/guides/How%20to%20install%20and%20use%20Mosquitto%20for%20Windows.pdf).
+> :bulb: **Atenção:** Fazendo dessa forma ele usará o localhost (IP local) e a porta 1883 como padrão. Para usar outras possibilidades, conulte esta [documentação](https://team-ethernet.github.io/guides/How%20to%20install%20and%20use%20Mosquitto%20for%20Windows.pdf).
 
 
 - Para publicar um dado no tópico criado na etapa anterior, basta abrir uma nova janela no prompt e dar o seguinte
@@ -97,7 +97,7 @@ mosquitto_pub -t NOME_DO_TOPICO -m "MENSAGEM"
 
 O segundo prompt aberto (subscribe) retornará a mensagem passada.
 
-> :bulb: **Tip:** Se acontecer erro 'ao publicar a mensagem, é necessário permitir publicações anônima de acordo com
+> :bulb: **Atenção:** Se acontecer erro 'ao publicar a mensagem, é necessário permitir publicações anônima de acordo com
 > esta [documentação](https://mosquitto.org/man/mosquitto-conf-5.html).
 
 #### Banco de dados MSQL

@@ -5,22 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/img/create.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/dashboard.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/home.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_Submit_ESP8266/Data_Submit_ESP8266.ino" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_Submit_ESP8266/blink.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_Submit_ESP8266_MQTT/Data_Submit_ESP8266_MQTT.ino" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_Submit_ESP8266_MQTT/blink.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/DataController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/MQTTClientInit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DataService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/generator.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/generator.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/code.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/code.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/dashboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/export.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/export.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/generator.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/generator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -248,7 +237,7 @@
       <workItem from="1718473533899" duration="2964000" />
       <workItem from="1719063941710" duration="641000" />
       <workItem from="1719143258700" duration="637000" />
-      <workItem from="1719143908516" duration="4115000" />
+      <workItem from="1719143908516" duration="4481000" />
     </task>
     <servers />
   </component>
