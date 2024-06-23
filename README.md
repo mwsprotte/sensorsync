@@ -98,11 +98,11 @@ ser feito de duas maneiras: acessá-lo remotamente via SSH ou diretamente, conec
 ```
 ssh ubuntu@10.0.0.103
 ```
-- Digite a senha para entrar na conexção:
+- Digite a senha para entrar na conexão:
 
 
 ```
-raspberrypi3
+raspberry
 ```
 
 A partir de então esse terminal estará representando o acesso no servidor.
@@ -110,10 +110,16 @@ A partir de então esse terminal estará representando o acesso no servidor.
 #### Acesso direto
 
 - Conecte um monitor e um teclado no Raspberry e então o ligue na tomara. O Ubuntu Server iniciará e será solicitada um senha de usuário. 
-Entre com a senha abaixo:
+Entre com as credenciais abaixo.
 
+Login:
 ```
-raspberrypi3
+ubuntu
+```
+
+Senha:
+```
+raspberry
 ```
 
 - Digite o comando abaixo para carregar o layout de teclado correto:
@@ -124,13 +130,34 @@ sudo loadkeys br
 
 Será solicitada a senha para realizar esse comando. Entre com a senha anterior.
 
-#### Ajustar o relógio e subir a API
+#### Subir a API
 
-- Em desenvolvimento.
+- Primeiramente é necessário dar o comando abaixo para chagar o horário do servidor:
+
+```
+date
+```
+
+- Caso seja necessário alterar o horário, ajuste com o seguinte comando (substitua a data e hora pelos valores atuais):
+
+```
+sudo date --set="2024-07-1 10:59:59.990"
+```
+
+- Os elementos da stack do sistema já inicializam automaticamente com o sistema operacional e o arquivo da API já está no diretório inicial. Para iniciar a API basta executar o seguinte comando:
+
+
+```
+java jar sensorsync-0.0.1-SNAPSHOT.jar
+```
+
+> :bulb: **Dica:** Evite desligar o servidor para não perder esses ajustes.
+
+
 
 <hr>
 
-## Subir a Stack em Raspberry PI com Ubunbtu Server
+## Subir a Stack em Raspberry PI com Ubuntu Server
 
 - Em desenvolvimento.
 <hr>
