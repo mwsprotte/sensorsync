@@ -105,12 +105,12 @@ public class ProjectController {
                             "#include \"ESP8266HTTPClient.h\"\n" +
                             "#include \"sensor_sync.h\"\n" +
                             "\n" +
-                            "const char *WIFI_SSID = \"Matheus_191\";\n" +
-                            "const char *WIFI_PASSWORD = \"johnnycash2023\";\n" +
+                            "const char *WIFI_SSID = \"Sistema_IoT\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
+                            "const char *WIFI_PASSWORD = \"entrarentrar //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\";\n" +
                             "#define project " + p.getId() + "\n" +
                             "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
                             "\n" +
-                            "char *URL = \"http://192.168.100.166:8080/datapackage\";\n" +
+                            "char *URL = \"http://10.0.0.103:8080/datapackage\"; //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
                             "float data[" + p.getDataNumber() + "];\n" +
                             "\n" +
@@ -156,17 +156,17 @@ public class ProjectController {
                             "#include \"blink.h\"\n" +
                             "#include \"sensor_sync.h\"\n" +
                             "\n" +
-                            "#define wifi_ssid \"Matheus_191\"\n" +
-                            "#define wifi_password \"johnnycash2023\"\n" +
+                            "#define wifi_ssid \"Sistema_IoT\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
+                            "#define wifi_password \"entrarentrar\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "#define project " + p.getId() + "\n" +
                             "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
                             "\n" +
-                            "char *URL = \"http://192.168.100.166:8080/datapackage\";\n" +
+                            "char *URL = \"http://10.0.0.103:8080/datapackage\"; //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
                             "float data[" + p.getDataNumber() + "];\n" +
                             "\n" +
                             "void setup() {\n" +
-                            "  Serial.begin(57600);  //when you open serial terminal, chnge 9600\n" +
+                            "  Serial.begin(57600);  //when you open serial terminal, change 9600\n" +
                             "  client.setServer(server, 1883);\n" +
                             "  client.setCallback(callback);\n" +
                             "  setup_wifi(wifi_ssid, wifi_password);\n" +
@@ -217,12 +217,12 @@ public class ProjectController {
                             "#include \"ESP8266HTTPClient.h\"\n" +
                             "#include \"sensor_sync.h\"\n" +
                             "\n" +
-                            "const char *WIFI_SSID = \"Matheus_191\";\n" +
-                            "const char *WIFI_PASSWORD = \"johnnycash2023\";\n" +
+                            "const char *WIFI_SSID = \"Sistema_IoT\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
+                            "const char *WIFI_PASSWORD = \"entrarentrar\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "#define project " + p.getId() + "\n" +
                             "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
                             "\n" +
-                            "char *URL = \"http://192.168.100.166:8080/datapackage\";\n" +
+                            "char *URL = \"http://10.0.0.103:8080/datapackage\"; //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
                             "float data[" + p.getDataNumber() + "];\n" +
                             "\n" +
@@ -268,12 +268,12 @@ public class ProjectController {
                             "#include \"blink.h\"\n" +
                             "#include \"sensor_sync.h\"\n" +
                             "\n" +
-                            "#define wifi_ssid \"Matheus_191\"\n" +
-                            "#define wifi_password \"johnnycash2023\"\n" +
+                            "#define wifi_ssid \"Sistema_IoT\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
+                            "#define wifi_password \"entrarentrar\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "#define project " + p.getId() + "\n" +
                             "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
                             "\n" +
-                            "char *URL = \"http://192.168.100.166:8080/datapackage\";\n" +
+                            "char *URL = \"http://10.0.0.103:8080/datapackage\"; //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
                             "float data[" + p.getDataNumber() + "];\n" +
                             "\n" +
@@ -282,7 +282,8 @@ public class ProjectController {
                             "  client.setServer(server, 1883);\n" +
                             "  client.setCallback(callback);\n" +
                             "  setup_wifi(wifi_ssid, wifi_password);\n" +
-                            "  delay(1500);\n" +
+                            "  delay(1500);\n " +
+                            "   client.setBufferSize(99999);\n" +
                             "\n" +
                             "  // **********************************************************************************************\n" +
                             "  // ESPAÇO DESTINADO PARA INICIALIZAÇÃO DOS SENSORES\n" +
@@ -384,9 +385,9 @@ public class ProjectController {
                             "#define project " + p.getId() + "\n" +
                             "#define device 0 //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
                             "\n" +
-                            "const char *WIFI_SSID = \"Rede_IoT_Matheus\";\n" +
-                            "const char *WIFI_PASSWORD = \"senhasenha\";\n" +
-                            "const char *URL = \"http://192.168.0.100:8080/datapackage\"\n" +
+                            "const char *WIFI_SSID = \"Sistema_IoT\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
+                            "const char *WIFI_PASSWORD = \"senhasenha\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
+                            "const char *URL = \"http://10.0.0.103:8080/datapackage\" //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
                             "String data[" + p.getDataNumber() + "];\n" +
                             "\n" +
@@ -443,9 +444,9 @@ public class ProjectController {
                             "#define project 1\n" +
                             "#define device 0 //atualiza para o índice do dispositivo caso exista mais de um para o projeto\n" +
                             "\n" +
-                            "const char *WIFI_SSID = \"Rede_IoT_Matheus\";\n" +
-                            "const char *WIFI_PASSWORD = \"senhasenha\";\n" +
-                            "const char *URL = \"http://192.168.0.100:8080/datapackage\"\n" +
+                            "const char *WIFI_SSID = \"Sistema_IoT\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
+                            "const char *WIFI_PASSWORD = \"senhasenha\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
+                            "const char *URL = \"http://10.0.0.103:8080/datapackage\" //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[2];\n" +
                             "String data[2];\n" +
                             "\n" +
@@ -453,7 +454,7 @@ public class ProjectController {
                             "HTTPClient httpClient;\n" +
                             "\n" +
                             "void setup () {\n" +
-                            "    Serial.begin(57600);//when you open serial terminal, chnge 9600\n" +
+                            "    Serial.begin(57600);//when you open serial terminal, change 9600\n" +
                             "    client.setServer(server, 1883);\n" +
                             "    client.setCallback(callback);\n" +
                             "    Serial.begin(9600);\n" +

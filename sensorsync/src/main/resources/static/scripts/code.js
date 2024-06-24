@@ -1,14 +1,14 @@
 // const HOST = "http://10.0.0.103";
 //  const HOST = "http://10.0.0.104";
 //const HOST = "http://localhost";
-const HOST = "http://192.168.100.100";
+const HOST = "http://localhost";
 
 
 function generateCode() {
 
     (localStorage.getItem('device') == null) ? device = 0 : device = localStorage.getItem('device');
     (localStorage.getItem('protocol') == null) ? protocol = 0 : protocol = localStorage.getItem('protocol');
-    (localStorage.getItem('projectGenerated') == null) ? project = 0 : project = localStorage.getItem('projectGenerated');
+    (localStorage.getItem('projectGenerated') == null) ? project = localStorage.getItem('projectID') : project = localStorage.getItem('projectGenerated');
 
     //var request = HOST + ":8080/data/report/" + localStorage.getItem('projectID') + "/device/" + device;
     var request = HOST + ":8080/project/generateCode/" + project + "/device/" + device + "/protocol/" + protocol;

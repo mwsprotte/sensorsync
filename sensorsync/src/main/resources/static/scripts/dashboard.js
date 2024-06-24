@@ -229,6 +229,11 @@ setInterval(function () {
 }, 1000); //300000 is 5minutes in ms
 
 
+function reGenerateCode() {
+    alert("Será aberta uma nova guia com o código do sistema embarcado");
+    window.open("./code.html", "_blank").focus()
+}
+
 // ***************************************************************************************************
 // Configurando a vizualização para o dispositivo escolhido
 

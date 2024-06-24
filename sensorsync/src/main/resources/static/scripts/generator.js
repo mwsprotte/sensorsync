@@ -48,8 +48,8 @@ function loadDataDesc(index) {
 
 function loadDataUseCard(index) {
     try {
-        var auxRead = document.getElementById("useCard" + index).value;
-        if (auxRead == null) {
+        var auxRead = document.getElementById("useCard" + index).checked;
+        if (auxRead == false) {
             return 0;
         } else {
             return 1;
@@ -62,8 +62,8 @@ function loadDataUseCard(index) {
 
 function loadDataUseChart(index) {
     try {
-        var auxRead = document.getElementById("useChart" + index).value;
-        if (auxRead == null) {
+        var auxRead = document.getElementById("useChart" + index).checked;
+        if (auxRead == false) {
             return 0;
         } else {
             return 1;

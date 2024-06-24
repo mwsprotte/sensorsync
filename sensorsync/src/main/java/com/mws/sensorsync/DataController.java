@@ -29,7 +29,7 @@ public class DataController {
 
     /**
      * Endpoints do Crud básico
-     * */
+     */
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Data> findall() {
@@ -65,7 +65,9 @@ public class DataController {
         return ResponseEntity.noContent().build();
     }
 
-    /** Recebendo uma lista de dados para salvar no banco*/
+    /**
+     * Recebendo uma lista de dados para salvar no banco
+     */
     @PostMapping(value = "/saveList", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public boolean saveList(@RequestBody List<Data> dataList) {
         try {
@@ -80,13 +82,38 @@ public class DataController {
         }
     }
 
-    /**RETORNA TODOS OS CARDS PARA UM PROJETO*/
+    /**
+     * RETORNA TODOS OS CARDS PARA UM PROJETO
+     */
     @GetMapping(value = "/cards/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CardView> findDataCards(@PathVariable(value = "projectID") Long id) {
         List<CardView> cards = new ArrayList<>();
         for (Long i = 0L; i < projectService.findById(id).getSensorNumber(); i++) {
             for (Long j = 0L; j < (projectService.findById(id).getDataNumber()); j++) {
-                var entity = dataServices.findForCard(id, i, j);
+                if (metadataService.findByProjectIdAndDataIndex(id, j).isUseCard()) {
+                    var entity = dataServices.findForCard(id, i, j);
+                    CardView dataToAdd = new CardView();
+                    dataToAdd.setData(entity.getData());
+                    dataToAdd.setReadTime(entity.getReadTime());
+                    dataToAdd.setSensorDescription(entity.getSensorDescription());
+                    dataToAdd.setSensorIndex(entity.getSensorIndex());
+                    dataToAdd.setDataDesc(metadataService.findByProjectIdAndDataIndex(id, j).getDataDesc());
+                    cards.add(dataToAdd);
+                }
+            }
+        }
+        return cards;
+    }
+
+    /**
+     * RETORNA TODOS OS CARDS PARA UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO
+     */
+    @GetMapping(value = "/cards/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CardView> findDataCardsByDevice(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device) {
+        List<CardView> cards = new ArrayList<>();
+        for (Long j = 0L; j < (projectService.findById(id).getDataNumber()); j++) {
+            if (metadataService.findByProjectIdAndDataIndex(id, j).isUseCard()) {
+                var entity = dataServices.findForCard(id, device, j);
                 CardView dataToAdd = new CardView();
                 dataToAdd.setData(entity.getData());
                 dataToAdd.setReadTime(entity.getReadTime());
@@ -99,24 +126,9 @@ public class DataController {
         return cards;
     }
 
-   /**RETORNA TODOS OS CARDS PARA UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO*/
-    @GetMapping(value = "/cards/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CardView> findDataCardsByDevice(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device) {
-        List<CardView> cards = new ArrayList<>();
-        for (Long j = 0L; j < (projectService.findById(id).getDataNumber()); j++) {
-            var entity = dataServices.findForCard(id, device, j);
-            CardView dataToAdd = new CardView();
-            dataToAdd.setData(entity.getData());
-            dataToAdd.setReadTime(entity.getReadTime());
-            dataToAdd.setSensorDescription(entity.getSensorDescription());
-            dataToAdd.setSensorIndex(entity.getSensorIndex());
-            dataToAdd.setDataDesc(metadataService.findByProjectIdAndDataIndex(id, j).getDataDesc());
-            cards.add(dataToAdd);
-        }
-        return cards;
-    }
-
-    /**RETORNA OS DADOS PARA O GRÁFICO DE UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO*/
+    /**
+     * RETORNA OS DADOS PARA O GRÁFICO DE UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO
+     */
     @GetMapping(value = "/charts/{projectID}/device/{device}/length/{length}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<List<String>> findDataCharts(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device, @PathVariable(value = "length") Long length) {
         List<List<String>> dataForCharts = new ArrayList<>();
@@ -144,18 +156,24 @@ public class DataController {
 //        Iterando para carregar os conjuntos de dados para cada grandeza
         int maxIndex = (int) projectService.findById(id).getDataNumber();
         for (int i = 0; i < maxIndex; i++) {
-            List<String> labelsY = new ArrayList<>();
-            var entityY = dataServices.findForChart(id, device, Long.valueOf(i), length);
-            for (int j = 0; j < entityY.size(); j++) {
-                labelsY.add(String.valueOf(entityY.get(j).getData()));
+            if (metadataService.findByProjectId(id).get(i).isUseChart()) {
+                List<String> labelsY = new ArrayList<>();
+                var entityY = dataServices.findForChart(id, device, Long.valueOf(i), length);
+                for (int j = 0; j < entityY.size(); j++) {
+                    labelsY.add(String.valueOf(entityY.get(j).getData()));
+                }
+                Collections.reverse(labelsY);
+                dataForCharts.add(labelsY.stream().toList());
+
             }
-            Collections.reverse(labelsY);
-            dataForCharts.add(labelsY.stream().toList());
+
         }
         return dataForCharts;
     }
 
-    /**Retornar todos os dados de determinado projeto para gerar um relatório*/
+    /**
+     * Retornar todos os dados de determinado projeto para gerar um relatório
+     */
     @GetMapping(value = "/report/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<List<String>> findAllDataReport(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device) {
         List<List<String>> dataForReport = new ArrayList<>();
