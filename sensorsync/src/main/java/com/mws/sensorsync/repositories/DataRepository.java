@@ -34,4 +34,12 @@ public interface DataRepository extends JpaRepository<Data, Long> {
     List<Data> findAllByProjectAndDeviceAndIndex(@Param("projectid") Long projectId, @Param("sensorIndex") Long sensorIndex);
 
 
+    @Query(value = "SELECT * FROM data WHERE projectid = :projectid order by id DESC LIMIT :length", nativeQuery = true)
+    List<Data> findByProject(@Param("projectid") Long projectId, @Param("length") Long length);
+
+    @Query(value = "SELECT * FROM data WHERE projectid = :projectid and sensor_index = :sensorIndex order by id DESC LIMIT :length", nativeQuery = true)
+    List<Data> findByProjectIDandDecvice(@Param("projectid") Long projectId, @Param("sensorIndex") Long sensorIndex, @Param("length") Long length);
+
+    @Query(value = "SELECT * FROM data WHERE projectid = :projectid and sensor_index = :sensorIndex and data_index = :dataIndex order by id DESC LIMIT :length", nativeQuery = true)
+    List<Data> findByProjectIDandDecviceandData(@Param("projectid") Long projectId, @Param("sensorIndex") Long sensorIndex, @Param("dataIndex") Long dataIndex, @Param("length") Long length);
 }

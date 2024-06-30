@@ -71,6 +71,21 @@ public class DataService {
         logger.info("Todos os dados para o projeto " + projectID + " removidos!");
     }
 
+    public List<Data> findByProject(Long projectId, Long length) {
+        logger.info("Buscando os dados para o projeto " + projectId);
+        return dataRepository.findByProject(projectId, length);
+    }
+
+    public List<Data> findByProjectIDandDevice(Long projectId, Long device, Long length) {
+        logger.info("Buscando os dados para o projeto " + projectId + "e dispositivo " + device);
+        return dataRepository.findByProjectIDandDecvice(projectId, device, length);
+    }
+
+    public List<Data> findByProjectIDandDeviceandData(Long projectId, Long device, Long dataIndex, Long length) {
+        logger.info("Buscando os dados para o projeto " + projectId + "e dispositivo " + device);
+        return dataRepository.findByProjectIDandDecviceandData(projectId, device, dataIndex, length);
+    }
+
 //    *********************************************************************************************
 
 

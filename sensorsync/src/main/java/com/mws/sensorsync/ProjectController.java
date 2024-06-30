@@ -106,9 +106,9 @@ public class ProjectController {
                             "#include \"sensor_sync.h\"\n" +
                             "\n" +
                             "const char *WIFI_SSID = \"Sistema_IoT\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
-                            "const char *WIFI_PASSWORD = \"entrarentrar //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\";\n" +
+                            "const char *WIFI_PASSWORD = \"entrarentrar\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n\n" +
                             "#define project " + p.getId() + "\n" +
-                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM\n" +
                             "\n" +
                             "char *URL = \"http://10.0.0.103:8080/datapackage\"; //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
@@ -159,7 +159,7 @@ public class ProjectController {
                             "#define wifi_ssid \"Sistema_IoT\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "#define wifi_password \"entrarentrar\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "#define project " + p.getId() + "\n" +
-                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM\n" +
                             "\n" +
                             "char *URL = \"http://10.0.0.103:8080/datapackage\"; //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
@@ -220,7 +220,7 @@ public class ProjectController {
                             "const char *WIFI_SSID = \"Sistema_IoT\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "const char *WIFI_PASSWORD = \"entrarentrar\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "#define project " + p.getId() + "\n" +
-                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM\n" +
                             "\n" +
                             "char *URL = \"http://10.0.0.103:8080/datapackage\"; //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
@@ -271,7 +271,7 @@ public class ProjectController {
                             "#define wifi_ssid \"Sistema_IoT\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "#define wifi_password \"entrarentrar\" //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "#define project " + p.getId() + "\n" +
-                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "#define device 0  //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM\n" +
                             "\n" +
                             "char *URL = \"http://10.0.0.103:8080/datapackage\"; //ATUALIZAR PARA O IP DO SEU SERVIDOR CASO UTILIZE FORA DO LABORATÓRIO\n" +
                             "String desc[" + p.getDataNumber() + "];\n" +
@@ -383,7 +383,7 @@ public class ProjectController {
                             "#include \"sensor_sync.h\"\n" +
                             "#include \"blink.h\"\n" +
                             "#define project " + p.getId() + "\n" +
-                            "#define device 0 //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n" +
+                            "#define device 0 //ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM\n" +
                             "\n" +
                             "const char *WIFI_SSID = \"Sistema_IoT\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +
                             "const char *WIFI_PASSWORD = \"senhasenha\"; //ATUALIZAR PARA AS CREDENCIAS DA SUA REDE CASO USE FORA DO LABORATÓRIO\n" +

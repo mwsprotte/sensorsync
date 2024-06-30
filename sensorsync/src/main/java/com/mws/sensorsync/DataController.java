@@ -207,5 +207,22 @@ public class DataController {
         return dataForReport;
     }
 
+    /**
+     * Endpoints da interface máquina
+     */
+    @GetMapping(value = "project/{project_id}/length/{n}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Data> findByProjectID(@PathVariable(value = "project_id") Long project_id, @PathVariable(value = "n") Long length) {
+        return dataServices.findByProject(project_id, length);
+    }
+
+    @GetMapping(value = "project/{project_id}/device/{y}/length/{n}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Data> findByProjectIDandDevice(@PathVariable(value = "project_id") Long project_id, @PathVariable(value = "y") Long device, @PathVariable(value = "n") Long length) {
+        return dataServices.findByProjectIDandDevice(project_id, device, length);
+    }
+
+    @GetMapping(value = "project/{project_id}/device/{y}/data/{z}/length/{n}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Data> findByProjectIDandDeviceandData(@PathVariable(value = "project_id") Long project_id, @PathVariable(value = "y") Long device, @PathVariable(value = "z") Long dataIndex, @PathVariable(value = "n") Long length) {
+        return dataServices.findByProjectIDandDeviceandData(project_id, device, dataIndex, length);
+    }
 
 }
