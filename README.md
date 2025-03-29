@@ -59,7 +59,7 @@ http://10.0.0.103:8080/
 
 - Para criar seu projeto IoT, basta preencher os dados conforme seus requisitos de projeto e então pressione o botão "Criar" destacado na imagem acima. A seguir será aberta uma nova guia com o código do sistema embarcado para o controlador definido. 
 
-> :bulb: **Atenção:** Para que a integração funcione, é necessário baixar a biblioteca de integração disponível neste [repositório](https://github.com/mwsprotte/sensor_sync_lib) (link [alternativo](https://1drv.ms/f/s!Aun1_-xL9pS4jY01hmCQVaL5HULldw?e=g9c7Ec)). Basta salvá-la no diretório de compilação do seu sistema embarcado.
+> :bulb: **Atenção:** Para que a integração funcione, é necessário baixar a biblioteca de integração disponível neste [repositório](https://github.com/mwsprotte/sensorsync_lib) (link [alternativo](https://1drv.ms/f/s!Aun1_-xL9pS4jY01hmCQVaL5HULldw?e=g9c7Ec)). Basta salvá-la no diretório de compilação do seu sistema embarcado.
 
 Uma vez que o projeto foi criado, é possível acessar seu dashboard conforme o tópico a seguir. 
 
