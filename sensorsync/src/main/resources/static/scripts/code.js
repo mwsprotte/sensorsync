@@ -1,7 +1,7 @@
 // const HOST = "http://10.0.0.103";
 //  const HOST = "http://10.0.0.104";
-//const HOST = "http://localhost";
-const HOST = "http://localhost";
+//const HOST = "http://10.0.0.103";
+const HOST = "http://10.0.0.103";
 
 
 function generateCode() {

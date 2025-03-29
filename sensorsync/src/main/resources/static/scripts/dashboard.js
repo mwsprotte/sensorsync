@@ -3,7 +3,7 @@
 
 //  const HOST = "http://10.0.0.103";
 // const HOST = "http://10.0.0.104";
-const HOST = "http://localhost";
+const HOST = "http://10.0.0.103";
 // const HOST = "http://192.168.100.100";
 
 // ***************************************************************************************************
@@ -147,58 +147,108 @@ function generateCharts() {
 
     });
 }
+//async function updateCharts() {
+//    var chartRequest = `${HOST}:8080/data/charts/${localStorage.getItem('projectID')}/device/${Number(document.querySelector('#deviceSelected').value)}/length/${Number(document.querySelector("#length").value)}`;
+//
+//    try {
+//        const response = await fetch(chartRequest, {
+//            method: 'GET',
+//            headers: {
+//                'Content-Type': 'application/json'
+//            }
+//        });
+//
+//        if (response.ok) {
+//            const chartData = await response.json();
+//
+//            var l = myBarChart.data.labels.length;
+//            var response_l = chartData[1].length;
+//
+//            if (chartData[1][response_l - 1] != myBarChart.data.labels[l - 1]) {
+//                for (let index = 0; index < l; index++) {
+//                    myBarChart.data.labels.pop();
+//                }
+//
+//                // limpando apenas os dados
+//                // https://www.chartjs.org/docs/latest/developers/updates.html
+//                var d = myBarChart.data.datasets.length;
+//                for (let index = 0; index < d; index++) {
+//                    myBarChart.data.datasets.pop();
+//                }
+//
+//                chartLabels = chartData[0];
+//
+//                for (let index = 0; index < chartData[1].length; index++) {
+//                    myBarChart.data.labels.push(chartData[1][index]);
+//                }
+//
+//                for (let index = 2; index < chartData.length; index++) {
+//                    const element = chartData[index];
+//                    myBarChart.data.datasets.push({
+//                        label: chartLabels[index - 2],
+//                        data: element,
+//                        fill: false,
+//                        tension: 0.1
+//                    });
+//                }
+//            }
+//            myBarChart.update();
+//        }
+//    } catch (error) {
+//        console.error('Error fetching chart data:', error);
+//    }
+//}
 
+async function updateCharts() {
+    var chartRequest = `${HOST}:8080/data/charts/${localStorage.getItem('projectID')}/device/${Number(document.querySelector('#deviceSelected').value)}/length/${Number(document.querySelector("#length").value)}`;
 
-function updateCharts() {
-    var chartRequest = HOST + ":8080/data/charts/" + localStorage.getItem('projectID') + "/device/" + Number(document.querySelector('#deviceSelected').value) + "/length/" + Number(document.querySelector("#length").value) + "";
+    try {
+        const response = await fetch(chartRequest, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', chartRequest);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    // xhr.setRequestHeader('Authorization', 'Basic ' + btoa(localStorage.getItem('user') + ':' + localStorage.getItem('password')));
-    xhr.send();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var chartData = JSON.parse(xhr.response);
+        if (response.ok) {
+            const chartData = await response.json();
 
-            var l = myBarChart.data.labels.length;
-            var response_l = chartData[1].length;
+            // Verificar se a quantidade de labels e dados mudou
+            const newLabels = chartData[1];
+            const currentLabels = myBarChart.data.labels;
 
-            if (chartData[1][response_l - 1] != myBarChart.data.labels[l - 1]) {
-                for (let index = 0; index < l; index++) {
-                    myBarChart.data.labels.pop();
+            if (newLabels[newLabels.length - 1] !== currentLabels[currentLabels.length - 1]) {
+                // Atualizar os rótulos
+                myBarChart.data.labels = newLabels;
+
+                // Atualizar os datasets
+                for (let i = 2; i < chartData.length; i++) {
+                    const newData = chartData[i];
+                    const dataset = myBarChart.data.datasets[i - 2];
+
+                    // Se o dataset já existe, atualize os dados
+                    if (dataset) {
+                        dataset.data = newData;
+                    } else {
+                        // Se o dataset não existir, crie um novo
+                        myBarChart.data.datasets.push({
+                            label: chartData[0][i - 2],
+                            data: newData,
+                            fill: false,
+                            tension: 0.1
+                        });
+                    }
                 }
 
-                // limpando apenas os dados
-                // https://www.chartjs.org/docs/latest/developers/updates.html
-                var d = myBarChart.data.datasets.length;
-                for (let index = 0; index < d; index++) {
-                    myBarChart.data.datasets.pop();
-                }
-
-
-                chartLabels = chartData[0];
-
-                for (let index = 0; index < chartData[1].length; index++) {
-                    myBarChart.data.labels.push(chartData[1][index]);
-
-                }
-
-                for (let index = 2; index < chartData.length; index++) {
-                    const element = chartData[index];
-                    myBarChart.data.datasets.push({
-                        label: chartLabels[index - 2],
-                        data: element,
-                        fill: false,
-                        tension: 0.1
-                    })
-                }
+                // Atualizar o gráfico com os novos dados
+                myBarChart.update();
             }
         }
-        ;
-        myBarChart.update();
+    } catch (error) {
+        console.error('Error fetching chart data:', error);
     }
 }
+
 
 function updateViews() {
     if (document.getElementById('setTimeOff').checked == true) {
