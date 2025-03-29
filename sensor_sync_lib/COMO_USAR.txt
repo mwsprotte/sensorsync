@@ -1,1 +1,0 @@
-Extraia a pasta "sensor_sync" para dentro da mesma pasta que seu programa (.ino)
