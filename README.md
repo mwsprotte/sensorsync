@@ -44,7 +44,7 @@ entrarentrar
 - Dentro dessa rede, o sistema estará disponível no seguinte link (pode ser acessado a partir de qualquer navegador):
 
 ```
-http://10.0.0.103:8080/
+http://localhost:8080/
 ```
 
 - Ao acessar o sistema, será aberta a seguinte tela inicial:
@@ -88,7 +88,7 @@ ser feito de duas maneiras: acessá-lo remotamente via SSH ou diretamente, conec
 
 - Acesse a rede do sistema de acordo com os passos iniciais da seção anterior, certifique-se que o Rasberry está ligado e conectado na rede.
 
-> :bulb: **Atenção:** Dentro dessa rede, entre com o comando `ping 10.0.0.103` para saber se o Rasberry está ligado 
+> :bulb: **Atenção:** Dentro dessa rede, entre com o comando `ping localhost` para saber se o Rasberry está ligado 
 > e conectado ou não. Caso aconteça algum erro, proceda o acesso da outra forma apresentada no próxima [subseção](#acesso-direto).
 
 
@@ -96,7 +96,7 @@ ser feito de duas maneiras: acessá-lo remotamente via SSH ou diretamente, conec
 
 
 ```
-ssh ubuntu@10.0.0.103
+ssh ubuntu@localhost
 ```
 - Digite a senha para entrar na conexão:
 

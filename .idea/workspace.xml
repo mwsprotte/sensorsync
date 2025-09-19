@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="" />
+    <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/code.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/code.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/dashboard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/export.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/export.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/generator.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/generator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/index.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -39,7 +48,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;Application.Startup.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.Startup.executor&quot;: &quot;Run&quot;,
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;Maven.sensorsync [clean,package].executor&quot;: &quot;Run&quot;,
     &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
@@ -246,6 +255,9 @@
       <workItem from="1727145346838" duration="9000" />
       <workItem from="1727193039313" duration="4000" />
       <workItem from="1733357768732" duration="4000" />
+      <workItem from="1743373012173" duration="6000" />
+      <workItem from="1745855560107" duration="4000" />
+      <workItem from="1747959365155" duration="724000" />
     </task>
     <servers />
   </component>

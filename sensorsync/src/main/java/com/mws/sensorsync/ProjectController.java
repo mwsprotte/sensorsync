@@ -158,9 +158,9 @@ public class ProjectController {
                         .append("#define project ").append(p.getId()).append("\n")
                         .append("#define device 0  // ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n")
                         .append("#define dataNumber ").append(p.getDataNumber()).append("\n")
-                        .append("#define server \"10.0.0.103\"  // Servidor MQTT\n")
+                        .append("#define server \"10.0.0.104\"  // Servidor MQTT\n")
                         .append("\n")
-                        .append("char *URL = \"http://10.0.0.103:8080/data/saveList\";  // URL do servidor HTTP\n")
+                        .append("char *URL = \"http://10.0.0.104:8080/data/saveList\";  // URL do servidor HTTP\n")
                         .append("String desc[").append(p.getDataNumber()).append("];  // Descrições dos sensores\n")
                         .append("float data[").append(p.getDataNumber()).append("];   // Dados dos sensores\n")
                         .append("\n")
@@ -240,8 +240,8 @@ public class ProjectController {
                         .append("#define project ").append(p.getId()).append("\n")
                         .append("#define device 0  // ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n")
                         .append("#define dataNumber ").append(p.getDataNumber()).append("\n")
-                        .append("#define server \"10.0.0.103\"  // Servidor MQTT\n")
-                        .append("char *URL = \"http://10.0.0.103:8080/data/saveList\";  // URL do servidor HTTP\n")
+                        .append("#define server \"10.0.0.104\"  // Servidor MQTT\n")
+                        .append("char *URL = \"http://10.0.0.104:8080/data/saveList\";  // URL do servidor HTTP\n")
                         .append("String desc[").append(p.getDataNumber()).append("];  // Descrições dos sensores\n")
                         .append("float data[").append(p.getDataNumber()).append("];   // Dados dos sensores\n");
                 if (protocol == ProtocolType.HTTP.getValue()) {
@@ -361,8 +361,8 @@ public class ProjectController {
                         .append("#define project ").append(p.getId()).append("\n")
                         .append("#define device 0  // ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n")
                         .append("#define dataNumber ").append(p.getDataNumber()).append("\n")
-                        .append("#define server \"10.0.0.103\"  // Servidor MQTT\n")
-                        .append("char *URL = \"http://10.0.0.103:8080/data/saveList\";  // URL do servidor HTTP\n")
+                        .append("#define server \"10.0.0.104\"  // Servidor MQTT\n")
+                        .append("char *URL = \"http://10.0.0.104:8080/data/saveList\";  // URL do servidor HTTP\n")
                         .append("String desc[").append(p.getDataNumber()).append("];  // Descrições dos sensores\n")
                         .append("float data[").append(p.getDataNumber()).append("];   // Dados dos sensores\n");
 
