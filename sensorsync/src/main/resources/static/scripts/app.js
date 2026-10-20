@@ -126,8 +126,34 @@ function renderNavbar(active, extra = '') {
 async function loadCurrentUser(active = '', extra = '') {
     currentUser = await api('/api/me');
     renderNavbar(active, extra);
-    ensurePasswordModal();
+    guardAutofill();
     return currentUser;
+}
+
+/**
+ * Evita que o gerenciador de senhas do navegador preencha campos comuns (busca, nomes) com o login salvo:
+ * desliga o autocomplete e deixa o campo somente leitura ate receber foco.
+ * Vale para campos que ja existem e para os criados depois (tabelas, modais).
+ */
+function guardAutofill() {
+    const guard = el => {
+        if (el.dataset.ssGuard || el.closest('[data-autofill-ok]')) return;
+        el.dataset.ssGuard = '1';
+        el.setAttribute('autocomplete', 'off');
+        el.setAttribute('data-lpignore', 'true');
+        if (!el.readOnly && document.activeElement !== el) {
+            el.readOnly = true;
+            el.addEventListener('focus', () => { el.readOnly = false; }, { once: true });
+            el.addEventListener('pointerdown', () => { el.readOnly = false; }, { once: true });
+        }
+    };
+    const selector = "input[type=text]:not([hidden]), input[type=search], input[type=email], input:not([type])";
+    document.querySelectorAll(selector).forEach(guard);
+    new MutationObserver(muts => muts.forEach(m => m.addedNodes.forEach(n => {
+        if (n.nodeType !== 1) return;
+        if (n.matches && n.matches(selector)) guard(n);
+        n.querySelectorAll && n.querySelectorAll(selector).forEach(guard);
+    }))).observe(document.body, { childList: true, subtree: true });
 }
 
 /** Spinner centralizado para areas carregando. */
@@ -166,7 +192,8 @@ function ensurePasswordModal() {
       <div class="modal-dialog"><div class="modal-content">
         <div class="modal-header"><h1 class="modal-title fs-5">Alterar senha</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
-        <div class="modal-body">
+        <form class="modal-body" autocomplete="off" onsubmit="changePassword(); return false;">
+          <input type="text" name="username" autocomplete="username" value="${esc(currentUser ? currentUser.login : '')}" hidden readonly>
           <div class="mb-3"><label class="form-label" for="pwCurrent">Senha atual</label>
             <input type="password" class="form-control" id="pwCurrent" autocomplete="current-password"></div>
           <div class="mb-3"><label class="form-label" for="pwNew">Nova senha (mínimo 8 caracteres)</label>
@@ -174,7 +201,7 @@ function ensurePasswordModal() {
           <div class="mb-3"><label class="form-label" for="pwNew2">Repita a nova senha</label>
             <input type="password" class="form-control" id="pwNew2" autocomplete="new-password"></div>
           <div id="pwMsg" class="text-danger small"></div>
-        </div>
+        </form>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="button" class="btn btn-primary" onclick="changePassword()">Salvar</button>
@@ -185,6 +212,9 @@ function ensurePasswordModal() {
 }
 
 function openPasswordModal() {
+    // O modal (que tem campos de senha) so e criado quando aberto: um campo de senha presente na
+    // pagina faz o navegador tratar outros campos de texto como "login" e preenche-los com o usuario salvo.
+    ensurePasswordModal();
     ['pwCurrent', 'pwNew', 'pwNew2'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('pwMsg').textContent = '';
     bootstrap.Modal.getOrCreateInstance(document.getElementById('passwordModal')).show();
