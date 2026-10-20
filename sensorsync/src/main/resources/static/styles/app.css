@@ -374,6 +374,17 @@ body {
         height: 280px;
     }
 
+    .ss-chart-split {
+        height: 200px;
+    }
+
+    /* Chips de dispositivo rolam na horizontal em vez de quebrar em varias linhas */
+    .ss-dev-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: .25rem;
+    }
+
     .ss-kpi-value {
         font-size: 1.7rem;
     }
@@ -390,14 +401,59 @@ body {
         font-size: 1.05rem;
     }
 
-    /* Botoes de selecao e controles do grafico ocupam a largura toda */
-    #deviceSelectorWrap,
-    #deviceSelectorWrap select {
-        width: 100%;
-    }
-
     .ss-footer .container-xl {
         flex-direction: column;
         align-items: flex-start !important;
     }
+}
+
+/* Grafico por variavel */
+.ss-chart-split {
+    position: relative;
+    height: 220px;
+}
+
+/* Chips de selecao de dispositivo */
+.ss-dev-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+}
+
+.ss-dev-chip {
+    --chip-color: var(--ss-green);
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    max-width: 240px;
+    padding: .35rem .8rem;
+    border-radius: 999px;
+    border: 1px solid var(--bs-border-color);
+    background: var(--ss-surface);
+    color: var(--bs-body-color);
+    font-size: .875rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+
+.ss-dev-chip:hover {
+    border-color: var(--chip-color);
+}
+
+.ss-dev-chip.active {
+    border-color: var(--chip-color);
+    box-shadow: inset 0 0 0 1px var(--chip-color);
+    background: color-mix(in srgb, var(--chip-color) 10%, var(--ss-surface));
+    font-weight: 600;
+}
+
+.ss-dev-chip .bi-check-lg {
+    color: var(--chip-color);
+}
+
+.ss-dev-chip:focus-visible {
+    outline: 2px solid var(--chip-color);
+    outline-offset: 2px;
 }

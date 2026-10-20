@@ -140,11 +140,63 @@ public class DataController {
             column.put(metas.get(i).getDataIndex(), i);
         }
 
-        List<Data> rows = new ArrayList<>(dataServices.findRecentAfter(id, device, Math.max(0, after),
-                n * Math.max(1, p.getDataNumber())));
-        rows.sort(Comparator.comparingLong(Data::getId));
+        return new Series(vars, buildPoints(id, device, n, after, metas.size(), column, p.getDataNumber()));
+    }
 
-        // Agrupa em envios (mesma regra do relatorio)
+    /** Ultimo valor conhecido de uma variavel (fora da janela do grafico), com o instante. */
+    public record LatestValue(Double v, String time) {
+    }
+
+    /** Serie de varios dispositivos: pontos e ultimo valor conhecido de cada variavel, por indice de dispositivo. */
+    public record MultiSeries(List<SeriesVariable> variables, Map<Long, List<SeriesPoint>> devices,
+                              Map<Long, List<LatestValue>> latest) {
+    }
+
+    /**
+     * Serie de varios dispositivos em uma chamada: /data/series/{projeto}?devices=0,1,2&limit=50&after=ID.
+     * Os ids sao globais e crescentes, entao um unico "after" (maior id ja recebido) serve para todos.
+     * Na carga inicial (after=0) tambem devolve o ultimo valor conhecido de cada variavel por dispositivo.
+     */
+    @GetMapping(value = "/series/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public MultiSeries multiSeries(@PathVariable("projectID") Long id,
+                                   @RequestParam("devices") List<Long> devices,
+                                   @RequestParam(value = "limit", defaultValue = "50") Long limit,
+                                   @RequestParam(value = "after", defaultValue = "0") Long after) {
+        Project p = access.requireProject(id);
+        long n = checkLength(limit);
+        if (devices.size() > 50) {
+            throw ApiException.badRequest("No maximo 50 dispositivos por consulta");
+        }
+        List<Metadata> metas = metadataService.findByProjectId(id);
+        List<SeriesVariable> vars = metas.stream()
+                .map(m -> new SeriesVariable(m.getDataIndex(), m.getDataDesc(), m.getUnit(), m.isUseCard(), m.isUseChart()))
+                .toList();
+        Map<Long, Integer> column = new HashMap<>();
+        for (int i = 0; i < metas.size(); i++) {
+            column.put(metas.get(i).getDataIndex(), i);
+        }
+        Map<Long, List<SeriesPoint>> byDevice = new LinkedHashMap<>();
+        Map<Long, List<LatestValue>> latest = new LinkedHashMap<>();
+        for (Long device : new LinkedHashSet<>(devices)) {
+            byDevice.put(device, buildPoints(id, device, n, after, metas.size(), column, p.getDataNumber()));
+            if (after <= 0) {
+                List<LatestValue> l = new ArrayList<>();
+                for (Metadata m : metas) {
+                    Data d = dataServices.findForCard(id, device, m.getDataIndex());
+                    l.add(d == null ? null : new LatestValue(d.getData(), d.getReadTime()));
+                }
+                latest.put(device, l);
+            }
+        }
+        return new MultiSeries(vars, byDevice, latest);
+    }
+
+    /** Busca as ultimas leituras de um dispositivo e agrupa em envios (mesma regra do relatorio). */
+    private List<SeriesPoint> buildPoints(long projectId, long device, long n, long after, int width,
+                                          Map<Long, Integer> column, long dataNumber) {
+        List<Data> rows = new ArrayList<>(dataServices.findRecentAfter(projectId, device, Math.max(0, after),
+                n * Math.max(1, dataNumber)));
+        rows.sort(Comparator.comparingLong(Data::getId));
         List<SeriesPoint> points = new ArrayList<>();
         Double[] values = null;
         String time = null;
@@ -158,7 +210,7 @@ public class DataController {
                 if (values != null) {
                     points.add(new SeriesPoint(lastId, epochMillis(time), time, values));
                 }
-                values = new Double[metas.size()];
+                values = new Double[width];
                 time = d.getReadTime();
             }
             values[col] = d.getData();
@@ -170,7 +222,7 @@ public class DataController {
         if (points.size() > n) {
             points = new ArrayList<>(points.subList(points.size() - (int) n, points.size()));
         }
-        return new Series(vars, points);
+        return points;
     }
 
     /**

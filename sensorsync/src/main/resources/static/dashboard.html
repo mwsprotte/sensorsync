@@ -21,10 +21,6 @@
             <h1 class="mt-1 ss-clamp-2" id="projectTitle">...</h1>
             <div class="small ss-muted d-flex align-items-center gap-2" id="deviceStatus">&nbsp;</div>
         </div>
-        <div id="deviceSelectorWrap">
-            <label class="form-label small ss-muted mb-1" for="deviceSelected">Dispositivo</label>
-            <select id="deviceSelected" class="form-select" style="min-width: 200px;"></select>
-        </div>
     </div>
 
     <ul class="nav nav-underline ss-tabs mb-3 mb-md-4" id="projectTabs" role="tablist">
@@ -33,6 +29,12 @@
         <li class="nav-item" role="presentation"><button class="nav-link" data-tab="codigo" type="button" role="tab"><i class="bi bi-code-slash me-1 d-none d-sm-inline"></i>Código</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-tab="relatorio" type="button" role="tab"><i class="bi bi-table me-1 d-none d-sm-inline"></i>Relatório</button></li>
     </ul>
+
+    <!-- Selecao de dispositivos (varios na visao geral; um em codigo e relatorio) -->
+    <div id="deviceChipsWrap" class="mb-3">
+        <div class="small ss-muted mb-2" id="chipsHint"></div>
+        <div id="deviceChips" class="ss-dev-chips"></div>
+    </div>
 
     <!-- ===================== Visao geral ===================== -->
     <section data-panel="visao" class="d-none">
@@ -44,7 +46,8 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
                 <h2 class="h6 fw-semibold mb-0"><i class="bi bi-graph-up me-2"></i>Histórico</h2>
                 <div class="d-flex flex-wrap align-items-center gap-3">
-                    <div class="btn-group btn-group-sm" role="group" aria-label="Tipo de gráfico">
+                    <span class="small ss-muted d-none" id="multiHint"><i class="bi bi-info-circle me-1"></i>Comparando dispositivos: um gráfico por variável</span>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Tipo de gráfico" id="modeGroup">
                         <input type="radio" class="btn-check" name="chartMode" id="modeCombined">
                         <label class="btn btn-outline-secondary" for="modeCombined" title="Todas as variáveis no mesmo gráfico"><i class="bi bi-graph-up"></i> Único</label>
                         <input type="radio" class="btn-check" name="chartMode" id="modeSplit">
@@ -108,7 +111,7 @@
                             <option value="MQTT">MQTT</option>
                         </select>
                     </div>
-                    <p class="small ss-muted mt-3 mb-0">O dispositivo é o selecionado no topo da página.</p>
+                    <p class="small ss-muted mt-3 mb-0">O código é gerado para o dispositivo escolhido acima.</p>
                 </section>
                 <section class="ss-card p-4">
                     <h2 class="h6 fw-semibold mb-3"><i class="bi bi-list-check me-2"></i>Como gravar</h2>
