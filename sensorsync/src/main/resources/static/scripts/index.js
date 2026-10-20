@@ -1,12 +1,12 @@
 // ***************************************************************************************************
 // Constantes de uso no código
 
-const HOST = "http://10.0.0.104";
+const HOST = window.location.origin;
 
 // ***************************************************************************************************
 
 function generateProjectsTable() {
-    var request = HOST + ":8080/project";
+    var request = HOST + "/project";
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', request);
@@ -30,7 +30,7 @@ function generateProjectsTable() {
 }
 
 function loadProjectData(projectID) {
-    var request = HOST + ":8080/project/" + projectID;
+    var request = HOST + "/project/" + projectID;
     const xhr = new XMLHttpRequest();
     xhr.open('GET', request);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -79,8 +79,8 @@ function generetaDeleteList() {
 
         const xhr = new XMLHttpRequest();
 
-        var request = HOST + ":8080/user/check/login/" + document.querySelector("#login").value + "/password/" + document.querySelector("#password").value;
-        // var request = HOST + ":8080/user/check/login/tese/password/senhawe";
+        var request = HOST + "/user/check/login/" + document.querySelector("#login").value + "/password/" + document.querySelector("#password").value;
+        // var request = HOST + "/user/check/login/tese/password/senhawe";
 
         xhr.open('GET', request);
         xhr.setRequestHeader('Content-Type', 'application/json');
@@ -91,7 +91,7 @@ function generetaDeleteList() {
 
                 if (check === true) {
 
-                    var request = HOST + ":8080/project";
+                    var request = HOST + "/project";
 
                     const xhr = new XMLHttpRequest();
                     xhr.open('GET', request);
@@ -127,7 +127,7 @@ function deleteProject(projectID) {
 
     if (resultado == true) {
 
-        var request = HOST + ":8080/project/deleteAll/" + projectID +"/user/" + document.querySelector("#login").value + "/password/" + document.querySelector("#password").value;
+        var request = HOST + "/project/deleteAll/" + projectID +"/user/" + document.querySelector("#login").value + "/password/" + document.querySelector("#password").value;
         const xhr = new XMLHttpRequest();
         xhr.open('DELETE', request);
         xhr.setRequestHeader('Content-Type', 'application/json');

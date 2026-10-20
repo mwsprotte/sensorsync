@@ -208,7 +208,7 @@ public class ProjectController {
                             .append("httpConn.sendData(project, device, dataNumber, desc, data, URL);\n");
                 } else {
                     esp8266Code.append("  // Enviar dados via MQTT\n")
-                            .append("  mqttConn.sendData(project, device, desc, data, \"sensorsync\");\n");
+                            .append("  mqttConn.sendData(project, device, dataNumber, desc, data, \"sensorsync\");\n");
                 }
 
                 esp8266Code.append("\n")
@@ -274,7 +274,7 @@ public class ProjectController {
                             .append("  httpConn.sendData(project, device, dataNumber, desc, data, URL);\n");
                 } else {
                     esp32Code.append("  // Enviar dados via MQTT\n")
-                            .append("  mqttConn.sendData(project, device, desc, data, \"sensorsync\");\n");
+                            .append("  mqttConn.sendData(project, device, dataNumber, desc, data, \"sensorsync\");\n");
                 }
 
                 esp32Code.append("  delay(1000);  // Atraso para o próximo ciclo de aquisição de dados\n")
@@ -407,7 +407,7 @@ public class ProjectController {
                             .append("  httpConn.sendData(project, device, dataNumber, desc, data, URL);\n");
                 } else {
                     esp8266CodeArduino.append("  // Enviar dados via MQTT\n")
-                            .append("  mqttConn.sendData(project, device, desc, data, \"sensorsync\");\n");
+                            .append("  mqttConn.sendData(project, device, dataNumber, desc, data, \"sensorsync\");\n");
                 }
 
                 esp8266CodeArduino.append("  delay(1000);  // Atraso para o próximo ciclo de aquisição de dados\n")

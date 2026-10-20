@@ -1,7 +1,7 @@
 // ***************************************************************************************************
 // Constantes de uso no código
 
-const HOST = "http://10.0.0.104";
+const HOST = window.location.origin;
 
 
 // ***************************************************************************************************
@@ -76,7 +76,7 @@ function loadDataUseChart(index) {
 
 function saveProject() {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", HOST + ":8080/project");
+    xhr.open("POST", HOST + "/project");
     xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
 
     if (document.getElementById('projetctName').value != "") {
@@ -112,7 +112,7 @@ function saveProject() {
 function saveMetadata(id) {
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", HOST + ":8080/metadata/list");
+    xhr.open("POST", HOST + "/metadata/list");
     xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
 
     var metadataAll = '[';

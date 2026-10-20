@@ -1,7 +1,7 @@
 // ***************************************************************************************************
 // Constantes de uso no código
 
- const HOST = "http://10.0.0.104";
+const HOST = window.location.origin;
 
 // ***************************************************************************************************
 
@@ -15,7 +15,7 @@ function generateTable() {
     document.getElementById('reportTitle').innerHTML = title;
 
 
-    var request = HOST + ":8080/data/report/" + localStorage.getItem('projectID') + "/device/" + device;
+    var request = HOST + "/data/report/" + localStorage.getItem('projectID') + "/device/" + device;
     const xhr = new XMLHttpRequest();
     xhr.open('GET', request);
     xhr.setRequestHeader('Content-Type', 'application/json');

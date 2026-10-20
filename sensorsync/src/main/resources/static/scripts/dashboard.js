@@ -1,7 +1,7 @@
 // ***************************************************************************************************
 // Constantes de uso no código
 
- const HOST = "http://10.0.0.104";
+const HOST = window.location.origin;
 
 // ***************************************************************************************************
 
@@ -52,14 +52,14 @@ function closeProject() {
     localStorage.removeItem('dataNumber');
     localStorage.removeItem('deviceSelected');
 
-    window.location.href = HOST + ":8080/";
+    window.location.href = HOST + "/";
 }
 
 // Number(document.querySelector('#deviceSelected').value)
 
 function generateCards() {
-    // var request = HOST + ":8080/data/cards/" + localStorage.getItem('projectID');
-    var request = HOST + ":8080/data/cards/" + localStorage.getItem('projectID') + "/device/" + Number(document.querySelector('#deviceSelected').value);
+    // var request = HOST + "/data/cards/" + localStorage.getItem('projectID');
+    var request = HOST + "/data/cards/" + localStorage.getItem('projectID') + "/device/" + Number(document.querySelector('#deviceSelected').value);
     const xhr = new XMLHttpRequest();
     xhr.open('GET', request);
     xhr.setRequestHeader('Content-Type', 'application/json');
