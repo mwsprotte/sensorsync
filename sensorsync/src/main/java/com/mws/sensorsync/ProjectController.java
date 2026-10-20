@@ -80,6 +80,15 @@ public class ProjectController {
         return projectService.rename(access.requireProject(id), body.get("name"));
     }
 
+    /** Transfere o projeto para outro usuario (somente administradores). Corpo: {"login": "..."} */
+    @PutMapping(value = "/{id}/owner", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Project transfer(@PathVariable("id") Long id, @RequestBody Map<String, String> body) {
+        if (!access.currentUser().isAdmin()) {
+            throw ApiException.forbidden("Somente administradores podem transferir projetos");
+        }
+        return projectService.transfer(access.requireProject(id), body.get("login"));
+    }
+
     /** Exclui o projeto com todos os dados, variaveis e dispositivos. */
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {

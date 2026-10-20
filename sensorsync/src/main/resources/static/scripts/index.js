@@ -39,6 +39,7 @@ function projectCard(p) {
             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
               <li><a class="dropdown-item" href="code.html?id=${p.id}"><i class="bi bi-code-slash me-2"></i>Código embarcado</a></li>
               <li><a class="dropdown-item" href="export.html?id=${p.id}"><i class="bi bi-table me-2"></i>Relatório</a></li>
+              ${currentUser.role === 'ADMIN' ? `<li><a class="dropdown-item" href="#" onclick="openTransfer(${p.id}); return false;"><i class="bi bi-person-gear me-2"></i>Transferir dono</a></li>` : ''}
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#" onclick="clearData(${p.id}); return false;"><i class="bi bi-eraser me-2"></i>Apagar leituras</a></li>
               <li><a class="dropdown-item text-danger" href="#" onclick="deleteProject(${p.id}); return false;"><i class="bi bi-trash me-2"></i>Excluir projeto</a></li>
@@ -83,6 +84,37 @@ async function loadProjects() {
         renderProjects();
     } catch (e) {
         document.getElementById('projects').innerHTML = `<div class='col-12'><div class='alert alert-danger'>${esc(e.message)}</div></div>`;
+    }
+}
+
+let transferId = null;
+
+async function openTransfer(id) {
+    transferId = id;
+    const p = projects.find(x => x.id === id);
+    document.getElementById('transferName').textContent = p ? p.name : id;
+    const sel = document.getElementById('transferUser');
+    sel.innerHTML = '<option>Carregando...</option>';
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('transferModal')).show();
+    try {
+        const users = await api('/user');
+        sel.innerHTML = users.filter(u => u.enabled).map(u =>
+            `<option value="${esc(u.login)}" ${p && u.login === p.ownerLogin ? 'selected' : ''}>${esc([u.firstName, u.lastName].filter(Boolean).join(' ') || u.login)} (${esc(u.login)})</option>`).join('');
+    } catch (e) {
+        sel.innerHTML = '';
+        toast(e.message, 'danger');
+    }
+}
+
+async function confirmTransfer() {
+    const login = document.getElementById('transferUser').value;
+    try {
+        await api(`/project/${transferId}/owner`, { method: 'PUT', body: { login: login } });
+        bootstrap.Modal.getInstance(document.getElementById('transferModal')).hide();
+        toast('Projeto transferido para ' + login + '.');
+        loadProjects();
+    } catch (e) {
+        toast(e.message, 'danger');
     }
 }
 

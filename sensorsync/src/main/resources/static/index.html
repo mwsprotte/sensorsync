@@ -37,6 +37,28 @@
 
 <footer id="appFooter"></footer>
 
+<!-- Transferir dono do projeto (admin) -->
+<div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="transferTitle"><i class="bi bi-person-gear me-2"></i>Transferir projeto</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small ss-muted">O novo dono passa a ver e gerenciar <strong id="transferName"></strong>.
+                    Os dispositivos e tokens continuam os mesmos.</p>
+                <label class="form-label" for="transferUser">Novo dono</label>
+                <select class="form-select" id="transferUser"></select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmTransfer()">Transferir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
 <script src="scripts/app.js"></script>
 <script src="scripts/index.js"></script>

@@ -9,6 +9,7 @@ import com.mws.sensorsync.repositories.DataRepository;
 import com.mws.sensorsync.repositories.DeviceRepository;
 import com.mws.sensorsync.repositories.MetadataRepository;
 import com.mws.sensorsync.repositories.ProjectRepository;
+import com.mws.sensorsync.repositories.UserHumanRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +27,12 @@ public class ProjectService {
     private final DataRepository dataRepository;
     private final DeviceRepository deviceRepository;
     private final DeviceService deviceService;
+    private final UserHumanRepository users;
 
     public ProjectService(ProjectRepository projectRepository, MetadataRepository metadataRepository,
-                          DataRepository dataRepository, DeviceRepository deviceRepository, DeviceService deviceService) {
+                          DataRepository dataRepository, DeviceRepository deviceRepository, DeviceService deviceService,
+                          UserHumanRepository users) {
+        this.users = users;
         this.projectRepository = projectRepository;
         this.metadataRepository = metadataRepository;
         this.dataRepository = dataRepository;
@@ -109,6 +113,14 @@ public class ProjectService {
             throw ApiException.conflict("Ja existe um projeto com o nome " + n);
         }
         p.setName(n);
+        return projectRepository.save(p);
+    }
+
+    @Transactional
+    public Project transfer(Project p, String login) {
+        UserHuman newOwner = users.findFirstByLoginOrderByIdDesc(login == null ? "" : login.trim())
+                .orElseThrow(() -> ApiException.badRequest("Usuario " + login + " nao encontrado"));
+        p.setOwner(newOwner);
         return projectRepository.save(p);
     }
 
