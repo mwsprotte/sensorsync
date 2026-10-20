@@ -6,7 +6,8 @@ let project = null;
 let report = [];
 
 async function init() {
-    await loadCurrentUser();
+    await loadCurrentUser('home');
+    document.getElementById('backLink').href = 'dashboard.html?id=' + projectId;
     project = await api('/project/' + projectId);
     const devices = await api('/project/' + projectId + '/devices');
     const sel = document.getElementById('deviceSelected');
@@ -20,17 +21,22 @@ async function init() {
 async function generateTable() {
     const sel = document.getElementById('deviceSelected');
     const deviceName = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
-    document.getElementById('reportTitle').textContent = `Relatório - ${project.name} - ${deviceName}`;
+    document.getElementById('reportTitle').textContent = `Relatório · ${project.name}`;
     const div = document.getElementById('tableDataDiv');
     try {
         report = await api(`/data/report/${projectId}/device/${sel.value}`);
-        let table = "<div class='table-responsive'><table class='table table-bordered table-sm'>";
+        document.getElementById('reportInfo').textContent = `${deviceName} · ${Math.max(0, report.length - 1)} leitura(s)`;
+        if (report.length <= 1) {
+            div.innerHTML = "<p class='ss-muted text-center py-5 mb-0'><i class='bi bi-inbox d-block fs-2 mb-2'></i>Sem leituras para este dispositivo.</p>";
+            return;
+        }
+        let table = "<div class='table-responsive' style='max-height: 70vh;'><table class='table table-hover table-sm table-sticky mb-0 align-middle'>";
         report.forEach((row, i) => {
-            table += '<tr>' + row.map(cell => i === 0
-                ? `<th class='text-center'>${esc(cell)}</th>`
-                : `<td class='text-center'>${esc(String(cell).replace('.', ','))}</td>`).join('') + '</tr>';
+            table += (i === 0 ? '<thead>' : (i === 1 ? '<tbody>' : '')) + '<tr>' + row.map((cell, j) => i === 0
+                ? `<th class='${j ? 'text-end' : ''} px-3 py-2'>${esc(cell)}</th>`
+                : `<td class='${j ? 'text-end font-monospace' : 'ss-muted'} px-3'>${esc(String(cell).replace('.', ','))}</td>`).join('') + '</tr>' + (i === 0 ? '</thead>' : '');
         });
-        div.innerHTML = table + '</table></div>' + (report.length <= 1 ? "<p class='text-body-secondary'>Sem leituras para este dispositivo.</p>" : '');
+        div.innerHTML = table + '</tbody></table></div>';
     } catch (e) {
         div.innerHTML = `<div class='alert alert-danger'>${esc(e.message)}</div>`;
     }

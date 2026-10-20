@@ -7,20 +7,24 @@ async function loadUsers() {
     const div = document.getElementById('usersList');
     try {
         users = await api('/user');
-        let html = `<table class='table align-middle'><thead><tr><th>Login</th><th>Nome</th><th>E-mail</th><th>Papel</th><th>Situação</th><th></th></tr></thead><tbody>`;
+        let html = `<div class='table-responsive'><table class='table table-hover align-middle mb-0'><thead><tr>
+            <th class='px-3'>Usuário</th><th>E-mail</th><th>Papel</th><th>Situação</th><th></th></tr></thead><tbody>`;
         for (const u of users) {
             const me = currentUser && u.id === currentUser.id;
-            html += `<tr><td>${esc(u.login)}${me ? " <span class='badge text-bg-info'>você</span>" : ''}</td>
-                <td>${esc([u.firstName, u.lastName].filter(Boolean).join(' '))}</td>
-                <td>${esc(u.email)}</td>
-                <td>${u.role === 'ADMIN' ? 'Administrador' : 'Usuário'}</td>
-                <td>${u.enabled ? 'Ativa' : "<span class='text-danger'>Desativada</span>"}</td>
-                <td class='text-end text-nowrap'>
-                  <button class='btn btn-sm btn-outline-primary' onclick='openUserModal(${u.id})'>Editar</button>
-                  ${me ? '' : `<button class='btn btn-sm btn-outline-danger' onclick='deleteUser(${u.id})'>Excluir</button>`}
+            const name = [u.firstName, u.lastName].filter(Boolean).join(' ');
+            html += `<tr><td class='px-3'><div class='d-flex align-items-center gap-2'>
+                  <span class='ss-avatar'>${esc(initials(u))}</span>
+                  <div><div class='fw-semibold'>${esc(name || u.login)}${me ? " <span class='badge rounded-pill ss-chip ms-1'>você</span>" : ''}</div>
+                  <div class='small ss-muted'>${esc(u.login)}</div></div></div></td>
+                <td class='small'>${esc(u.email) || "<span class='ss-muted'>—</span>"}</td>
+                <td>${u.role === 'ADMIN' ? "<span class='badge rounded-pill text-bg-primary'><i class='bi bi-shield-check me-1'></i>Administrador</span>" : "<span class='badge rounded-pill ss-chip'>Usuário</span>"}</td>
+                <td>${u.enabled ? "<span class='small'><span class='ss-status-dot online me-1'></span>Ativa</span>" : "<span class='small text-danger'><i class='bi bi-slash-circle me-1'></i>Desativada</span>"}</td>
+                <td class='text-end text-nowrap pe-3'>
+                  <button class='btn btn-sm btn-outline-secondary' onclick='openUserModal(${u.id})' title='Editar'><i class='bi bi-pencil'></i></button>
+                  ${me ? '' : `<button class='btn btn-sm btn-outline-danger' onclick='deleteUser(${u.id})' title='Excluir'><i class='bi bi-trash'></i></button>`}
                 </td></tr>`;
         }
-        div.innerHTML = html + '</tbody></table>';
+        div.innerHTML = html + '</tbody></table></div>';
     } catch (e) {
         div.innerHTML = `<div class='alert alert-danger'>${esc(e.message)}</div>`;
     }
@@ -61,6 +65,7 @@ async function saveUser() {
             await api('/user', { method: 'POST', body: body });
         }
         bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+        toast(id ? 'Usuário atualizado.' : 'Usuário criado.');
         loadUsers();
     } catch (e) {
         document.getElementById('uMsg').textContent = e.message;
@@ -72,10 +77,11 @@ async function deleteUser(id) {
     if (!confirm(`Excluir o usuário ${u.login}?`)) return;
     try {
         await api('/user/' + id, { method: 'DELETE' });
+        toast('Usuário excluído.');
         loadUsers();
     } catch (e) {
-        alert(e.message);
+        toast(e.message, 'danger');
     }
 }
 
-loadCurrentUser().then(loadUsers);
+loadCurrentUser('users').then(loadUsers);

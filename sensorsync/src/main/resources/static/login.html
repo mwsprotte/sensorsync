@@ -4,35 +4,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SensorSync - Entrar</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <link rel="icon" type="image/png" href="img/logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
 </head>
-<body class="bg-body-tertiary">
-<div class="container" style="max-width: 420px;">
-    <div class="text-center mt-5 mb-4">
-        <img src="img/if_logo.png" alt="Logo" width="72" height="72">
-        <h1 class="h4 mt-3">SensorSync - IFSC Rau</h1>
+<body class="d-flex align-items-center min-vh-100">
+<main class="container" style="max-width: 400px;">
+    <div class="text-center mb-4">
+        <span class="ss-brand-mark mb-3" style="width:56px;height:56px;font-size:1.8rem;border-radius:16px"><i class="bi bi-speedometer2"></i></span>
+        <h1 class="h4 fw-semibold mb-1">SensorSync</h1>
+        <p class="ss-muted small mb-0">Plataforma IoT · IFSC Jaraguá do Sul - Rau</p>
     </div>
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
-            <div id="loginError" class="alert alert-danger d-none" role="alert">Login ou senha incorretos.</div>
-            <div id="loginOut" class="alert alert-success d-none" role="alert">Você saiu da plataforma.</div>
-            <form method="post" action="/login">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Login</label>
-                    <input type="text" class="form-control" id="username" name="username" autocomplete="username" required autofocus>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Senha</label>
-                    <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Entrar</button>
-            </form>
-        </div>
+    <div class="ss-card p-4">
+        <div id="loginError" class="alert alert-danger d-none py-2 small" role="alert"><i class="bi bi-exclamation-circle me-1"></i>Login ou senha incorretos.</div>
+        <form method="post" action="/login">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="username" name="username" placeholder="login" autocomplete="username" required autofocus>
+                <label for="username">Login</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password" name="password" placeholder="senha" autocomplete="current-password" required>
+                <label for="password">Senha</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>
+        </form>
     </div>
-    <p class="text-center text-body-secondary small mt-3">Sem acesso? Peça uma conta ao administrador do laboratório.</p>
-</div>
+    <p class="text-center ss-muted small mt-3">Sem acesso? Peça uma conta ao administrador do laboratório.</p>
+</main>
 <script src="scripts/login.js"></script>
 </body>
 </html>

@@ -13,15 +13,18 @@ function loadDataInput() {
     if (previous.length === dataNumber) return;  // nada mudou: nao recria os campos
     let cards = "";
     for (let index = 0; index < dataNumber; index++) {
-        const ref = index + 1;
-        const prev = previous[index] || { desc: 'Dado ' + ref, card: true, chart: true };
-        cards +=
-            "<div class='col-md-12'><p class='text-center fw-semibold'>Dado " + ref + "</p></div>" +
-            "<div class='col-md-6'><label class='form-label' for='cardDesc" + index + "'>Descrição</label><input type='text' class='form-control' maxlength='254' id='cardDesc" + index + "' value='" + esc(prev.desc) + "'></div>" +
-            "<div class='col-md-6'><br>" +
-            "<div class='form-check form-check-inline'><input class='form-check-input' type='checkbox' id='useCard" + index + "' " + (prev.card ? 'checked' : '') + "><label class='form-check-label' for='useCard" + index + "'>Card</label></div>" +
-            "<div class='form-check form-check-inline'><input class='form-check-input' type='checkbox' id='useChart" + index + "' " + (prev.chart ? 'checked' : '') + "><label class='form-check-label' for='useChart" + index + "'>Gráfico</label></div>" +
-            "</div><div><hr></div>";
+        const prev = previous[index] || { desc: 'Dado ' + (index + 1), card: true, chart: true };
+        cards += `<div class="ss-var-row d-flex flex-wrap align-items-center gap-3">
+            <span class="badge rounded-pill ss-chip" title="Índice no código">${index}</span>
+            <input type="text" class="form-control flex-grow-1" style="min-width: 180px; width: auto;" maxlength="254"
+                   id="cardDesc${index}" value="${esc(prev.desc)}" aria-label="Nome da variável ${index + 1}">
+            <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch" id="useCard${index}" ${prev.card ? 'checked' : ''}>
+                <label class="form-check-label small" for="useCard${index}">Card</label></div>
+            <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch" id="useChart${index}" ${prev.chart ? 'checked' : ''}>
+                <label class="form-check-label small" for="useChart${index}">Gráfico</label></div>
+        </div>`;
     }
     document.getElementById('cardsSet').innerHTML = cards;
 }
@@ -35,7 +38,9 @@ function selected(name) {
 async function saveProject() {
     const name = document.getElementById('projetctName').value.trim();
     if (!name) {
-        alert("Insira um nome para o projeto!");
+        document.getElementById('projetctName').classList.add('is-invalid');
+        document.getElementById('projetctName').focus();
+        toast('Informe um nome para o projeto.', 'warning');
         return;
     }
     const dataNumber = parseInt(document.getElementById('dataNumber').value);
@@ -66,9 +71,12 @@ async function saveProject() {
         });
         window.location.href = './code.html?' + params.toString();
     } catch (e) {
-        alert('Não foi possível criar o projeto: ' + e.message);
+        toast('Não foi possível criar o projeto: ' + e.message, 'danger');
         btn.disabled = false;
     }
 }
 
-loadCurrentUser();
+document.getElementById('projetctName').addEventListener('input', e => e.target.classList.remove('is-invalid'));
+document.getElementById('dataNumber').addEventListener('input', loadDataInput);
+loadDataInput();
+loadCurrentUser('create');

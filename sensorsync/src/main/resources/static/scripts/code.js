@@ -6,7 +6,7 @@ const projectId = queryParam('id');
 let devices = [];
 
 async function init() {
-    await loadCurrentUser();
+    await loadCurrentUser('home');
     if (!projectId) {
         document.getElementById('codeGenerated').innerHTML = "<div class='alert alert-warning'>Projeto não informado.</div>";
         return;
@@ -17,7 +17,7 @@ async function init() {
 
     try {
         const project = await api('/project/' + projectId);
-        document.getElementById('codeTitle').textContent = 'Código embarcado - ' + project.name;
+        document.getElementById('codeTitle').textContent = 'Código embarcado · ' + project.name;
         devices = await api('/project/' + projectId + '/devices');
     } catch (e) {
         document.getElementById('codeGenerated').innerHTML = `<div class='alert alert-danger'>${esc(e.message)}</div>`;
@@ -39,16 +39,18 @@ function renderTokens() {
     const fresh = devices.map(d => ({ d, token: recallToken(d.id) })).filter(x => x.token);
     const box = document.getElementById('tokensBox');
     if (fresh.length === 0) {
-        box.innerHTML = `<div class='alert alert-secondary small'>O código sai com o marcador <code>${TOKEN_PLACEHOLDER}</code>.
-            Gere ou copie o token do dispositivo na tela <a href='dashboard.html?id=${encodeURIComponent(projectId)}'>Dispositivos</a> do dashboard.</div>`;
+        box.innerHTML = `<div class='alert alert-secondary small d-flex gap-2'><i class='bi bi-info-circle'></i><div>O código sai com o marcador <code>${TOKEN_PLACEHOLDER}</code>.
+            Gere o token do dispositivo em <a href='dashboard.html?id=${encodeURIComponent(projectId)}'>Dashboard › Dispositivos</a> e use o botão "Código com este token".</div></div>`;
         return;
     }
-    let rows = fresh.map(x => `<tr><td>${esc(x.d.name)}</td><td><code>${esc(x.token)}</code></td>
-        <td><button class='btn btn-sm btn-outline-secondary' onclick='copyText(${JSON.stringify(x.token)})'>Copiar</button></td></tr>`).join('');
-    box.innerHTML = `<div class='alert alert-warning'>
-        <strong>Guarde estes tokens agora.</strong> Por segurança o servidor não guarda o token em si; depois de fechar esta aba
-        só é possível gerar um novo (o antigo deixa de funcionar).
-        <table class='table table-sm mt-2 mb-0'><tbody>${rows}</tbody></table></div>`;
+    let rows = fresh.map(x => `<div class='input-group input-group-sm mt-2'>
+        <span class='input-group-text' style='min-width: 140px'>${esc(x.d.name)}</span>
+        <input class='form-control font-monospace' readonly value='${esc(x.token)}'>
+        <button class='btn btn-outline-secondary' onclick='copyText(${JSON.stringify(x.token)}); toast("Token copiado.")'><i class='bi bi-clipboard'></i></button></div>`).join('');
+    box.innerHTML = `<div class='alert alert-warning mb-4'>
+        <div class='fw-semibold'><i class='bi bi-shield-lock me-1'></i>Guarde estes tokens agora</div>
+        <div class='small'>O servidor guarda só o hash do token. Depois de fechar esta aba, só é possível gerar um novo (o antigo deixa de funcionar).</div>
+        ${rows}</div>`;
 }
 
 async function generateCode() {
@@ -66,14 +68,14 @@ async function generateCode() {
         files.forEach((f, i) => {
             const code = token ? f.code.replaceAll(TOKEN_PLACEHOLDER, token) : f.code;
             const card = document.createElement('div');
-            card.className = 'card mb-4';
-            card.innerHTML = `<div class='card-header d-flex justify-content-between align-items-center'>
-                <span class='fw-semibold'>${esc(f.title)} <span class='text-body-secondary small'>${esc(f.fileName)}</span></span>
-                <span><button class='btn btn-sm btn-outline-secondary' data-act='copy'>Copiar</button>
-                <button class='btn btn-sm btn-outline-primary' data-act='download'>Baixar .ino</button></span></div>
-                <pre class='mb-0 p-3' style='max-height: 70vh; overflow: auto;'><code></code></pre>`;
+            card.className = 'ss-card mb-4';
+            card.innerHTML = `<div class='d-flex flex-wrap justify-content-between align-items-center gap-2 px-3 py-2 border-bottom'>
+                <span class='fw-semibold'><i class='bi bi-file-earmark-code me-1'></i>${esc(f.title)} <span class='ss-muted small fw-normal'>${esc(f.fileName)}</span></span>
+                <span class='d-flex gap-2'><button class='btn btn-sm btn-outline-secondary' data-act='copy'><i class='bi bi-clipboard me-1'></i>Copiar</button>
+                <button class='btn btn-sm btn-primary' data-act='download'><i class='bi bi-download me-1'></i>Baixar .ino</button></span></div>
+                <pre class='ss-code mb-0 p-3'><code></code></pre>`;
             card.querySelector('code').textContent = code;
-            card.querySelector("[data-act='copy']").onclick = () => copyText(code);
+            card.querySelector("[data-act='copy']").onclick = () => { copyText(code); toast('Código copiado.'); };
             card.querySelector("[data-act='download']").onclick = () => downloadText(f.fileName, code);
             target.appendChild(card);
         });

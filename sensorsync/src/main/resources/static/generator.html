@@ -1,143 +1,99 @@
 <!doctype html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SensorSync</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <title>SensorSync - Novo projeto</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
-
-
 </head>
+<body>
+<nav id="appNav"></nav>
 
-<body onload="loadDataInput()">
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-semibold" href="#" id="genereteTitle">
-            <img src='./img/if_logo.png' alt='Logo' width='60' height='60'
-                 class='d-inline-block align-text-mid'>
-            SensorSync - Crie o seu projeto
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
-                <!-- <a class="nav-link" href="#">Criar</a>
-            <a class="nav-link" href="#">Dashboard</a> -->
-                <!-- <a class="nav-link" aria-disabled="true" href="#">Opções</a> -->
-                <!--                <a class="nav-link" aria-disabled="true" href="#">Sobre</a>-->
-<!--                <a class="nav-link" aria-disabled="true" href="#">Documentação Avançada (Swagger)</a>-->
-                <a class="nav-link" href="index.html">Voltar</a>
-            </div>
-            <div class="navbar-nav ms-auto" id="userMenu"></div>
-        </div>
+<main class="container-xl">
+    <div class="ss-page-header">
+        <a href="index.html" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Projetos</a>
+        <h1 class="mt-1">Novo projeto</h1>
+        <p class="ss-muted mb-0">Defina o que será medido. A plataforma cria o dashboard, os tokens dos dispositivos e o código do microcontrolador.</p>
     </div>
-</nav>
-<br>
 
-
-<div class="container-lg" id="">
-
-    <div class="row g-5">
-
-
-        <div class='col-sm-6'>
-
-            <div class="mx-auto p-2">
-                <form class="row g-3">
-                    <div class="col-md-12">
-                        <label class="form-label">Nome do projeto:</label>
-                        <input type="text" class="form-control" id="projetctName" maxlength="254">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="sensorNumber">Quantidade de dispositivos:</label>
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <section class="ss-card p-4 mb-4">
+                <h2 class="h6 fw-semibold mb-3"><span class="badge rounded-pill text-bg-primary me-2">1</span>Projeto</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="projetctName">Nome do projeto</label>
+                    <input type="text" class="form-control" id="projetctName" maxlength="254" placeholder="Ex.: Estufa do laboratório">
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label" for="sensorNumber">Dispositivos</label>
                         <input type="number" step="1" min="1" max="50" class="form-control" id="sensorNumber" value="1">
+                        <div class="form-text">Placas que enviam as mesmas variáveis.</div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="dataNumber" class="form-label">Quantidade de dados:</label>
-                        <input type="number" step="1" max="20" min="1" class="form-control" id="dataNumber"
-                               value="1">
+                    <div class="col-6">
+                        <label class="form-label" for="dataNumber">Variáveis</label>
+                        <input type="number" step="1" min="1" max="20" class="form-control" id="dataNumber" value="1">
+                        <div class="form-text">Até 20 por dispositivo.</div>
                     </div>
-                    <div class="col-md-12">
-                        <hr>
-                        <p>Dispositivo de conexão:</p>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="deviceSelector" id="ESP8266device"
-                                   value="ESP8266" checked>
-                            <label class="form-check-label" for="ESP8266device">
-                                ESP8266
-                            </label>
-                        </div>
-                        <br>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="deviceSelector" id="ESP32Device"
-                                   value="ESP32">
-                            <label class="form-check-label" for="ESP32Device">
-                                ESP32
-                            </label>
-                        </div>
-                        <br>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="deviceSelector" id="ArduinoDevice"
-                                   value="ARDUINO_ESP8266">
-                            <label class="form-check-label" for="ArduinoDevice">
-                                ESP8266 + Arduino
-                            </label>
-                        </div>
+                </div>
+            </section>
 
-                        <br>
-                        <hr>
-                        <p>Protocolo para envio dos dados:</p>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="protocolSelector" id="HTTPSelect"
-                                   value="HTTP" checked>
-                            <label class="form-check-label" for="HTTPSelect">
-                                HTTP
-                            </label>
-                        </div>
-                        <br>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="protocolSelector" id="MQTTSelect"
-                                   value="MQTT">
-                            <label class="form-check-label" for="MQTTSelect">
-                                MQTT
-                            </label>
-                        </div>
+            <section class="ss-card p-4">
+                <h2 class="h6 fw-semibold mb-3"><span class="badge rounded-pill text-bg-primary me-2">2</span>Placa e protocolo</h2>
+                <p class="small ss-muted mb-2">Placa</p>
+                <div class="row g-2 mb-3">
+                    <div class="col-4">
+                        <input type="radio" class="btn-check" name="deviceSelector" id="ESP8266device" value="ESP8266" checked>
+                        <label class="ss-option border rounded-3 p-2 text-center w-100 h-100" for="ESP8266device">
+                            <i class="bi bi-cpu d-block fs-4"></i><span class="small fw-semibold">ESP8266</span></label>
                     </div>
-
-                </form>
-            </div>
-
+                    <div class="col-4">
+                        <input type="radio" class="btn-check" name="deviceSelector" id="ESP32Device" value="ESP32">
+                        <label class="ss-option border rounded-3 p-2 text-center w-100 h-100" for="ESP32Device">
+                            <i class="bi bi-cpu-fill d-block fs-4"></i><span class="small fw-semibold">ESP32</span></label>
+                    </div>
+                    <div class="col-4">
+                        <input type="radio" class="btn-check" name="deviceSelector" id="ArduinoDevice" value="ARDUINO_ESP8266">
+                        <label class="ss-option border rounded-3 p-2 text-center w-100 h-100" for="ArduinoDevice">
+                            <i class="bi bi-motherboard d-block fs-4"></i><span class="small fw-semibold">Arduino + ESP8266</span></label>
+                    </div>
+                </div>
+                <p class="small ss-muted mb-2">Protocolo</p>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <input type="radio" class="btn-check" name="protocolSelector" id="HTTPSelect" value="HTTP" checked>
+                        <label class="ss-option border rounded-3 p-2 w-100 h-100" for="HTTPSelect">
+                            <span class="fw-semibold small">HTTP</span><br><span class="small ss-muted">Simples, menos recurso no servidor</span></label>
+                    </div>
+                    <div class="col-6">
+                        <input type="radio" class="btn-check" name="protocolSelector" id="MQTTSelect" value="MQTT">
+                        <label class="ss-option border rounded-3 p-2 w-100 h-100" for="MQTTSelect">
+                            <span class="fw-semibold small">MQTT</span><br><span class="small ss-muted">Menor latência, conexão contínua</span></label>
+                    </div>
+                </div>
+            </section>
         </div>
 
-        <div class='col-sm-6'>
-
-            <div>
-                <br>
-                <br>
-            </div>
-
-
-            <div id="cardsSet" class="overflow-auto border rounded-3 row g-3 shadow-sm " style="max-height: 500px;">
-
-            </div>
+        <div class="col-lg-7">
+            <section class="ss-card p-4 h-100 d-flex flex-column">
+                <h2 class="h6 fw-semibold mb-1"><span class="badge rounded-pill text-bg-primary me-2">3</span>Variáveis</h2>
+                <p class="small ss-muted">A ordem define o índice usado no código (<code>setValue(0, ...)</code> é a primeira).</p>
+                <div id="cardsSet" class="d-flex flex-column gap-2 overflow-auto" style="max-height: 460px;"></div>
+                <div class="d-flex justify-content-end gap-2 mt-auto pt-4">
+                    <a href="index.html" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="button" class="btn btn-primary px-4" id="createBtn" onclick="saveProject()">
+                        <i class="bi bi-check2 me-1"></i>Criar projeto</button>
+                </div>
+            </section>
         </div>
-
     </div>
+</main>
 
-    <hr>
-
-    <div class="col-12 text-center">
-        <button type="button" class="btn btn-primary" id="createBtn" onclick="saveProject()">Criar</button>
-    </div>
-
-</div>
+<footer id="appFooter"></footer>
 
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
 <script src="scripts/app.js"></script>

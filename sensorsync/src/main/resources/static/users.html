@@ -4,31 +4,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SensorSync - Usuários</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <link rel="icon" type="image/png" href="img/logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-semibold" href="index.html">
-            <img src='./img/if_logo.png' alt='Logo' width='60' height='60' class='d-inline-block align-text-mid'>
-            Usuários
-        </a>
-        <div class="navbar-nav me-auto"><a class="nav-link" href="index.html">Voltar</a></div>
-        <div class="navbar-nav" id="userMenu"></div>
-    </div>
-</nav>
+<nav id="appNav"></nav>
 
-<div class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="h4 mb-0">Contas da plataforma</h1>
-        <button class="btn btn-primary" onclick="openUserModal()">Novo usuário</button>
+<main class="container-xl">
+    <div class="ss-page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <h1>Usuários</h1>
+            <p class="ss-muted mb-0 small">Usuários comuns veem e gerenciam só os próprios projetos. Administradores veem todos e gerenciam contas.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openUserModal()"><i class="bi bi-person-plus me-1"></i>Novo usuário</button>
     </div>
-    <p class="small text-body-secondary">Usuários comuns veem e gerenciam apenas os próprios projetos.
-        Administradores veem todos os projetos e gerenciam contas.</p>
-    <div id="usersList"></div>
-</div>
+    <section class="ss-card overflow-hidden"><div id="usersList"></div></section>
+</main>
+
+<footer id="appFooter"></footer>
 
 <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalTitle" aria-hidden="true">
     <div class="modal-dialog">

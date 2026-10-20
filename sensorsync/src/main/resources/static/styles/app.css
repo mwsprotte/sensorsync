@@ -1,0 +1,237 @@
+/* SensorSync - ajustes visuais sobre o Bootstrap 5.3 */
+
+:root,
+[data-bs-theme=light] {
+    --ss-green: #2b8a3e;
+    --ss-green-rgb: 43, 138, 62;
+    --ss-green-dark: #22702f;
+    --bs-primary: var(--ss-green);
+    --bs-primary-rgb: var(--ss-green-rgb);
+    --bs-link-color: var(--ss-green);
+    --bs-link-color-rgb: var(--ss-green-rgb);
+    --bs-link-hover-color: var(--ss-green-dark);
+    --ss-page-bg: #f4f6f5;
+    --ss-surface: #ffffff;
+}
+
+[data-bs-theme=dark] {
+    --ss-green: #40c057;
+    --ss-green-rgb: 64, 192, 87;
+    --ss-green-dark: #37b24d;
+    --bs-primary: var(--ss-green);
+    --bs-primary-rgb: var(--ss-green-rgb);
+    --bs-link-color: var(--ss-green);
+    --bs-link-color-rgb: var(--ss-green-rgb);
+    --bs-link-hover-color: #69db7c;
+    --bs-body-bg: #111614;
+    --bs-body-bg-rgb: 17, 22, 20;
+    --ss-page-bg: #111614;
+    --bs-secondary-bg: #222b28;
+    --bs-tertiary-bg: #1a211f;
+    --bs-border-color: #2c3633;
+    --ss-surface: #182019;
+}
+
+body {
+    background-color: var(--ss-page-bg);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--ss-green);
+    --bs-btn-border-color: var(--ss-green);
+    --bs-btn-hover-bg: var(--ss-green-dark);
+    --bs-btn-hover-border-color: var(--ss-green-dark);
+    --bs-btn-active-bg: var(--ss-green-dark);
+    --bs-btn-active-border-color: var(--ss-green-dark);
+    --bs-btn-disabled-bg: var(--ss-green);
+    --bs-btn-disabled-border-color: var(--ss-green);
+}
+
+[data-bs-theme=dark] .btn-primary {
+    --bs-btn-color: #0b1f10;
+    --bs-btn-hover-color: #0b1f10;
+    --bs-btn-active-color: #0b1f10;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--ss-green);
+    --bs-btn-border-color: var(--ss-green);
+    --bs-btn-hover-bg: var(--ss-green);
+    --bs-btn-hover-border-color: var(--ss-green);
+    --bs-btn-active-bg: var(--ss-green-dark);
+    --bs-btn-active-border-color: var(--ss-green-dark);
+}
+
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+    border-color: rgba(var(--ss-green-rgb), .6);
+    box-shadow: 0 0 0 .25rem rgba(var(--ss-green-rgb), .2);
+}
+
+.form-check-input:checked {
+    background-color: var(--ss-green);
+    border-color: var(--ss-green);
+}
+
+/* Navbar */
+.ss-navbar {
+    background: var(--ss-surface);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.ss-brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--ss-green-rgb), .12);
+    color: var(--ss-green);
+    font-size: 1.15rem;
+}
+
+.ss-navbar .nav-link.active {
+    color: var(--ss-green);
+    font-weight: 600;
+}
+
+/* Superficies */
+.ss-card {
+    background: var(--ss-surface);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+}
+
+.ss-page-header {
+    padding: 1.5rem 0 1rem;
+}
+
+.ss-page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.ss-muted {
+    color: var(--bs-secondary-color);
+}
+
+.ss-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--ss-green-rgb), .12);
+    color: var(--ss-green);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* Cards de projeto na tela inicial */
+.ss-project {
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+
+.ss-project:hover {
+    box-shadow: 0 .5rem 1.25rem rgba(0, 0, 0, .08);
+    transform: translateY(-1px);
+}
+
+.ss-project .stretched-link::after {
+    z-index: 0;
+}
+
+.ss-project .dropdown {
+    position: relative;
+    z-index: 2;
+}
+
+/* KPIs do dashboard */
+.ss-kpi-value {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.ss-status-dot {
+    width: .6rem;
+    height: .6rem;
+    border-radius: 50%;
+    display: inline-block;
+    background: var(--bs-secondary-color);
+}
+
+.ss-status-dot.online {
+    background: #2f9e44;
+    box-shadow: 0 0 0 3px rgba(47, 158, 68, .2);
+}
+
+.ss-status-dot.idle {
+    background: #f08c00;
+}
+
+/* Bloco de codigo */
+.ss-code {
+    background: #0b110e;
+    color: #d3e4da;
+    border-radius: 0 0 1rem 1rem;
+    font-size: .85rem;
+    max-height: 70vh;
+    overflow: auto;
+}
+
+/* Variaveis no gerador */
+.ss-var-row {
+    border: 1px solid var(--bs-border-color);
+    border-radius: .75rem;
+    padding: .75rem;
+    background: var(--ss-page-bg);
+}
+
+.ss-option {
+    cursor: pointer;
+}
+
+.btn-check:checked + .ss-option {
+    border-color: var(--ss-green) !important;
+    background: rgba(var(--ss-green-rgb), .08);
+    box-shadow: 0 0 0 1px var(--ss-green);
+}
+
+/* Avatar com iniciais */
+.ss-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--ss-green-rgb), .15);
+    color: var(--ss-green);
+    font-weight: 600;
+    font-size: .85rem;
+    flex-shrink: 0;
+}
+
+.table-sticky thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--ss-surface);
+}
+
+.ss-footer {
+    color: var(--bs-secondary-color);
+    font-size: .85rem;
+}
+
+.ss-chip {
+    background: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    font-weight: 500;
+}

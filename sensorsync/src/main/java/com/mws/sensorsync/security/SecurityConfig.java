@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login.html", "/login", "/error",
                                 "/img/**", "/scripts/imports/**", "/scripts/dark_mode.js", "/scripts/login.js",
+                                "/vendor/**", "/styles/**",
                                 "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/ingest", "/data/saveList").permitAll()
                         .requestMatchers("/user/**", "/users.html", "/scripts/users.js").hasRole("ADMIN")

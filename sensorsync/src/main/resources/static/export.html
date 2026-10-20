@@ -4,23 +4,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SensorSync - Relatório</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <link rel="icon" type="image/png" href="img/logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
 </head>
 <body>
-<div class="container my-4">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0" id="reportTitle">Relatório de dados</h1>
+<nav id="appNav"></nav>
+
+<main class="container-xl">
+    <div class="ss-page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <a class="small text-decoration-none" id="backLink" href="index.html"><i class="bi bi-arrow-left"></i> Dashboard</a>
+            <h1 class="mt-1" id="reportTitle">Relatório</h1>
+            <div class="small ss-muted" id="reportInfo">&nbsp;</div>
+        </div>
         <div class="d-flex gap-2">
-            <select class="form-select w-auto" id="deviceSelected" aria-label="Dispositivo"></select>
-            <button class="btn btn-primary" onclick="downloadCsv()">Baixar CSV</button>
+            <select class="form-select" style="width: auto; min-width: 180px;" id="deviceSelected" aria-label="Dispositivo"></select>
+            <button class="btn btn-primary text-nowrap" onclick="downloadCsv()"><i class="bi bi-filetype-csv me-1"></i>Baixar CSV</button>
         </div>
     </div>
-    <div id="tableDataDiv">
-        <div class="text-center my-5"><div class="spinner-border" style="width: 5rem; height: 5rem;" role="status"></div></div>
-    </div>
-</div>
+    <section class="ss-card overflow-hidden">
+        <div id="tableDataDiv">
+            <div class="d-flex justify-content-center py-5"><div class="spinner-border text-success" role="status"></div></div>
+        </div>
+    </section>
+</main>
+
+<footer id="appFooter"></footer>
+
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
 <script src="scripts/app.js"></script>
 <script src="scripts/export.js"></script>

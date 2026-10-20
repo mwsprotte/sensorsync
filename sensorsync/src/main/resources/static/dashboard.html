@@ -4,100 +4,82 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SensorSync - Dashboard</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <link rel="icon" type="image/png" href="img/logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
     <script src="scripts/imports/chart.js"></script>
 </head>
-
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-semibold" href="index.html" id="projectTitle">...</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav me-auto align-items-lg-center gap-2">
-                <div id="deviceSelector"><select id="deviceSelected" class="form-select" aria-label="Dispositivo"></select></div>
-                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#devicesModal" onclick="loadDevices()">Dispositivos</a>
-                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#optionsModal">Opções</a>
-                <a class="nav-link" href="index.html">Fechar projeto</a>
-            </div>
-            <div class="navbar-nav" id="userMenu"></div>
+<nav id="appNav"></nav>
+
+<main class="container-xl">
+    <div class="ss-page-header d-flex flex-wrap align-items-end justify-content-between gap-3">
+        <div class="min-w-0">
+            <a href="index.html" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Projetos</a>
+            <h1 class="mt-1 text-truncate" id="projectTitle">...</h1>
+            <div class="small ss-muted d-flex align-items-center gap-2" id="deviceStatus">&nbsp;</div>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <select id="deviceSelected" class="form-select" style="width: auto; min-width: 180px;" aria-label="Dispositivo"></select>
+            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#devicesModal" onclick="loadDevices()">
+                <i class="bi bi-cpu me-1"></i>Dispositivos</button>
+            <a class="btn btn-outline-secondary" id="codeLink" href="#"><i class="bi bi-code-slash me-1"></i>Código</a>
+            <a class="btn btn-outline-secondary" id="exportLink" href="#"><i class="bi bi-table me-1"></i>Relatório</a>
         </div>
     </div>
-</nav>
-<br>
 
-<div class="container" id="dataCards">
-    <div class="d-flex justify-content-center">
-        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-            <span class="visually-hidden">Carregando...</span>
+    <div class="row g-3" id="dataCards">
+        <div class="col-12">
+            <div class="d-flex justify-content-center py-5"><div class="spinner-border text-success" role="status"></div></div>
         </div>
     </div>
-</div>
 
-<br>
-<div class="container"><hr></div>
-<br>
-<div class="container-xxl">
-    <div style="position: relative; height: 500px;">
-        <canvas id="dataChart"></canvas>
-    </div>
-</div>
-
-<br><br><hr>
-<footer class="text-center">
-    <div class="text-center p-3">IFSC RAU | SensorSync - Plataforma IoT self-hosted e multiprotocolo</div>
-</footer>
-<br>
-
-<!-- Opcoes de visualizacao -->
-<div class="modal fade" id="optionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-     aria-labelledby="optionsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="optionsModalLabel">Ajustes</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="setTimeOff" checked>
-                    <label class="form-check-label" for="setTimeOff">Atualização automática dos dados</label>
+    <section class="ss-card p-3 p-md-4 mt-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            <h2 class="h6 fw-semibold mb-0"><i class="bi bi-graph-up me-2"></i>Histórico</h2>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Quantidade de pontos" id="lengthGroup">
+                    <input type="radio" class="btn-check" name="len" id="len20" value="20"><label class="btn btn-outline-primary" for="len20">20</label>
+                    <input type="radio" class="btn-check" name="len" id="len50" value="50"><label class="btn btn-outline-primary" for="len50">50</label>
+                    <input type="radio" class="btn-check" name="len" id="len100" value="100"><label class="btn btn-outline-primary" for="len100">100</label>
+                    <input type="radio" class="btn-check" name="len" id="len500" value="500"><label class="btn btn-outline-primary" for="len500">500</label>
                 </div>
-                <hr>
-                <label for="length">Quantidade de pontos nos gráficos</label>
-                <input type="number" class="form-control mt-2" id="length" name="length" min="3" max="1000" value="20">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="updateViews()">Aplicar</button>
-                <a class="btn btn-success" id="codeLink" href="#">Gerar microcódigo</a>
-                <a class="btn btn-success" id="exportLink" href="#" target="_blank">Gerar relatório</a>
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" id="setTimeOff" checked>
+                    <label class="form-check-label small" for="setTimeOff">Tempo real</label>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+        <div style="position: relative; height: 420px;">
+            <canvas id="dataChart"></canvas>
+        </div>
+        <p class="small ss-muted mb-0 mt-2 d-none" id="noChart">Nenhuma variável marcada como gráfico neste projeto.</p>
+    </section>
+</main>
+
+<footer id="appFooter"></footer>
 
 <!-- Dispositivos do projeto -->
 <div class="modal fade" id="devicesModal" tabindex="-1" aria-labelledby="devicesModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="devicesModalLabel">Dispositivos do projeto</h1>
+                <h1 class="modal-title fs-5" id="devicesModalLabel"><i class="bi bi-cpu me-2"></i>Dispositivos do projeto</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                <p class="small text-body-secondary">Cada dispositivo usa o seu próprio token e só consegue gravar dados neste projeto.
-                    O token é exibido uma única vez; se perder, gere um novo (o anterior para de funcionar).</p>
+                <p class="small ss-muted">Cada dispositivo usa o próprio token e só consegue gravar neste projeto.
+                    O token aparece uma única vez; se perder, gere outro (o anterior para de funcionar).</p>
                 <div id="newTokenBox"></div>
                 <div id="devicesList"></div>
             </div>
             <div class="modal-footer">
-                <input type="text" class="form-control w-auto" id="newDeviceName" placeholder="Nome do novo dispositivo" maxlength="254">
-                <button type="button" class="btn btn-primary" onclick="addDevice()">Adicionar dispositivo</button>
+                <div class="input-group" style="max-width: 420px;">
+                    <input type="text" class="form-control" id="newDeviceName" placeholder="Nome do novo dispositivo" maxlength="254">
+                    <button type="button" class="btn btn-primary" onclick="addDevice()"><i class="bi bi-plus-lg me-1"></i>Adicionar</button>
+                </div>
             </div>
         </div>
     </div>

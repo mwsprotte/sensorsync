@@ -4,56 +4,65 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SensorSync - Código embarcado</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <link rel="icon" type="image/png" href="img/logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-semibold" href="index.html">
-            <img src='./img/if_logo.png' alt='Logo' width='60' height='60' class='d-inline-block align-text-mid'>
-            <span id="codeTitle">Código do sistema embarcado</span>
-        </a>
-        <div class="navbar-nav me-auto">
-            <a class="nav-link" id="dashboardLink" href="#">Abrir dashboard</a>
-        </div>
-        <div class="navbar-nav" id="userMenu"></div>
-    </div>
-</nav>
+<nav id="appNav"></nav>
 
-<div class="container my-4">
+<main class="container-xl">
+    <div class="ss-page-header">
+        <a class="small text-decoration-none" id="dashboardLink" href="#"><i class="bi bi-arrow-left"></i> Dashboard</a>
+        <h1 class="mt-1" id="codeTitle">Código embarcado</h1>
+    </div>
+
     <div id="tokensBox"></div>
 
-    <div class="row g-3 align-items-end mb-3">
-        <div class="col-md-4">
-            <label class="form-label" for="board">Placa</label>
-            <select class="form-select" id="board">
-                <option value="ESP8266">ESP8266</option>
-                <option value="ESP32">ESP32</option>
-                <option value="ARDUINO_ESP8266">Arduino + ESP8266</option>
-            </select>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <section class="ss-card p-4 mb-4">
+                <h2 class="h6 fw-semibold mb-3"><i class="bi bi-sliders me-2"></i>Opções</h2>
+                <div class="mb-3">
+                    <label class="form-label small" for="board">Placa</label>
+                    <select class="form-select" id="board">
+                        <option value="ESP8266">ESP8266</option>
+                        <option value="ESP32">ESP32</option>
+                        <option value="ARDUINO_ESP8266">Arduino + ESP8266</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small" for="protocol">Protocolo</label>
+                    <select class="form-select" id="protocol">
+                        <option value="HTTP">HTTP</option>
+                        <option value="MQTT">MQTT</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label small" for="device">Dispositivo</label>
+                    <select class="form-select" id="device"></select>
+                </div>
+            </section>
+
+            <section class="ss-card p-4">
+                <h2 class="h6 fw-semibold mb-3"><i class="bi bi-list-check me-2"></i>Como gravar</h2>
+                <ol class="small ps-3 mb-0 d-flex flex-column gap-2">
+                    <li>Na IDE Arduino, instale a biblioteca <strong>SensorSync</strong> em <em>Ferramentas › Gerenciar Bibliotecas</em>. A PubSubClient vem junto.</li>
+                    <li>Baixe o <code>.ino</code> ao lado e preencha <code>WIFI_SSID</code> e <code>WIFI_PASSWORD</code>. O ESP só conecta em redes de 2,4 GHz.</li>
+                    <li>Substitua os <code>random()</code> pelas leituras dos sensores.</li>
+                    <li>Grave a placa e acompanhe pelo Monitor Serial (115200).</li>
+                </ol>
+            </section>
         </div>
-        <div class="col-md-4">
-            <label class="form-label" for="protocol">Protocolo</label>
-            <select class="form-select" id="protocol">
-                <option value="HTTP">HTTP</option>
-                <option value="MQTT">MQTT</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label" for="device">Dispositivo</label>
-            <select class="form-select" id="device"></select>
+        <div class="col-lg-8">
+            <div id="codeGenerated"></div>
         </div>
     </div>
+</main>
 
-    <div class="alert alert-info small">
-        Instale a biblioteca <strong>SensorSync</strong> pela IDE Arduino (<em>Ferramentas &gt; Gerenciar Bibliotecas</em>,
-        busque por "SensorSync"); a dependência PubSubClient é instalada junto. Depois preencha o nome e a senha da rede Wi-Fi no código.
-    </div>
-
-    <div id="codeGenerated"></div>
-</div>
+<footer id="appFooter"></footer>
 
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
 <script src="scripts/app.js"></script>

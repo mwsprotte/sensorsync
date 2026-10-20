@@ -41,26 +41,107 @@ function queryParam(name) {
 
 let currentUser = null;
 
-/** Carrega o usuario logado e monta o menu do usuario no elemento #userMenu (se existir). */
-async function loadCurrentUser() {
-    currentUser = await api('/api/me');
-    const menu = document.getElementById('userMenu');
-    if (menu) {
-        menu.innerHTML = `
-        <div class="dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            👤 ${esc(currentUser.login)}${currentUser.role === 'ADMIN' ? ' <span class="badge text-bg-secondary">admin</span>' : ''}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            ${currentUser.role === 'ADMIN' ? '<li><a class="dropdown-item" href="users.html">Gerenciar usuários</a></li>' : ''}
-            <li><a class="dropdown-item" href="#" onclick="openPasswordModal(); return false;">Alterar senha</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#" onclick="logout(); return false;">Sair</a></li>
+function initials(u) {
+    const parts = [u.firstName, u.lastName].filter(Boolean);
+    const base = parts.length ? parts.map(p => p[0]).join('') : (u.login || '?')[0];
+    return base.slice(0, 2).toUpperCase();
+}
+
+function currentTheme() {
+    return document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light';
+}
+
+function toggleTheme() {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('theme', next); } catch (e) { }
+    document.documentElement.setAttribute('data-bs-theme', next);
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.className = next === 'dark' ? 'bi bi-sun' : 'bi bi-moon-stars';
+    if (typeof onThemeChange === 'function') onThemeChange(next);
+}
+
+/**
+ * Monta a barra de navegacao padrao em <nav id="appNav"> e o rodape em <footer id="appFooter">.
+ * active: 'home' | 'create' | 'users' | ''. extra: HTML opcional exibido a esquerda do menu do usuario.
+ */
+function renderNavbar(active, extra = '') {
+    const nav = document.getElementById('appNav');
+    if (!nav || !currentUser) return;
+    const isAdmin = currentUser.role === 'ADMIN';
+    const link = (key, href, icon, label) =>
+        `<li class="nav-item"><a class="nav-link ${active === key ? 'active' : ''}" href="${href}"><i class="bi ${icon} me-1"></i>${label}</a></li>`;
+    nav.className = 'navbar navbar-expand-lg ss-navbar sticky-top';
+    nav.innerHTML = `
+      <div class="container-xl">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" href="index.html">
+          <span class="ss-brand-mark"><i class="bi bi-speedometer2"></i></span>SensorSync
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appNavMenu"
+                aria-controls="appNavMenu" aria-expanded="false" aria-label="Abrir menu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="appNavMenu">
+          <ul class="navbar-nav me-auto">
+            ${link('home', 'index.html', 'bi-grid', 'Projetos')}
+            ${link('create', 'generator.html', 'bi-plus-circle', 'Novo projeto')}
+            ${isAdmin ? link('users', 'users.html', 'bi-people', 'Usuários') : ''}
           </ul>
-        </div>`;
+          <div class="d-flex align-items-center gap-2">
+            ${extra}
+            <button class="btn btn-link nav-link px-2" type="button" onclick="toggleTheme()" title="Alternar tema claro/escuro">
+              <i id="themeIcon" class="bi ${currentTheme() === 'dark' ? 'bi-sun' : 'bi-moon-stars'}"></i>
+            </button>
+            <div class="dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="ss-avatar">${esc(initials(currentUser))}</span>
+                <span class="d-lg-none d-xl-inline">${esc(currentUser.firstName || currentUser.login)}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                <li><h6 class="dropdown-header">${esc(currentUser.login)} · ${isAdmin ? 'Administrador' : 'Usuário'}</h6></li>
+                <li><a class="dropdown-item" href="#" onclick="openPasswordModal(); return false;"><i class="bi bi-key me-2"></i>Alterar senha</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    const footer = document.getElementById('appFooter');
+    if (footer) {
+        footer.className = 'ss-footer text-center py-4 mt-5 border-top';
+        footer.innerHTML = 'SensorSync · Plataforma IoT self-hosted · IFSC Câmpus Jaraguá do Sul - Rau';
     }
+}
+
+/** Carrega o usuario logado, monta a navegacao e o modal de senha. */
+async function loadCurrentUser(active = '', extra = '') {
+    currentUser = await api('/api/me');
+    renderNavbar(active, extra);
     ensurePasswordModal();
     return currentUser;
+}
+
+/** Spinner centralizado para areas carregando. */
+const SPINNER = "<div class='d-flex justify-content-center py-5'><div class='spinner-border text-success' role='status'><span class='visually-hidden'>Carregando...</span></div></div>";
+
+/** Mensagem temporaria no canto da tela (substitui alert() para avisos simples). */
+function toast(message, variant = 'success') {
+    let area = document.getElementById('toastArea');
+    if (!area) {
+        area = document.createElement('div');
+        area.id = 'toastArea';
+        area.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(area);
+    }
+    const el = document.createElement('div');
+    el.className = `toast align-items-center text-bg-${variant} border-0`;
+    el.setAttribute('role', 'status');
+    el.innerHTML = `<div class="d-flex"><div class="toast-body">${esc(message)}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button></div>`;
+    area.appendChild(el);
+    const t = new bootstrap.Toast(el, { delay: 3500 });
+    el.addEventListener('hidden.bs.toast', () => el.remove());
+    t.show();
 }
 
 async function logout() {
@@ -110,7 +191,7 @@ async function changePassword() {
     try {
         await api('/api/me/password', { method: 'POST', body: { currentPassword: document.getElementById('pwCurrent').value, newPassword: next } });
         bootstrap.Modal.getInstance(document.getElementById('passwordModal')).hide();
-        alert('Senha alterada.');
+        toast('Senha alterada.');
     } catch (e) {
         msg.textContent = e.message;
     }
