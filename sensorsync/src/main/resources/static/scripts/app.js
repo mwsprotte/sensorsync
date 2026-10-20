@@ -118,7 +118,9 @@ function renderNavbar(active, extra = '') {
               <img src="img/jaragua_rau_horizontal_marca2015_CMYK.png" alt="IFSC Câmpus Jaraguá do Sul - Rau" class="ss-campus-logo light-only">
               <img src="img/index/jaragua_rau_horizontal_marca2015_mono_branco.png" alt="IFSC Câmpus Jaraguá do Sul - Rau" class="ss-campus-logo dark-only">
             </span>
-            <span>SensorSync · Plataforma IoT self-hosted do IFSC</span></div>`;
+            <span class="text-md-end">SensorSync · Plataforma IoT self-hosted do IFSC<br>
+              Desenvolvido por <a href="https://github.com/mwsprotte" target="_blank" rel="noopener" class="fw-semibold">
+              <i class="bi bi-github me-1"></i>Matheus Willian Sprotte</a></span></div>`;
     }
 }
 

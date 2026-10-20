@@ -130,7 +130,7 @@ function showTab(tab, updateHash = true) {
     });
     document.querySelectorAll('[data-panel]').forEach(p => p.classList.toggle('d-none', p.dataset.panel !== tab));
     // O seletor de dispositivo vale para visao geral, codigo e relatorio
-    document.getElementById('deviceSelectorWrap').classList.toggle('invisible', tab === 'dispositivos');
+    document.getElementById('deviceSelectorWrap').classList.toggle('d-none', tab === 'dispositivos');
     if (updateHash) history.replaceState(null, '', '#' + tab);
 
     if (tab === 'visao') updateViews();
@@ -335,7 +335,7 @@ function timeTick(value) {
 
 function chartOptions(yTitle, axes) {
     const scales = {
-        x: { type: 'linear', bounds: 'data', ticks: { maxTicksLimit: 7, maxRotation: 0, callback: timeTick }, grid: { display: false } }
+        x: { type: 'linear', bounds: 'data', ticks: { maxTicksLimit: window.innerWidth < 576 ? 4 : 7, maxRotation: 0, callback: timeTick }, grid: { display: false } }
     };
     axes.forEach((a, i) => {
         scales[a.id] = {
@@ -465,19 +465,23 @@ async function loadDevices() {
     const list = document.getElementById('devicesList');
     try {
         await refreshDeviceSelector();
-        let html = `<div class='table-responsive'><table class='table align-middle mb-0'><thead><tr><th>Índice</th><th>Nome</th><th>Token</th><th>Último envio</th><th></th></tr></thead><tbody>`;
+        // Lista em linhas flexiveis: no celular cada dispositivo vira um bloco empilhado
+        let html = "<div class='d-flex flex-column gap-2'>";
         for (const d of devices) {
             const token = d.hasToken ? `<code>${esc(d.tokenPrefix)}…</code>` : "<span class='badge text-bg-warning'><i class='bi bi-exclamation-triangle me-1'></i>sem token</span>";
-            html += `<tr><td>${d.deviceIndex}</td>
-                <td><input class='form-control form-control-sm' value='${esc(d.name)}' onchange='renameDevice(${d.id}, this.value)'></td>
-                <td>${token}</td><td class='small'>${esc(fmtDate(d.lastSeenAt))}</td>
-                <td class='text-nowrap text-end'>
+            html += `<div class='ss-var-row d-flex flex-wrap align-items-center gap-2 gap-md-3'>
+                <span class='badge rounded-pill ss-chip' title='Índice do dispositivo'>${d.deviceIndex}</span>
+                <input class='form-control form-control-sm flex-grow-1' style='min-width: 160px; width: auto; max-width: 320px;' value='${esc(d.name)}'
+                       aria-label='Nome do dispositivo ${d.deviceIndex}' onchange='renameDevice(${d.id}, this.value)'>
+                <span class='small'><span class='ss-muted'>Token</span> ${token}</span>
+                <span class='small'><span class='ss-muted'>Último envio</span> ${esc(fmtDate(d.lastSeenAt))}</span>
+                <span class='ms-md-auto d-flex gap-2'>
                   <button class='btn btn-sm ${d.hasToken ? 'btn-outline-primary' : 'btn-primary'}' onclick='newToken(${d.id})'><i class='bi bi-key me-1'></i>${d.hasToken ? 'Novo token' : 'Gerar token'}</button>
                   <button class='btn btn-sm btn-outline-secondary' onclick='openCodeFor(${d.deviceIndex})' title='Código'><i class='bi bi-code-slash'></i></button>
                   <button class='btn btn-sm btn-outline-danger' onclick='deleteDevice(${d.id})' title='Excluir'><i class='bi bi-trash'></i></button>
-                </td></tr>`;
+                </span></div>`;
         }
-        list.innerHTML = html + '</tbody></table></div>';
+        list.innerHTML = html + '</div>';
     } catch (e) {
         list.innerHTML = `<div class='alert alert-danger'>${esc(e.message)}</div>`;
     }
@@ -622,8 +626,9 @@ async function loadReport() {
         let table = "<div class='table-responsive' style='max-height: 70vh;'><table class='table table-hover table-sm table-sticky mb-0 align-middle'>";
         report.forEach((row, i) => {
             table += (i === 0 ? '<thead>' : (i === 1 ? '<tbody>' : '')) + '<tr>' + row.map((cell, j) => i === 0
-                ? `<th class='${j ? 'text-end' : ''} px-3 py-2'>${esc(cell)}</th>`
-                : `<td class='${j ? 'text-end font-monospace' : 'ss-muted'} px-3'>${esc(String(cell).replace('.', ','))}</td>`).join('') + '</tr>' + (i === 0 ? '</thead>' : '');
+                ? `<th class='${j ? 'text-end' : ''} px-2 px-sm-3 py-2'>${esc(cell)}</th>`
+                : (j ? `<td class='text-end font-monospace px-2 px-sm-3' title='${esc(String(cell).replace('.', ','))}'>${cell === '' ? '' : esc(formatValue(cell))}</td>`
+                     : `<td class='ss-muted px-2 px-sm-3 small text-nowrap' title='${esc(cell)}'><span class='d-none d-sm-inline'>${esc(cell)}</span><span class='d-sm-none'>${esc(String(cell).slice(0, 8))}</span></td>`)).join('') + '</tr>' + (i === 0 ? '</thead>' : '');
         });
         div.innerHTML = table + '</tbody></table></div>';
     } catch (e) {

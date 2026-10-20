@@ -27,11 +27,11 @@
         </div>
     </div>
 
-    <ul class="nav nav-underline ss-tabs mb-4" id="projectTabs" role="tablist">
-        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="visao" type="button" role="tab"><i class="bi bi-speedometer2 me-1"></i>Visão geral</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="dispositivos" type="button" role="tab"><i class="bi bi-cpu me-1"></i>Dispositivos</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="codigo" type="button" role="tab"><i class="bi bi-code-slash me-1"></i>Código</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="relatorio" type="button" role="tab"><i class="bi bi-table me-1"></i>Relatório</button></li>
+    <ul class="nav nav-underline ss-tabs mb-3 mb-md-4" id="projectTabs" role="tablist">
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="visao" type="button" role="tab"><i class="bi bi-speedometer2 me-1 d-none d-sm-inline"></i>Visão geral</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="dispositivos" type="button" role="tab"><i class="bi bi-cpu me-1 d-none d-sm-inline"></i>Dispositivos</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="codigo" type="button" role="tab"><i class="bi bi-code-slash me-1 d-none d-sm-inline"></i>Código</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="relatorio" type="button" role="tab"><i class="bi bi-table me-1 d-none d-sm-inline"></i>Relatório</button></li>
     </ul>
 
     <!-- ===================== Visao geral ===================== -->
@@ -63,7 +63,7 @@
                     <button class="btn btn-sm btn-link text-body-secondary p-0" title="Baixar imagem do gráfico" onclick="downloadChart(0)" id="chartPngBtn"><i class="bi bi-image"></i></button>
                 </div>
             </div>
-            <div id="chartCombinedWrap" style="position: relative; height: 420px;"><canvas id="dataChart"></canvas></div>
+            <div id="chartCombinedWrap" class="ss-chart-main"><canvas id="dataChart"></canvas></div>
             <div id="chartSplit" class="row g-3 d-none"></div>
             <p class="small ss-muted mb-0 mt-2 d-none" id="noChart">Nenhuma variável marcada como gráfico neste projeto.</p>
             <p class="small ss-muted mb-0 mt-2 d-none" id="noData"><i class="bi bi-hourglass-split me-1"></i>Aguardando os primeiros envios deste dispositivo.</p>

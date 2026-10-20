@@ -14,18 +14,23 @@ function loadDataInput() {
     let cards = "";
     for (let index = 0; index < dataNumber; index++) {
         const prev = previous[index] || { desc: 'Dado ' + (index + 1), unit: '', card: true, chart: true };
-        cards += `<div class="ss-var-row d-flex flex-wrap align-items-center gap-3">
-            <span class="badge rounded-pill ss-chip" title="Índice no código">${index}</span>
-            <input type="text" class="form-control flex-grow-1" style="min-width: 180px; width: auto;" maxlength="254"
-                   id="cardDesc${index}" value="${esc(prev.desc)}" aria-label="Nome da variável ${index + 1}">
-            <input type="text" class="form-control" style="width: 90px;" maxlength="32" list="unitList"
-                   id="unit${index}" value="${esc(prev.unit)}" placeholder="Unidade" aria-label="Unidade da variável ${index + 1}">
-            <div class="form-check form-switch mb-0">
+        // Linha 1: indice + nome. Unidade e chaves ficam ao lado no desktop e quebram para baixo no celular.
+        cards += `<div class="ss-var-row d-flex flex-wrap align-items-center gap-2 gap-md-3">
+            <div class="d-flex align-items-center gap-2" style="flex: 1 1 220px; min-width: 0;">
+              <span class="badge rounded-pill ss-chip" title="Índice no código">${index}</span>
+              <input type="text" class="form-control" maxlength="254"
+                     id="cardDesc${index}" value="${esc(prev.desc)}" aria-label="Nome da variável ${index + 1}">
+            </div>
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+              <input type="text" class="form-control" style="width: 84px;" maxlength="32" list="unitList"
+                     id="unit${index}" value="${esc(prev.unit)}" placeholder="Unidade" aria-label="Unidade da variável ${index + 1}">
+              <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" role="switch" id="useCard${index}" ${prev.card ? 'checked' : ''}>
                 <label class="form-check-label small" for="useCard${index}">Card</label></div>
-            <div class="form-check form-switch mb-0">
+              <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" role="switch" id="useChart${index}" ${prev.chart ? 'checked' : ''}>
                 <label class="form-check-label small" for="useChart${index}">Gráfico</label></div>
+            </div>
         </div>`;
     }
     document.getElementById('cardsSet').innerHTML = cards;
