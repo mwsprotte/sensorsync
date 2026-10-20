@@ -410,21 +410,8 @@ function allPoints() {
     return selection.flatMap(i => seriesByDev[i] || []);
 }
 
-/**
- * Pontos de uma variavel. Pausas longas no envio (mais de 5x o intervalo tipico, minimo 5 s)
- * viram uma quebra na linha, em vez de uma reta ligando dois momentos distantes.
- */
 function dataFor(idx, col) {
-    const pts = (seriesByDev[idx] || []).filter(p => p.v[col] !== null).map(p => ({ x: pointX(p), y: p.v[col] }));
-    if (pts.length < 3) return pts;
-    const dts = pts.slice(1).map((p, i) => p.x - pts[i].x).sort((a, b) => a - b);
-    const gap = Math.max(5000, 5 * dts[Math.floor(dts.length / 2)]);
-    const out = [pts[0]];
-    for (let i = 1; i < pts.length; i++) {
-        if (pts[i].x - pts[i - 1].x > gap) out.push({ x: (pts[i].x + pts[i - 1].x) / 2, y: null });
-        out.push(pts[i]);
-    }
-    return out;
+    return (seriesByDev[idx] || []).filter(p => p.v[col] !== null).map(p => ({ x: pointX(p), y: p.v[col] }));
 }
 
 /**
@@ -496,7 +483,7 @@ function chartOptions(showLegend, axes) {
         animation: false,
         responsive: true,
         maintainAspectRatio: false,
-        spanGaps: false,
+        spanGaps: true,
         interaction: { mode: 'nearest', axis: 'x', intersect: false },
         scales,
         plugins: {
