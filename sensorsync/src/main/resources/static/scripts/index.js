@@ -56,7 +56,7 @@ function projectCard(p) {
 }
 
 function renderProjects() {
-    const q = document.getElementById('search').value.trim().toLowerCase();
+    const q = searchTyped ? document.getElementById('search').value.trim().toLowerCase() : '';
     const list = projects.filter(p => !q || p.name.toLowerCase().includes(q) || String(p.id) === q
         || (p.ownerLogin || '').toLowerCase().includes(q));
     const target = document.getElementById('projects');
@@ -69,7 +69,10 @@ function renderProjects() {
         return;
     }
     target.innerHTML = list.length ? list.map(projectCard).join('')
-        : "<div class='col-12'><p class='ss-muted'>Nenhum projeto encontrado.</p></div>";
+        : `<div class='col-12'><div class='ss-card p-4 text-center'>
+             <p class='mb-2'>Nenhum projeto encontrado para "<strong>${esc(q)}</strong>".</p>
+             <button class='btn btn-sm btn-outline-secondary' onclick='clearSearch()'><i class='bi bi-x-lg me-1'></i>Limpar busca</button>
+           </div></div>`;
 }
 
 async function loadProjects() {
@@ -106,7 +109,28 @@ async function clearData(id) {
     }
 }
 
-document.getElementById('search').addEventListener('input', renderProjects);
+function clearSearch() {
+    const input = document.getElementById('search');
+    input.value = '';
+    renderProjects();
+    input.focus();
+}
+
+// O filtro so reage ao que o usuario digita. Alguns navegadores preenchem campos de texto
+// automaticamente (ex.: com o login salvo) e so liberam esse valor apos o primeiro clique na pagina,
+// o que fazia todos os projetos sumirem.
+let searchTyped = false;
+const searchInput = document.getElementById('search');
+searchInput.value = '';
+searchInput.addEventListener('keydown', () => { searchTyped = true; });
+searchInput.addEventListener('paste', () => { searchTyped = true; });
+searchInput.addEventListener('input', () => {
+    if (!searchTyped) {
+        searchInput.value = '';
+        return;
+    }
+    renderProjects();
+});
 
 loadCurrentUser('home').then(u => {
     const hour = new Date().getHours();

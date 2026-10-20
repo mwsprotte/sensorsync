@@ -1,28 +1,43 @@
-/* SensorSync - ajustes visuais sobre o Bootstrap 5.3 */
+/* SensorSync - ajustes visuais sobre o Bootstrap 5.3
+ * Cores da identidade visual dos Institutos Federais / IFSC:
+ *   verde  #32A041 (rgb 50,160,65)   vermelho #C8191E (rgb 200,25,30)
+ * Botoes usam um verde um pouco mais escuro para manter contraste do texto branco.
+ */
 
 :root,
 [data-bs-theme=light] {
-    --ss-green: #2b8a3e;
-    --ss-green-rgb: 43, 138, 62;
-    --ss-green-dark: #22702f;
+    --ss-if-green: #32a041;
+    --ss-if-red: #c8191e;
+    --ss-green: #2b8c3a;
+    --ss-green-rgb: 43, 140, 58;
+    --ss-green-dark: #237531;
+    --bs-danger: #c8191e;
+    --bs-danger-rgb: 200, 25, 30;
+    --bs-danger-text-emphasis: #8a1115;
     --bs-primary: var(--ss-green);
     --bs-primary-rgb: var(--ss-green-rgb);
     --bs-link-color: var(--ss-green);
     --bs-link-color-rgb: var(--ss-green-rgb);
     --bs-link-hover-color: var(--ss-green-dark);
+    --bs-link-hover-color-rgb: 35, 117, 49;
     --ss-page-bg: #f4f6f5;
     --ss-surface: #ffffff;
 }
 
 [data-bs-theme=dark] {
-    --ss-green: #40c057;
-    --ss-green-rgb: 64, 192, 87;
-    --ss-green-dark: #37b24d;
+    --ss-if-green: #3fb853;
+    --ss-if-red: #e0353a;
+    --ss-green: #3fb853;
+    --ss-green-rgb: 63, 184, 83;
+    --ss-green-dark: #35a548;
+    --bs-danger: #e0353a;
+    --bs-danger-rgb: 224, 53, 58;
     --bs-primary: var(--ss-green);
     --bs-primary-rgb: var(--ss-green-rgb);
     --bs-link-color: var(--ss-green);
     --bs-link-color-rgb: var(--ss-green-rgb);
     --bs-link-hover-color: #69db7c;
+    --bs-link-hover-color-rgb: 105, 219, 124;
     --bs-body-bg: #111614;
     --bs-body-bg-rgb: 17, 22, 20;
     --ss-page-bg: #111614;
@@ -72,10 +87,37 @@ body {
     border-color: var(--ss-green);
 }
 
-/* Navbar */
+/* Navbar com a faixa vermelho/verde do simbolo do IF */
 .ss-navbar {
     background: var(--ss-surface);
     border-bottom: 1px solid var(--bs-border-color);
+    border-top: 4px solid transparent;
+    border-image: linear-gradient(90deg, var(--ss-if-red) 0 56px, var(--ss-if-green) 56px 100%) 1;
+    border-image-slice: 1 0 0 0;
+}
+
+.ss-brand-logo {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+}
+
+.ss-brand-sub {
+    font-size: .7rem;
+    font-weight: 500;
+    color: var(--bs-secondary-color);
+    letter-spacing: .02em;
+}
+
+.ss-campus-logo {
+    height: 44px;
+    width: auto;
+}
+
+[data-bs-theme=dark] .ss-campus-logo.light-only,
+[data-bs-theme=light] .ss-campus-logo.dark-only,
+:root:not([data-bs-theme]) .ss-campus-logo.dark-only {
+    display: none;
 }
 
 .ss-brand-mark {
@@ -166,8 +208,12 @@ body {
 }
 
 .ss-status-dot.online {
-    background: #2f9e44;
-    box-shadow: 0 0 0 3px rgba(47, 158, 68, .2);
+    background: var(--ss-if-green);
+    box-shadow: 0 0 0 3px rgba(50, 160, 65, .2);
+}
+
+.ss-status-dot.offline {
+    background: var(--ss-if-red);
 }
 
 .ss-status-dot.idle {
@@ -234,4 +280,11 @@ body {
     color: var(--bs-body-color);
     border: 1px solid var(--bs-border-color);
     font-weight: 500;
+}
+
+.ss-login {
+    border-top: 4px solid transparent;
+    border-image: linear-gradient(90deg, var(--ss-if-red) 0 56px, var(--ss-if-green) 56px 100%) 1;
+    border-image-slice: 1 0 0 0;
+    border-radius: 0 0 1rem 1rem;
 }

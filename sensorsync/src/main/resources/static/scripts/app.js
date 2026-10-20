@@ -73,8 +73,12 @@ function renderNavbar(active, extra = '') {
     nav.className = 'navbar navbar-expand-lg ss-navbar sticky-top';
     nav.innerHTML = `
       <div class="container-xl">
-        <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" href="index.html">
-          <span class="ss-brand-mark"><i class="bi bi-speedometer2"></i></span>SensorSync
+        <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+          <img src="img/if_logo.png" alt="IFSC" class="ss-brand-logo">
+          <span class="d-flex flex-column lh-sm">
+            <span class="fw-semibold">SensorSync</span>
+            <span class="ss-brand-sub d-none d-sm-inline">IFSC · Câmpus Jaraguá do Sul - Rau</span>
+          </span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appNavMenu"
                 aria-controls="appNavMenu" aria-expanded="false" aria-label="Abrir menu">
@@ -108,8 +112,13 @@ function renderNavbar(active, extra = '') {
       </div>`;
     const footer = document.getElementById('appFooter');
     if (footer) {
-        footer.className = 'ss-footer text-center py-4 mt-5 border-top';
-        footer.innerHTML = 'SensorSync · Plataforma IoT self-hosted · IFSC Câmpus Jaraguá do Sul - Rau';
+        footer.className = 'ss-footer py-4 mt-5 border-top';
+        footer.innerHTML = `<div class="container-xl d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <span>
+              <img src="img/jaragua_rau_horizontal_marca2015_CMYK.png" alt="IFSC Câmpus Jaraguá do Sul - Rau" class="ss-campus-logo light-only">
+              <img src="img/index/jaragua_rau_horizontal_marca2015_mono_branco.png" alt="IFSC Câmpus Jaraguá do Sul - Rau" class="ss-campus-logo dark-only">
+            </span>
+            <span>SensorSync · Plataforma IoT self-hosted do IFSC</span></div>`;
     }
 }
 

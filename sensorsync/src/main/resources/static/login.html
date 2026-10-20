@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SensorSync - Entrar</title>
-    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="icon" type="image/png" href="img/if_logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
     <link href="styles/app.css" rel="stylesheet">
@@ -13,11 +13,12 @@
 <body class="d-flex align-items-center min-vh-100">
 <main class="container" style="max-width: 400px;">
     <div class="text-center mb-4">
-        <span class="ss-brand-mark mb-3" style="width:56px;height:56px;font-size:1.8rem;border-radius:16px"><i class="bi bi-speedometer2"></i></span>
-        <h1 class="h4 fw-semibold mb-1">SensorSync</h1>
-        <p class="ss-muted small mb-0">Plataforma IoT · IFSC Jaraguá do Sul - Rau</p>
+        <img src="img/jaragua_rau_horizontal_marca2015_CMYK.png" alt="Instituto Federal de Santa Catarina - Câmpus Jaraguá do Sul - Rau" class="ss-campus-logo light-only" style="height: 64px;">
+        <img src="img/index/jaragua_rau_horizontal_marca2015_mono_branco.png" alt="Instituto Federal de Santa Catarina - Câmpus Jaraguá do Sul - Rau" class="ss-campus-logo dark-only" style="height: 64px;">
     </div>
-    <div class="ss-card p-4">
+    <div class="ss-card ss-login p-4">
+        <h1 class="h5 fw-semibold mb-1">SensorSync</h1>
+        <p class="ss-muted small mb-4">Plataforma IoT do laboratório. Entre com a sua conta.</p>
         <div id="loginError" class="alert alert-danger d-none py-2 small" role="alert"><i class="bi bi-exclamation-circle me-1"></i>Login ou senha incorretos.</div>
         <form method="post" action="/login">
             <div class="form-floating mb-3">

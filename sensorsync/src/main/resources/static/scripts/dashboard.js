@@ -96,7 +96,7 @@ function renderDeviceStatus() {
     const el = document.getElementById('deviceStatus');
     if (!d) { el.innerHTML = '&nbsp;'; return; }
     const age = d.lastSeenAt ? (Date.now() - new Date(d.lastSeenAt).getTime()) / 1000 : Infinity;
-    const cls = age < 120 ? 'online' : age < 3600 ? 'idle' : '';
+    const cls = age < 120 ? 'online' : age < 3600 ? 'idle' : (d.lastSeenAt ? 'offline' : '');
     const text = !d.hasToken ? 'sem token: gere em Dispositivos'
         : d.lastSeenAt ? 'último envio ' + timeAgo(d.lastSeenAt) : 'aguardando o primeiro envio';
     el.innerHTML = `<span class="ss-status-dot ${cls}"></span><span>${esc(d.name)} · ${esc(text)}</span>`;
@@ -140,7 +140,7 @@ async function generateCards() {
 
 // ---- Grafico ----------------------------------------------------------------------------------
 
-const PALETTE = ['#2b8a3e', '#1c7ed6', '#f08c00', '#ae3ec9', '#e03131', '#0ca678', '#5c7cfa', '#d6336c'];
+const PALETTE = ['#32a041', '#1c7ed6', '#f08c00', '#ae3ec9', '#c8191e', '#0ca678', '#5c7cfa', '#d6336c'];
 
 function applyChartTheme() {
     const dark = currentTheme() === 'dark';
