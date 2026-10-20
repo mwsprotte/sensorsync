@@ -25,19 +25,20 @@
 }
 
 [data-bs-theme=dark] {
-    --ss-if-green: #3fb853;
-    --ss-if-red: #e0353a;
-    --ss-green: #3fb853;
-    --ss-green-rgb: 63, 184, 83;
-    --ss-green-dark: #35a548;
+    /* Verde mais sobrio no escuro para nao "brilhar" sobre o fundo */
+    --ss-if-green: #2f8f3d;
+    --ss-if-red: #c8191e;
+    --ss-green: #4caf5c;
+    --ss-green-rgb: 76, 175, 92;
+    --ss-green-dark: #3d9a4c;
     --bs-danger: #e0353a;
     --bs-danger-rgb: 224, 53, 58;
     --bs-primary: var(--ss-green);
     --bs-primary-rgb: var(--ss-green-rgb);
     --bs-link-color: var(--ss-green);
     --bs-link-color-rgb: var(--ss-green-rgb);
-    --bs-link-hover-color: #69db7c;
-    --bs-link-hover-color-rgb: 105, 219, 124;
+    --bs-link-hover-color: #6cc47a;
+    --bs-link-hover-color-rgb: 108, 196, 122;
     --bs-body-bg: #111614;
     --bs-body-bg-rgb: 17, 22, 20;
     --ss-page-bg: #111614;
@@ -63,9 +64,20 @@ body {
 }
 
 [data-bs-theme=dark] .btn-primary {
-    --bs-btn-color: #0b1f10;
-    --bs-btn-hover-color: #0b1f10;
-    --bs-btn-active-color: #0b1f10;
+    --bs-btn-bg: #2f8f3d;
+    --bs-btn-border-color: #2f8f3d;
+    --bs-btn-hover-bg: #287a34;
+    --bs-btn-hover-border-color: #287a34;
+    --bs-btn-active-bg: #23692d;
+    --bs-btn-active-border-color: #23692d;
+    --bs-btn-color: #fff;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-active-color: #fff;
+}
+
+[data-bs-theme=dark] .text-bg-primary {
+    background-color: #2f8f3d !important;
+    color: #fff !important;
 }
 
 .btn-outline-primary {
@@ -87,13 +99,11 @@ body {
     border-color: var(--ss-green);
 }
 
-/* Navbar com a faixa vermelho/verde do simbolo do IF */
+/* Navbar com uma faixa verde do IFSC no topo */
 .ss-navbar {
     background: var(--ss-surface);
+    border-top: 3px solid var(--ss-if-green);
     border-bottom: 1px solid var(--bs-border-color);
-    border-top: 4px solid transparent;
-    border-image: linear-gradient(90deg, var(--ss-if-red) 0 56px, var(--ss-if-green) 56px 100%) 1;
-    border-image-slice: 1 0 0 0;
 }
 
 .ss-brand-logo {
@@ -283,8 +293,9 @@ body {
 }
 
 .ss-login {
-    border-top: 4px solid transparent;
-    border-image: linear-gradient(90deg, var(--ss-if-red) 0 56px, var(--ss-if-green) 56px 100%) 1;
-    border-image-slice: 1 0 0 0;
-    border-radius: 0 0 1rem 1rem;
+    border-top: 3px solid var(--ss-if-green);
+}
+
+[data-bs-theme=dark] .ss-campus-logo.dark-only {
+    opacity: .75;
 }
