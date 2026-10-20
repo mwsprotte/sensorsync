@@ -116,7 +116,8 @@ function clearSearch() {
     input.focus();
 }
 
-// O filtro so reage ao que o usuario digita. Alguns navegadores preenchem campos de texto
+// O campo comeca readonly (o gerenciador de senhas do navegador nao preenche campos readonly)
+// e o filtro so reage ao que o usuario digita. Alguns navegadores preenchem campos de texto
 // automaticamente (ex.: com o login salvo) e so liberam esse valor apos o primeiro clique na pagina,
 // o que fazia todos os projetos sumirem.
 let searchTyped = false;
