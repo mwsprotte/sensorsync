@@ -12,7 +12,7 @@ const TOKEN_PLACEHOLDER = 'COLE_AQUI_O_TOKEN_DO_DISPOSITIVO';
 function prefs() {
     return {
         device: localStorage.getItem('dash_device_' + projectId),
-        length: Number(localStorage.getItem('dataLength')) || 20,
+        length: Number(localStorage.getItem('dataLength')) || 50,
         auto: localStorage.getItem('autoUpdate') !== 'off'
     };
 }
@@ -23,7 +23,7 @@ function selectedDevice() {
 
 function chartLength() {
     const r = document.querySelector("input[name='len']:checked");
-    return r ? Number(r.value) : 20;
+    return r ? Number(r.value) : 50;
 }
 
 async function init() {
@@ -48,7 +48,7 @@ async function init() {
     document.getElementById('protocol').addEventListener('change', generateCode);
 
     const p = prefs();
-    const lenRadio = document.querySelector(`input[name='len'][value='${p.length}']`) || document.getElementById('len20');
+    const lenRadio = document.querySelector(`input[name='len'][value='${p.length}']`) || document.getElementById('len50');
     lenRadio.checked = true;
     document.getElementById('setTimeOff').checked = p.auto;
 
@@ -60,14 +60,16 @@ async function init() {
     document.querySelectorAll("input[name='len']").forEach(r => r.addEventListener('change', updateViews));
     document.getElementById('setTimeOff').addEventListener('change', updateViews);
 
-    createChart();
+    document.getElementById('modeCombined').addEventListener('change', () => setChartMode('combined'));
+    document.getElementById('modeSplit').addEventListener('change', () => setChartMode('split'));
+    document.getElementById('modeCombined').checked = chartMode() === 'combined';
+    document.getElementById('modeSplit').checked = chartMode() === 'split';
     document.querySelectorAll('#projectTabs [data-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
     window.addEventListener('hashchange', () => showTab(tabFromHash(), false));
     showTab(tabFromHash(), false);
     setInterval(() => {
         if (activeTab === 'visao' && document.getElementById('setTimeOff').checked && !document.hidden) {
-            generateCards();
-            updateCharts();
+            pollSeries();
         }
     }, 2000);
     setInterval(() => { if (!document.hidden) refreshDeviceStatus(); }, 15000);
@@ -154,7 +156,18 @@ function openCodeFor(deviceIndex) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ---- Cards ------------------------------------------------------------------------------------
+// ---- Visao geral: cards e graficos -------------------------------------------------------------
+// Uma unica chamada (/data/series) alimenta cards e graficos. Depois da carga inicial, a cada 2 s
+// so os envios novos sao buscados (?after=<ultimo id>) e acrescentados, sem redesenhar tudo.
+
+const PALETTE = ['#32a041', '#1c7ed6', '#f08c00', '#ae3ec9', '#c8191e', '#0ca678', '#5c7cfa', '#d6336c'];
+
+let seriesVars = [];        // [{index, desc, unit, card, chart}]
+let seriesPoints = [];      // [{id, t, time, v: [...]}], do mais antigo ao mais recente
+let lastPointId = 0;
+let fallbackCards = {};     // ultimo valor conhecido fora da janela (via /data/cards)
+let charts = [];            // instancias Chart.js ativas
+let polling = false;
 
 function formatValue(v) {
     const n = Number(v);
@@ -162,103 +175,284 @@ function formatValue(v) {
     return n.toLocaleString('pt-BR', { maximumFractionDigits: digits });
 }
 
-async function generateCards() {
+function chartMode() {
+    return localStorage.getItem('chartMode') === 'split' ? 'split' : 'combined';
+}
+
+function setChartMode(mode) {
+    try { localStorage.setItem('chartMode', mode); } catch (e) { }
+    document.getElementById('modeCombined').checked = mode === 'combined';
+    document.getElementById('modeSplit').checked = mode === 'split';
+    buildCharts();
+}
+
+/** Carga completa (ao abrir, trocar dispositivo ou quantidade de pontos). */
+async function loadSeries() {
+    const device = selectedDevice();
     try {
-        const cards = await api(`/data/cards/${projectId}/device/${selectedDevice()}`);
-        let html = '';
-        for (const c of cards) {
-            const value = c.data === null ? '—' : formatValue(c.data);
-            html += `<div class="col-sm-6 col-lg-4 col-xl-3"><div class="ss-card p-3 h-100">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <span class="small fw-semibold ss-muted text-truncate">${esc(c.dataDesc)}</span>
-                  <i class="bi bi-activity text-success"></i></div>
-                <div class="ss-kpi-value">${esc(value)}</div>
-                <div class="small ss-muted mt-1"><i class="bi bi-clock me-1"></i>${esc(c.readTime || 'sem leituras')}</div>
-              </div></div>`;
-        }
-        if (cards.length === 0) {
-            html = "<div class='col-12'><p class='ss-muted'>Nenhuma variável marcada como card.</p></div>";
-        }
-        document.getElementById('dataCards').innerHTML = html;
+        const [series, cards] = await Promise.all([
+            api(`/data/series/${projectId}/device/${device}?limit=${chartLength()}`),
+            api(`/data/cards/${projectId}/device/${device}`)
+        ]);
+        if (device !== selectedDevice()) return;  // usuario trocou de dispositivo durante a busca
+        seriesVars = series.variables;
+        seriesPoints = series.points;
+        lastPointId = seriesPoints.length ? seriesPoints[seriesPoints.length - 1].id : 0;
+        fallbackCards = {};
+        cards.forEach(c => { if (c.data !== null) fallbackCards[c.dataDesc] = { value: c.data, time: c.readTime }; });
+        renderCards();
+        buildCharts();
     } catch (e) {
-        console.error(e);
+        document.getElementById('dataCards').innerHTML = `<div class='col-12'><div class='alert alert-danger'>${esc(e.message)}</div></div>`;
     }
 }
 
-// ---- Grafico ----------------------------------------------------------------------------------
+/** Atualizacao incremental: busca so o que chegou depois do ultimo ponto. */
+async function pollSeries() {
+    if (polling) return;
+    polling = true;
+    const device = selectedDevice();
+    try {
+        const series = await api(`/data/series/${projectId}/device/${device}?limit=${chartLength()}&after=${lastPointId}`);
+        if (device !== selectedDevice() || series.points.length === 0) return;
+        seriesPoints.push(...series.points);
+        const extra = seriesPoints.length - chartLength();
+        if (extra > 0) seriesPoints.splice(0, extra);
+        lastPointId = seriesPoints[seriesPoints.length - 1].id;
+        renderCards();
+        updateChartData();
+    } catch (e) {
+        console.error(e);
+    } finally {
+        polling = false;
+    }
+}
 
-const PALETTE = ['#32a041', '#1c7ed6', '#f08c00', '#ae3ec9', '#c8191e', '#0ca678', '#5c7cfa', '#d6336c'];
+// ---- Cards ------------------------------------------------------------------------------------
+
+/** Mini grafico (SVG) da janela atual, sem custo de uma instancia Chart.js por card. */
+function sparkline(values, color) {
+    const pts = values.map((v, i) => [i, v]).filter(p => p[1] !== null);
+    if (pts.length < 2) return '';
+    const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    const w = 120, h = 32, pad = 2;
+    const sx = x => pad + (maxX === minX ? 0 : (x - minX) / (maxX - minX)) * (w - 2 * pad);
+    const sy = y => h - pad - (maxY === minY ? 0.5 : (y - minY) / (maxY - minY)) * (h - 2 * pad);
+    const d = pts.map((p, i) => (i ? 'L' : 'M') + sx(p[0]).toFixed(1) + ' ' + sy(p[1]).toFixed(1)).join(' ');
+    return `<svg class="ss-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+        <path d="${d}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+function renderCards() {
+    const cardVars = seriesVars.map((v, i) => ({ ...v, col: i })).filter(v => v.card);
+    if (cardVars.length === 0) {
+        document.getElementById('dataCards').innerHTML = "<div class='col-12'><p class='ss-muted'>Nenhuma variável marcada como card.</p></div>";
+        return;
+    }
+    let html = '';
+    cardVars.forEach((v, k) => {
+        const values = seriesPoints.map(p => p.v[v.col]);
+        let lastIdx = values.length - 1;
+        while (lastIdx >= 0 && values[lastIdx] === null) lastIdx--;
+        const fb = fallbackCards[v.desc];
+        const value = lastIdx >= 0 ? values[lastIdx] : (fb ? fb.value : null);
+        const time = lastIdx >= 0 ? seriesPoints[lastIdx].time : (fb ? fb.time : null);
+        let prevIdx = lastIdx - 1;
+        while (prevIdx >= 0 && values[prevIdx] === null) prevIdx--;
+        const nums = values.filter(x => x !== null);
+        let trend = '';
+        if (prevIdx >= 0) {
+            const diff = values[lastIdx] - values[prevIdx];
+            trend = diff > 0 ? "<i class='bi bi-arrow-up-right ss-muted' title='Subiu em relação ao envio anterior'></i>"
+                : diff < 0 ? "<i class='bi bi-arrow-down-right ss-muted' title='Desceu em relação ao envio anterior'></i>"
+                : "<i class='bi bi-arrow-right ss-muted' title='Estável'></i>";
+        }
+        const unit = v.unit ? `<span class="ss-kpi-unit">${esc(v.unit)}</span>` : '';
+        const color = PALETTE[seriesVars.filter(x => x.chart).findIndex(x => x.index === v.index) % PALETTE.length] || PALETTE[k % PALETTE.length];
+        const range = nums.length > 1
+            ? `<span title="Mínimo e máximo nos últimos ${nums.length} envios">mín ${esc(formatValue(Math.min(...nums)))} · máx ${esc(formatValue(Math.max(...nums)))}</span>` : '';
+        html += `<div class="col-sm-6 col-lg-4 col-xl-3"><div class="ss-card p-3 h-100 d-flex flex-column">
+            <div class="d-flex align-items-center justify-content-between mb-1 gap-2">
+              <span class="small fw-semibold ss-muted text-truncate" title="${esc(v.desc)}">${esc(v.desc)}</span>${trend}</div>
+            <div class="d-flex align-items-end justify-content-between gap-2">
+              <div class="ss-kpi-value">${value === null ? '—' : esc(formatValue(value))}${unit}</div>
+              ${sparkline(values.slice(-60), color)}
+            </div>
+            <div class="small ss-muted mt-2 d-flex flex-wrap justify-content-between gap-1">
+              <span><i class="bi bi-clock me-1"></i>${esc(time || 'sem leituras')}</span>${range}</div>
+          </div></div>`;
+    });
+    document.getElementById('dataCards').innerHTML = html;
+}
+
+// ---- Graficos ---------------------------------------------------------------------------------
 
 function applyChartTheme() {
     const dark = currentTheme() === 'dark';
     Chart.defaults.color = dark ? '#adb5bd' : '#495057';
     Chart.defaults.borderColor = dark ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.06)';
+    Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
 }
 
 function onThemeChange() {
-    if (!chart) return;
-    const data = chart.data;
-    chart.destroy();
-    createChart();
-    chart.data = data;
-    chart.update();
+    buildCharts();
 }
 
-function createChart() {
-    applyChartTheme();
-    const ctx = document.getElementById('dataChart').getContext('2d');
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: [], datasets: [] },
-        options: {
-            // Rotulos "HH:mm:ss dd/MM/yyyy": o eixo mostra so a hora; a data aparece no tooltip
-            scales: {
-                x: { ticks: { maxTicksLimit: 8, maxRotation: 0, callback: function (v) { return String(this.getLabelForValue(v)).slice(0, 8); } } },
-                y: { beginAtZero: false }
-            },
-            spanGaps: true,
-            interaction: { mode: 'index', intersect: false },
-            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
-            elements: { point: { radius: 2 }, line: { borderWidth: 2 } },
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false
-        }
+function chartVars() {
+    return seriesVars.map((v, i) => ({ ...v, col: i })).filter(v => v.chart);
+}
+
+function pointX(p) {
+    return p.t ?? p.id;
+}
+
+function datasetFor(v, k) {
+    const color = PALETTE[k % PALETTE.length];
+    return {
+        label: v.desc + (v.unit ? ` (${v.unit})` : ''),
+        data: seriesPoints.filter(p => p.v[v.col] !== null).map(p => ({ x: pointX(p), y: p.v[v.col] })),
+        borderColor: color,
+        backgroundColor: color + '22',
+        pointRadius: seriesPoints.length > 120 ? 0 : 2,
+        pointHoverRadius: 4,
+        borderWidth: 2,
+        tension: 0.25,
+        fill: chartMode() === 'split'
+    };
+}
+
+/** Rotulo do eixo x: so a hora se a janela for de um dia; senao, data e hora. */
+function timeTick(value) {
+    const first = seriesPoints.length ? pointX(seriesPoints[0]) : value;
+    const last = seriesPoints.length ? pointX(seriesPoints[seriesPoints.length - 1]) : value;
+    const d = new Date(value);
+    if (isNaN(d)) return '';
+    return (last - first) < 86400000
+        ? d.toLocaleTimeString('pt-BR')
+        : d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function chartOptions(yTitle, axes) {
+    const scales = {
+        x: { type: 'linear', bounds: 'data', ticks: { maxTicksLimit: 7, maxRotation: 0, callback: timeTick }, grid: { display: false } }
+    };
+    axes.forEach((a, i) => {
+        scales[a.id] = {
+            position: i === 0 ? 'left' : 'right',
+            title: { display: !!a.title, text: a.title },
+            grid: { drawOnChartArea: i === 0 },
+            ticks: { callback: v => formatValue(v) }
+        };
     });
+    return {
+        parsing: false,
+        normalized: true,
+        animation: false,
+        responsive: true,
+        maintainAspectRatio: false,
+        spanGaps: true,
+        interaction: { mode: 'nearest', axis: 'x', intersect: false },
+        scales: scales,
+        plugins: {
+            legend: { display: !yTitle, position: 'bottom', labels: { usePointStyle: true, boxHeight: 6 } },
+            // Muitos pontos: reduz para ~400 preservando a forma da curva (algoritmo LTTB)
+            decimation: { enabled: true, algorithm: 'lttb', samples: 400, threshold: 600 },
+            tooltip: {
+                callbacks: {
+                    title: items => {
+                        const x = items[0].parsed.x;
+                        const p = seriesPoints.find(pt => pointX(pt) === x);
+                        return p ? p.time : '';
+                    },
+                    label: item => ` ${item.dataset.label}: ${formatValue(item.parsed.y)}`
+                }
+            }
+        }
+    };
 }
 
-let lastChartKey = '';
+function destroyCharts() {
+    charts.forEach(c => c.destroy());
+    charts = [];
+}
 
-async function updateCharts(force = false) {
-    const length = chartLength();
-    try {
-        const data = await api(`/data/charts/${projectId}/device/${selectedDevice()}/length/${length}`);
-        const names = data[0], labels = data[1], series = data.slice(2);
-        const key = JSON.stringify([selectedDevice(), length, labels.length, labels[labels.length - 1], series.map(s => s[s.length - 1])]);
-        if (!force && key === lastChartKey) return;
-        lastChartKey = key;
-        document.getElementById('noChart').classList.toggle('d-none', names.length > 0);
-        chart.data.labels = labels;
-        chart.data.datasets = series.map((s, i) => ({
-            label: names[i],
-            data: s.map(v => v === '' ? null : Number(v)),
-            borderColor: PALETTE[i % PALETTE.length],
-            backgroundColor: PALETTE[i % PALETTE.length],
-            fill: false,
-            tension: 0.25
-        }));
-        chart.update();
-    } catch (e) {
-        console.error(e);
+function buildCharts() {
+    destroyCharts();
+    applyChartTheme();
+    const vars = chartVars();
+    const combinedWrap = document.getElementById('chartCombinedWrap');
+    const splitWrap = document.getElementById('chartSplit');
+    document.getElementById('noChart').classList.toggle('d-none', vars.length > 0);
+    document.getElementById('noData').classList.toggle('d-none', vars.length === 0 || seriesPoints.length > 0);
+    const split = chartMode() === 'split';
+    combinedWrap.classList.toggle('d-none', split || vars.length === 0);
+    document.getElementById('chartPngBtn').classList.toggle('d-none', split || vars.length === 0);
+    splitWrap.classList.toggle('d-none', !split || vars.length === 0);
+    if (vars.length === 0) return;
+
+    if (!split) {
+        // Ate duas unidades diferentes: um eixo y para cada (esquerda/direita)
+        const units = [...new Set(vars.map(v => v.unit || ''))];
+        const twoAxes = units.length === 2;
+        const datasets = vars.map((v, k) => ({ ...datasetFor(v, k), yAxisID: twoAxes && (v.unit || '') === units[1] ? 'y1' : 'y' }));
+        const axes = twoAxes ? [{ id: 'y', title: units[0] }, { id: 'y1', title: units[1] }] : [{ id: 'y', title: units.length === 1 ? units[0] : '' }];
+        const opts = chartOptions(null, axes);
+        charts.push(new Chart(document.getElementById('dataChart'), { type: 'line', data: { datasets }, options: opts }));
+    } else {
+        splitWrap.innerHTML = vars.map((v, k) => `<div class="col-lg-6"><div class="border rounded-3 p-2 h-100">
+            <div class="d-flex justify-content-between align-items-center px-1">
+              <span class="small fw-semibold"><span class="ss-legend-dot" style="background:${PALETTE[k % PALETTE.length]}"></span>${esc(v.desc)}${v.unit ? ` <span class="ss-muted fw-normal">(${esc(v.unit)})</span>` : ''}</span>
+              <button class="btn btn-sm btn-link text-body-secondary p-0" title="Baixar imagem" onclick="downloadChart(${k})"><i class="bi bi-image"></i></button>
+            </div>
+            <div style="position: relative; height: 220px;"><canvas></canvas></div></div></div>`).join('');
+        splitWrap.querySelectorAll('canvas').forEach((cv, k) => {
+            const v = vars[k];
+            charts.push(new Chart(cv, { type: 'line', data: { datasets: [datasetFor(v, k)] }, options: chartOptions(v.desc, [{ id: 'y', title: '' }]) }));
+        });
     }
+}
+
+/** Atualiza os dados dos graficos existentes sem recria-los. */
+function updateChartData() {
+    const vars = chartVars();
+    if (charts.length === 0) {
+        buildCharts();
+        return;
+    }
+    document.getElementById('noData').classList.toggle('d-none', vars.length === 0 || seriesPoints.length > 0);
+    if (chartMode() === 'combined') {
+        const c = charts[0];
+        vars.forEach((v, k) => {
+            const fresh = datasetFor(v, k);
+            c.data.datasets[k].data = fresh.data;
+            c.data.datasets[k].pointRadius = fresh.pointRadius;
+        });
+        c.update('none');
+    } else {
+        charts.forEach((c, k) => {
+            const fresh = datasetFor(vars[k], k);
+            c.data.datasets[0].data = fresh.data;
+            c.data.datasets[0].pointRadius = fresh.pointRadius;
+            c.update('none');
+        });
+    }
+}
+
+function downloadChart(k = 0) {
+    const c = charts[k];
+    if (!c) return;
+    const a = document.createElement('a');
+    a.href = c.toBase64Image('image/png', 1);
+    a.download = `sensorsync_projeto${projectId}_dispositivo${selectedDevice()}${chartMode() === 'split' ? '_var' + k : ''}.png`;
+    a.click();
 }
 
 function updateViews() {
     localStorage.setItem('autoUpdate', document.getElementById('setTimeOff').checked ? 'on' : 'off');
     localStorage.setItem('dataLength', chartLength());
     renderDeviceStatus();
-    generateCards();
-    updateCharts(true);
+    loadSeries();
 }
 
 // ---- Dispositivos -----------------------------------------------------------------------------

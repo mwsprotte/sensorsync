@@ -332,3 +332,25 @@ body {
 .ss-tabs .nav-link.active {
     border-bottom-color: var(--ss-green);
 }
+
+/* Cards: unidade e mini grafico */
+.ss-kpi-unit {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--bs-secondary-color);
+    margin-left: .25rem;
+}
+
+.ss-spark {
+    width: 120px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.ss-legend-dot {
+    width: .6rem;
+    height: .6rem;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: .4rem;
+}

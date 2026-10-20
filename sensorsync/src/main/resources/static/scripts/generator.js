@@ -8,16 +8,18 @@ function loadDataInput() {
     for (let i = 0; i < 20; i++) {
         const d = document.getElementById('cardDesc' + i);
         if (!d) break;
-        previous.push({ desc: d.value, card: document.getElementById('useCard' + i).checked, chart: document.getElementById('useChart' + i).checked });
+        previous.push({ desc: d.value, unit: document.getElementById('unit' + i).value, card: document.getElementById('useCard' + i).checked, chart: document.getElementById('useChart' + i).checked });
     }
     if (previous.length === dataNumber) return;  // nada mudou: nao recria os campos
     let cards = "";
     for (let index = 0; index < dataNumber; index++) {
-        const prev = previous[index] || { desc: 'Dado ' + (index + 1), card: true, chart: true };
+        const prev = previous[index] || { desc: 'Dado ' + (index + 1), unit: '', card: true, chart: true };
         cards += `<div class="ss-var-row d-flex flex-wrap align-items-center gap-3">
             <span class="badge rounded-pill ss-chip" title="Índice no código">${index}</span>
             <input type="text" class="form-control flex-grow-1" style="min-width: 180px; width: auto;" maxlength="254"
                    id="cardDesc${index}" value="${esc(prev.desc)}" aria-label="Nome da variável ${index + 1}">
+            <input type="text" class="form-control" style="width: 90px;" maxlength="32" list="unitList"
+                   id="unit${index}" value="${esc(prev.unit)}" placeholder="Unidade" aria-label="Unidade da variável ${index + 1}">
             <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" role="switch" id="useCard${index}" ${prev.card ? 'checked' : ''}>
                 <label class="form-check-label small" for="useCard${index}">Card</label></div>
@@ -48,6 +50,7 @@ async function saveProject() {
     for (let i = 0; i < dataNumber; i++) {
         variables.push({
             dataDesc: document.getElementById('cardDesc' + i).value,
+            unit: document.getElementById('unit' + i).value,
             useCard: document.getElementById('useCard' + i).checked,
             useChart: document.getElementById('useChart' + i).checked
         });

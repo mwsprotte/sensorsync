@@ -81,7 +81,7 @@
         <div class="col-lg-7">
             <section class="ss-card p-4 h-100 d-flex flex-column">
                 <h2 class="h6 fw-semibold mb-1"><span class="badge rounded-pill text-bg-primary me-2">3</span>Variáveis</h2>
-                <p class="small ss-muted">A ordem define o índice usado no código (<code>setValue(0, ...)</code> é a primeira).</p>
+                <p class="small ss-muted">A ordem define o índice usado no código (<code>setValue(0, ...)</code> é a primeira). A unidade é opcional e aparece nos cards e gráficos.</p>
                 <div id="cardsSet" class="d-flex flex-column gap-2 overflow-auto" style="max-height: 460px;"></div>
                 <div class="d-flex justify-content-end gap-2 mt-auto pt-4">
                     <a href="index.html" class="btn btn-outline-secondary">Cancelar</a>
@@ -94,6 +94,11 @@
 </main>
 
 <footer id="appFooter"></footer>
+
+<datalist id="unitList">
+    <option value="°C"><option value="%"><option value="V"><option value="A"><option value="W"><option value="Ω">
+    <option value="lux"><option value="hPa"><option value="ppm"><option value="m/s"><option value="rpm"><option value="°">
+</datalist>
 
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
 <script src="scripts/app.js"></script>

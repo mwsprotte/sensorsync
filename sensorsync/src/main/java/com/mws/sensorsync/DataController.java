@@ -98,6 +98,81 @@ public class DataController {
         return result;
     }
 
+    /** Uma variavel do projeto, como o dashboard precisa. */
+    public record SeriesVariable(long index, String desc, String unit, boolean card, boolean chart) {
+    }
+
+    /** Um envio do dispositivo: id da ultima linha gravada, instante (epoch ms) e um valor por variavel (null = ausente). */
+    public record SeriesPoint(long id, Long t, String time, Double[] v) {
+    }
+
+    public record Series(List<SeriesVariable> variables, List<SeriesPoint> points) {
+    }
+
+    private static final java.time.format.DateTimeFormatter READ_TIME =
+            java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
+
+    private static Long epochMillis(String readTime) {
+        try {
+            return java.time.LocalDateTime.parse(readTime, READ_TIME)
+                    .atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Serie temporal para o dashboard (cards + graficos em uma unica chamada).
+     * ?limit=N : ultimos N envios. ?after=ID : so envios gravados depois do id informado (atualizacao incremental).
+     */
+    @GetMapping(value = "/series/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Series series(@PathVariable("projectID") Long id, @PathVariable("device") Long device,
+                         @RequestParam(value = "limit", defaultValue = "50") Long limit,
+                         @RequestParam(value = "after", defaultValue = "0") Long after) {
+        Project p = access.requireProject(id);
+        long n = checkLength(limit);
+        List<Metadata> metas = metadataService.findByProjectId(id);
+        List<SeriesVariable> vars = metas.stream()
+                .map(m -> new SeriesVariable(m.getDataIndex(), m.getDataDesc(), m.getUnit(), m.isUseCard(), m.isUseChart()))
+                .toList();
+        Map<Long, Integer> column = new HashMap<>();
+        for (int i = 0; i < metas.size(); i++) {
+            column.put(metas.get(i).getDataIndex(), i);
+        }
+
+        List<Data> rows = new ArrayList<>(dataServices.findRecentAfter(id, device, Math.max(0, after),
+                n * Math.max(1, p.getDataNumber())));
+        rows.sort(Comparator.comparingLong(Data::getId));
+
+        // Agrupa em envios (mesma regra do relatorio)
+        List<SeriesPoint> points = new ArrayList<>();
+        Double[] values = null;
+        String time = null;
+        long lastId = 0;
+        for (Data d : rows) {
+            Integer col = column.get(d.getDataIndex());
+            if (col == null) {
+                continue;
+            }
+            if (values == null || !Objects.equals(time, d.getReadTime()) || values[col] != null) {
+                if (values != null) {
+                    points.add(new SeriesPoint(lastId, epochMillis(time), time, values));
+                }
+                values = new Double[metas.size()];
+                time = d.getReadTime();
+            }
+            values[col] = d.getData();
+            lastId = d.getId();
+        }
+        if (values != null) {
+            points.add(new SeriesPoint(lastId, epochMillis(time), time, values));
+        }
+        if (points.size() > n) {
+            points = new ArrayList<>(points.subList(points.size() - (int) n, points.size()));
+        }
+        return new Series(vars, points);
+    }
+
     /**
      * Relatorio completo de um dispositivo: primeira linha = cabecalho ("Instante" + variaveis),
      * demais linhas = um envio por linha (vazio quando a variavel nao veio naquele envio).

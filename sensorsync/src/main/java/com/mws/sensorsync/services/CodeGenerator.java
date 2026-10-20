@@ -87,7 +87,7 @@ public class CodeGenerator {
         String endpointLine = endpointLine(protocol, ep);
         StringBuilder reads = new StringBuilder();
         for (int i = 0; i < vars.size(); i++) {
-            reads.append("    sensorSync.setValue(%d, random(0, 100));  // %s%n".formatted(i, oneLine(vars.get(i).getDataDesc())));
+            reads.append("    sensorSync.setValue(%d, random(0, 100));  // %s%n".formatted(i, oneLine(vars.get(i).getDataDesc() + (vars.get(i).getUnit() == null ? "" : " (" + vars.get(i).getUnit() + ")"))));
         }
         return header(p, device, board == Board.ESP32 ? "ESP32" : "ESP8266", protocol)
                 + cfg
@@ -123,7 +123,7 @@ public class CodeGenerator {
     private String arduinoSide(Project p, List<Metadata> vars) {
         StringBuilder reads = new StringBuilder();
         for (int i = 0; i < vars.size(); i++) {
-            reads.append("  valores[%d] = random(0, 100);  // %s%n".formatted(i, oneLine(vars.get(i).getDataDesc())));
+            reads.append("  valores[%d] = random(0, 100);  // %s%n".formatted(i, oneLine(vars.get(i).getDataDesc() + (vars.get(i).getUnit() == null ? "" : " (" + vars.get(i).getUnit() + ")"))));
         }
         return """
                 // SensorSync | Arduino (leitura dos sensores)

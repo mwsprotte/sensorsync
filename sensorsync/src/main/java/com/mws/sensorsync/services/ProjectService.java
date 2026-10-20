@@ -41,7 +41,7 @@ public class ProjectService {
     }
 
     /** Uma variavel do projeto, como enviada pela tela de criacao. */
-    public record VariableForm(String dataDesc, boolean useCard, boolean useChart) {
+    public record VariableForm(String dataDesc, boolean useCard, boolean useChart, String unit) {
     }
 
     /** Pedido de criacao de projeto: nome, variaveis e quantos dispositivos criar. */
@@ -93,6 +93,7 @@ public class ProjectService {
             m.setDataDesc(v.dataDesc() == null || v.dataDesc().isBlank() ? "Dado " + (i + 1) : v.dataDesc().trim());
             m.setUseCard(v.useCard());
             m.setUseChart(v.useChart());
+            m.setUnit(v.unit() == null || v.unit().isBlank() ? null : v.unit().trim().substring(0, Math.min(32, v.unit().trim().length())));
             metadataRepository.save(m);
         }
 
