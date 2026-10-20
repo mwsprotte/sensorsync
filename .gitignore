@@ -27,3 +27,6 @@ replay_pid*
 .claude/
 deploy/*.env
 *.env
+
+# Configuracao local com senhas (nunca versionar)
+config/
