@@ -299,3 +299,36 @@ body {
 [data-bs-theme=dark] .ss-campus-logo.dark-only {
     opacity: .75;
 }
+
+/* Bootstrap 5.3 nao tem esta utilitaria: sem ela, textos longos em flex nao encolhem e nao truncam */
+.min-w-0 {
+    min-width: 0;
+}
+
+/* Nome do projeto: ate 2 linhas, depois reticencias (nome completo no title) */
+.ss-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}
+
+/* Abas do projeto */
+.ss-tabs {
+    border-bottom: 1px solid var(--bs-border-color);
+    --bs-nav-underline-link-active-color: var(--ss-green);
+    --bs-nav-link-color: var(--bs-secondary-color);
+    --bs-nav-link-hover-color: var(--bs-body-color);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.ss-tabs .nav-link {
+    white-space: nowrap;
+}
+
+.ss-tabs .nav-link.active {
+    border-bottom-color: var(--ss-green);
+}

@@ -30,15 +30,15 @@ function projectCard(p) {
         <div class="d-flex align-items-start gap-3">
           <span class="ss-icon-badge"><i class="bi bi-broadcast"></i></span>
           <div class="flex-grow-1 min-w-0">
-            <h2 class="h6 fw-semibold mb-1 text-truncate" title="${esc(p.name)}">${esc(p.name)}</h2>
+            <h2 class="h6 fw-semibold mb-1 ss-clamp-2" title="${esc(p.name)}">${esc(p.name)}</h2>
             <div class="small ss-muted">Projeto #${p.id}</div>
           </div>
           <div class="dropdown">
             <button class="btn btn-sm btn-link text-body-secondary" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Mais ações">
               <i class="bi bi-three-dots-vertical"></i></button>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-              <li><a class="dropdown-item" href="code.html?id=${p.id}"><i class="bi bi-code-slash me-2"></i>Código embarcado</a></li>
-              <li><a class="dropdown-item" href="export.html?id=${p.id}"><i class="bi bi-table me-2"></i>Relatório</a></li>
+              <li><a class="dropdown-item" href="dashboard.html?id=${p.id}#codigo"><i class="bi bi-code-slash me-2"></i>Código embarcado</a></li>
+              <li><a class="dropdown-item" href="dashboard.html?id=${p.id}#relatorio"><i class="bi bi-table me-2"></i>Relatório</a></li>
               ${currentUser.role === 'ADMIN' ? `<li><a class="dropdown-item" href="#" onclick="openTransfer(${p.id}); return false;"><i class="bi bi-person-gear me-2"></i>Transferir dono</a></li>` : ''}
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#" onclick="clearData(${p.id}); return false;"><i class="bi bi-eraser me-2"></i>Apagar leituras</a></li>

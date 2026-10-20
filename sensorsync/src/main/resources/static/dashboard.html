@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SensorSync - Dashboard</title>
+    <title>SensorSync - Projeto</title>
     <link rel="icon" type="image/png" href="img/if_logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
@@ -15,75 +15,120 @@
 <nav id="appNav"></nav>
 
 <main class="container-xl">
-    <div class="ss-page-header d-flex flex-wrap align-items-end justify-content-between gap-3">
-        <div class="min-w-0">
+    <div class="ss-page-header pb-2 d-flex flex-wrap align-items-end justify-content-between gap-3">
+        <div class="min-w-0 flex-grow-1">
             <a href="index.html" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Projetos</a>
-            <h1 class="mt-1 text-truncate" id="projectTitle">...</h1>
+            <h1 class="mt-1 ss-clamp-2" id="projectTitle">...</h1>
             <div class="small ss-muted d-flex align-items-center gap-2" id="deviceStatus">&nbsp;</div>
         </div>
-        <div class="d-flex flex-wrap align-items-center gap-2">
-            <select id="deviceSelected" class="form-select" style="width: auto; min-width: 180px;" aria-label="Dispositivo"></select>
-            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#devicesModal" onclick="loadDevices()">
-                <i class="bi bi-cpu me-1"></i>Dispositivos</button>
-            <a class="btn btn-outline-secondary" id="codeLink" href="#"><i class="bi bi-code-slash me-1"></i>Código</a>
-            <a class="btn btn-outline-secondary" id="exportLink" href="#"><i class="bi bi-table me-1"></i>Relatório</a>
+        <div id="deviceSelectorWrap">
+            <label class="form-label small ss-muted mb-1" for="deviceSelected">Dispositivo</label>
+            <select id="deviceSelected" class="form-select" style="min-width: 200px;"></select>
         </div>
     </div>
 
-    <div class="row g-3" id="dataCards">
-        <div class="col-12">
-            <div class="d-flex justify-content-center py-5"><div class="spinner-border text-success" role="status"></div></div>
-        </div>
-    </div>
+    <ul class="nav nav-underline ss-tabs mb-4" id="projectTabs" role="tablist">
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="visao" type="button" role="tab"><i class="bi bi-speedometer2 me-1"></i>Visão geral</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="dispositivos" type="button" role="tab"><i class="bi bi-cpu me-1"></i>Dispositivos</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="codigo" type="button" role="tab"><i class="bi bi-code-slash me-1"></i>Código</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="relatorio" type="button" role="tab"><i class="bi bi-table me-1"></i>Relatório</button></li>
+    </ul>
 
-    <section class="ss-card p-3 p-md-4 mt-4">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
-            <h2 class="h6 fw-semibold mb-0"><i class="bi bi-graph-up me-2"></i>Histórico</h2>
-            <div class="d-flex flex-wrap align-items-center gap-3">
-                <div class="btn-group btn-group-sm" role="group" aria-label="Quantidade de pontos" id="lengthGroup">
-                    <input type="radio" class="btn-check" name="len" id="len20" value="20"><label class="btn btn-outline-primary" for="len20">20</label>
-                    <input type="radio" class="btn-check" name="len" id="len50" value="50"><label class="btn btn-outline-primary" for="len50">50</label>
-                    <input type="radio" class="btn-check" name="len" id="len100" value="100"><label class="btn btn-outline-primary" for="len100">100</label>
-                    <input type="radio" class="btn-check" name="len" id="len500" value="500"><label class="btn btn-outline-primary" for="len500">500</label>
-                </div>
-                <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" role="switch" id="setTimeOff" checked>
-                    <label class="form-check-label small" for="setTimeOff">Tempo real</label>
+    <!-- ===================== Visao geral ===================== -->
+    <section data-panel="visao" class="d-none">
+        <div class="row g-3" id="dataCards">
+            <div class="col-12"><div class="d-flex justify-content-center py-5"><div class="spinner-border text-success" role="status"></div></div></div>
+        </div>
+
+        <section class="ss-card p-3 p-md-4 mt-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <h2 class="h6 fw-semibold mb-0"><i class="bi bi-graph-up me-2"></i>Histórico</h2>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Quantidade de pontos">
+                        <input type="radio" class="btn-check" name="len" id="len20" value="20"><label class="btn btn-outline-primary" for="len20">20</label>
+                        <input type="radio" class="btn-check" name="len" id="len50" value="50"><label class="btn btn-outline-primary" for="len50">50</label>
+                        <input type="radio" class="btn-check" name="len" id="len100" value="100"><label class="btn btn-outline-primary" for="len100">100</label>
+                        <input type="radio" class="btn-check" name="len" id="len500" value="500"><label class="btn btn-outline-primary" for="len500">500</label>
+                    </div>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="setTimeOff" checked>
+                        <label class="form-check-label small" for="setTimeOff">Tempo real</label>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div style="position: relative; height: 420px;">
-            <canvas id="dataChart"></canvas>
-        </div>
-        <p class="small ss-muted mb-0 mt-2 d-none" id="noChart">Nenhuma variável marcada como gráfico neste projeto.</p>
+            <div style="position: relative; height: 420px;"><canvas id="dataChart"></canvas></div>
+            <p class="small ss-muted mb-0 mt-2 d-none" id="noChart">Nenhuma variável marcada como gráfico neste projeto.</p>
+        </section>
     </section>
-</main>
 
-<footer id="appFooter"></footer>
-
-<!-- Dispositivos do projeto -->
-<div class="modal fade" id="devicesModal" tabindex="-1" aria-labelledby="devicesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="devicesModalLabel"><i class="bi bi-cpu me-2"></i>Dispositivos do projeto</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <p class="small ss-muted">Cada dispositivo usa o próprio token e só consegue gravar neste projeto.
+    <!-- ===================== Dispositivos ===================== -->
+    <section data-panel="dispositivos" class="d-none">
+        <div class="ss-card p-3 p-md-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                <p class="small ss-muted mb-0" style="max-width: 640px;">Cada dispositivo usa o próprio token e só consegue gravar neste projeto.
                     O token aparece uma única vez; se perder, gere outro (o anterior para de funcionar).</p>
-                <div id="newTokenBox"></div>
-                <div id="devicesList"></div>
-            </div>
-            <div class="modal-footer">
-                <div class="input-group" style="max-width: 420px;">
+                <div class="input-group" style="max-width: 380px;">
                     <input type="text" class="form-control" id="newDeviceName" placeholder="Nome do novo dispositivo" maxlength="254">
                     <button type="button" class="btn btn-primary" onclick="addDevice()"><i class="bi bi-plus-lg me-1"></i>Adicionar</button>
                 </div>
             </div>
+            <div id="newTokenBox"></div>
+            <div id="devicesList"></div>
         </div>
-    </div>
-</div>
+    </section>
+
+    <!-- ===================== Codigo ===================== -->
+    <section data-panel="codigo" class="d-none">
+        <div id="tokensBox"></div>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <section class="ss-card p-4 mb-4">
+                    <h2 class="h6 fw-semibold mb-3"><i class="bi bi-sliders me-2"></i>Opções</h2>
+                    <div class="mb-3">
+                        <label class="form-label small" for="board">Placa</label>
+                        <select class="form-select" id="board">
+                            <option value="ESP8266">ESP8266</option>
+                            <option value="ESP32">ESP32</option>
+                            <option value="ARDUINO_ESP8266">Arduino + ESP8266</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label small" for="protocol">Protocolo</label>
+                        <select class="form-select" id="protocol">
+                            <option value="HTTP">HTTP</option>
+                            <option value="MQTT">MQTT</option>
+                        </select>
+                    </div>
+                    <p class="small ss-muted mt-3 mb-0">O dispositivo é o selecionado no topo da página.</p>
+                </section>
+                <section class="ss-card p-4">
+                    <h2 class="h6 fw-semibold mb-3"><i class="bi bi-list-check me-2"></i>Como gravar</h2>
+                    <ol class="small ps-3 mb-0 d-flex flex-column gap-2">
+                        <li>Na IDE Arduino, instale a biblioteca <strong>SensorSync</strong> em <em>Ferramentas › Gerenciar Bibliotecas</em>. A PubSubClient vem junto.</li>
+                        <li>Baixe o <code>.ino</code> e preencha <code>WIFI_SSID</code> e <code>WIFI_PASSWORD</code>. O ESP só conecta em redes de 2,4 GHz.</li>
+                        <li>Substitua os <code>random()</code> pelas leituras dos sensores.</li>
+                        <li>Grave a placa e acompanhe pelo Monitor Serial (115200).</li>
+                    </ol>
+                </section>
+            </div>
+            <div class="col-lg-8"><div id="codeGenerated"></div></div>
+        </div>
+    </section>
+
+    <!-- ===================== Relatorio ===================== -->
+    <section data-panel="relatorio" class="d-none">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <div class="small ss-muted" id="reportInfo">&nbsp;</div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" onclick="loadReport()"><i class="bi bi-arrow-clockwise me-1"></i>Atualizar</button>
+                <button class="btn btn-primary" onclick="downloadCsv()"><i class="bi bi-filetype-csv me-1"></i>Baixar CSV</button>
+            </div>
+        </div>
+        <section class="ss-card overflow-hidden"><div id="tableDataDiv"></div></section>
+    </section>
+</main>
+
+<footer id="appFooter"></footer>
 
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
 <script src="scripts/app.js"></script>

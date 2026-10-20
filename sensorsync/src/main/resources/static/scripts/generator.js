@@ -69,7 +69,7 @@ async function saveProject() {
             protocol: selected('protocolSelector'),
             novo: '1'
         });
-        window.location.href = './code.html?' + params.toString();
+        window.location.href = './dashboard.html?' + params.toString() + '#codigo';
     } catch (e) {
         toast('Não foi possível criar o projeto: ' + e.message, 'danger');
         btn.disabled = false;
