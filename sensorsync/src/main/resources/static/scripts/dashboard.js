@@ -1,304 +1,238 @@
 // ***************************************************************************************************
-// Constantes de uso no código
+// Dashboard: dashboard.html?id=<projeto>
 
-const HOST = window.location.origin;
+const projectId = queryParam('id') || localStorage.getItem('projectID');
+let devices = [];
+let chart = null;
 
-// ***************************************************************************************************
-
-function verifyAndOpenDashboard() {
-    if (localStorage.getItem('loadProject') == "true") {
-        document.getElementById('projectTitle').innerHTML = localStorage.getItem('projectName');
-        constructDevicesSelector();
-        prepareCharts();
-    } else {
-        console.log('Não foi encontrado projeto na memória!');
-    }
-}
-
-
-function constructDevicesSelector() {
-
-    var devicesMainScreen = "<select id='deviceSelected' class=form-select>"
-    for (let index = 0; index < Number(localStorage.getItem('sensorNumber')); index++) {
-        devicesMainScreen = devicesMainScreen + "<option value='" + index + "'>Dispositivo " + index + "</option>"
-    }
-
-    devicesMainScreen = devicesMainScreen + "</select>";
-    document.getElementById('deviceSelector').innerHTML = devicesMainScreen;
-
-    (localStorage.getItem('deviceSelected') == null) ? device = 0 : device = localStorage.getItem('deviceSelected');
-    document.querySelector('#deviceSelected').value = device;
-
-    (localStorage.getItem('dataLength') == null) ? dataLength = 5 : dataLength = localStorage.getItem('dataLength');
-    document.querySelector("#length").value = dataLength;
-
-    if (localStorage.getItem('autoUpdate') == null) {
-        document.getElementById('setTimeOff').checked = true;
-    } else if (localStorage.getItem('autoUpdate') == 'off') {
-        document.getElementById('setTimeOff').checked = false;
-    } else {
-        document.getElementById('setTimeOff').checked = true;
-    }
-}
-
-// verifyAndOpenDashboard();
-
-function closeProject() {
-    localStorage.removeItem('loadProject');
-
-    localStorage.removeItem('projectName');
-    localStorage.removeItem('projectID');
-    localStorage.removeItem('sensorNumber');
-    localStorage.removeItem('dataNumber');
-    localStorage.removeItem('deviceSelected');
-
-    window.location.href = HOST + "/";
-}
-
-// Number(document.querySelector('#deviceSelected').value)
-
-function generateCards() {
-    // var request = HOST + "/data/cards/" + localStorage.getItem('projectID');
-    var request = HOST + "/data/cards/" + localStorage.getItem('projectID') + "/device/" + Number(document.querySelector('#deviceSelected').value);
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', request);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            dataCards = "<div class='container-fluid text-center'><div class='row gap-5 align-items-center'>";
-            dataPackage = JSON.parse(xhr.response);
-            for (let i = 0; i < dataPackage.length; i++) {
-                var dataToGenerate = dataPackage[i]
-
-                // if (document.getElementById('device' + dataToGenerate.sensorIndex).checked == true) {
-                // if (Number(document.querySelector('#deviceSelected').value) == dataToGenerate.sensorIndex) {
-                dataCards += "<div class='col-sm-3 shadow-sm border rounded-4'><p class='fw-light'>Dispositivo " + dataToGenerate.sensorIndex + " - " + dataToGenerate.sensorDescription +
-                    "</p>" + dataToGenerate.dataDesc +
-                    "<p><strong>" + dataToGenerate.data + "</strong></p>" +
-                    "<p class='fw-light'>" + dataToGenerate.readTime + "</p></div>";
-                // }
-
-            }
-            dataCards += "</div></div>";
-            document.getElementById('dataCards').innerHTML = dataCards;
-        }
+function prefs() {
+    return {
+        device: localStorage.getItem('dash_device_' + projectId),
+        length: Number(localStorage.getItem('dataLength')) || 20,
+        auto: localStorage.getItem('autoUpdate') !== 'off'
     };
 }
 
-function prepareCharts() {
-
-    generateCards();
-
-    // construindo o espaço para alocação dos gráficos
-    var chartSpace = "<div style='position-relative'>"
-
-    // for (let index = 0; index < localStorage.getItem('sensorNumber'); index++) {
-    //     chartSpace = chartSpace + "<canvas id='dataChart" + index + "' height='500'></canvas>"
-    // }
-
-    chartSpace = chartSpace + "<canvas id='dataChart" + Number(document.querySelector('#deviceSelected').value) + "' height='500'></canvas>"
-    chartSpace = chartSpace + "</div>";
-
-    document.getElementById('dataCharts').innerHTML = chartSpace;
-
-    generateCharts();
-
-    updateCharts();
-
+function selectedDevice() {
+    return Number(document.getElementById('deviceSelected').value);
 }
 
+async function init() {
+    await loadCurrentUser();
+    if (!projectId) {
+        window.location.href = 'index.html';
+        return;
+    }
+    let project;
+    try {
+        project = await api('/project/' + projectId);
+    } catch (e) {
+        document.getElementById('dataCards').innerHTML = `<div class='alert alert-danger'>${esc(e.message)}</div>`;
+        return;
+    }
+    document.title = 'SensorSync - ' + project.name;
+    document.getElementById('projectTitle').textContent = project.name;
+    document.getElementById('exportLink').href = 'export.html?id=' + projectId;
 
-function generateCharts() {
+    const p = prefs();
+    document.getElementById('length').value = p.length;
+    document.getElementById('setTimeOff').checked = p.auto;
 
+    await refreshDeviceSelector(p.device);
+    document.getElementById('deviceSelected').addEventListener('change', () => {
+        localStorage.setItem('dash_device_' + projectId, selectedDevice());
+        updateViews();
+    });
+    document.getElementById('length').addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+            updateViews();
+            bootstrap.Modal.getInstance(document.getElementById('optionsModal')).hide();
+        }
+    });
 
-    var device = Number(document.querySelector('#deviceSelected').value);
+    createChart();
+    updateViews();
+    setInterval(() => {
+        if (document.getElementById('setTimeOff').checked && !document.hidden) {
+            generateCards();
+            updateCharts();
+        }
+    }, 2000);
+}
 
-    const ctx = document.getElementById('dataChart' + device).getContext("2d");
+async function refreshDeviceSelector(preferred) {
+    devices = await api('/project/' + projectId + '/devices');
+    const sel = document.getElementById('deviceSelected');
+    const current = preferred ?? sel.value;
+    sel.innerHTML = devices.map(d => `<option value='${d.deviceIndex}'>${esc(d.name)}</option>`).join('');
+    if (current !== null && current !== '' && devices.some(d => String(d.deviceIndex) === String(current))) {
+        sel.value = current;
+    }
+    updateCodeLink();
+}
 
+function updateCodeLink() {
+    const d = devices.find(x => x.deviceIndex === selectedDevice());
+    document.getElementById('codeLink').href = 'code.html?id=' + projectId + (d ? '&device=' + d.id : '');
+}
 
-    globalThis.myBarChart = new Chart(ctx, {
+// ---- Cards ------------------------------------------------------------------------------------
+
+async function generateCards() {
+    try {
+        const cards = await api(`/data/cards/${projectId}/device/${selectedDevice()}`);
+        let html = "<div class='container-fluid text-center'><div class='row gap-4 justify-content-center align-items-stretch'>";
+        for (const c of cards) {
+            const value = c.data === null ? '—' : c.data;
+            html += `<div class='col-sm-3 shadow-sm border rounded-4 pt-2'>
+                <p class='fw-light mb-1'>${esc(c.dataDesc)}</p>
+                <p class='fs-3 mb-1'><strong>${esc(value)}</strong></p>
+                <p class='fw-light small'>${esc(c.readTime || 'sem leituras')}</p></div>`;
+        }
+        if (cards.length === 0) {
+            html += "<p class='text-body-secondary'>Nenhuma variável marcada como card.</p>";
+        }
+        document.getElementById('dataCards').innerHTML = html + "</div></div>";
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// ---- Grafico ----------------------------------------------------------------------------------
+
+function createChart() {
+    const ctx = document.getElementById('dataChart').getContext('2d');
+    chart = new Chart(ctx, {
         type: 'line',
-        data: {
-            // labels: [],
-            // datasets: [{}],
-        },
+        data: { labels: [], datasets: [] },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            colors: {
-                forceOverride: true
-            }, plugins: {
-                title: {
-                    display: true,
-                    text: 'Dispositivo ' + device,
-                }
-            },
+            scales: { y: { beginAtZero: false } },
+            spanGaps: true,
+            plugins: { title: { display: true, text: '' } },
             responsive: true,
             maintainAspectRatio: false,
-            animation: true
+            animation: false
         }
-
     });
 }
-//async function updateCharts() {
-//    var chartRequest = `${HOST}:8080/data/charts/${localStorage.getItem('projectID')}/device/${Number(document.querySelector('#deviceSelected').value)}/length/${Number(document.querySelector("#length").value)}`;
-//
-//    try {
-//        const response = await fetch(chartRequest, {
-//            method: 'GET',
-//            headers: {
-//                'Content-Type': 'application/json'
-//            }
-//        });
-//
-//        if (response.ok) {
-//            const chartData = await response.json();
-//
-//            var l = myBarChart.data.labels.length;
-//            var response_l = chartData[1].length;
-//
-//            if (chartData[1][response_l - 1] != myBarChart.data.labels[l - 1]) {
-//                for (let index = 0; index < l; index++) {
-//                    myBarChart.data.labels.pop();
-//                }
-//
-//                // limpando apenas os dados
-//                // https://www.chartjs.org/docs/latest/developers/updates.html
-//                var d = myBarChart.data.datasets.length;
-//                for (let index = 0; index < d; index++) {
-//                    myBarChart.data.datasets.pop();
-//                }
-//
-//                chartLabels = chartData[0];
-//
-//                for (let index = 0; index < chartData[1].length; index++) {
-//                    myBarChart.data.labels.push(chartData[1][index]);
-//                }
-//
-//                for (let index = 2; index < chartData.length; index++) {
-//                    const element = chartData[index];
-//                    myBarChart.data.datasets.push({
-//                        label: chartLabels[index - 2],
-//                        data: element,
-//                        fill: false,
-//                        tension: 0.1
-//                    });
-//                }
-//            }
-//            myBarChart.update();
-//        }
-//    } catch (error) {
-//        console.error('Error fetching chart data:', error);
-//    }
-//}
 
-async function updateCharts() {
-    var chartRequest = `${HOST}:8080/data/charts/${localStorage.getItem('projectID')}/device/${Number(document.querySelector('#deviceSelected').value)}/length/${Number(document.querySelector("#length").value)}`;
+let lastChartKey = '';
 
+async function updateCharts(force = false) {
+    const length = Number(document.getElementById('length').value) || 20;
     try {
-        const response = await fetch(chartRequest, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            const chartData = await response.json();
-
-            // Verificar se a quantidade de labels e dados mudou
-            const newLabels = chartData[1];
-            const currentLabels = myBarChart.data.labels;
-
-            if (newLabels[newLabels.length - 1] !== currentLabels[currentLabels.length - 1]) {
-                // Atualizar os rótulos
-                myBarChart.data.labels = newLabels;
-
-                // Atualizar os datasets
-                for (let i = 2; i < chartData.length; i++) {
-                    const newData = chartData[i];
-                    const dataset = myBarChart.data.datasets[i - 2];
-
-                    // Se o dataset já existe, atualize os dados
-                    if (dataset) {
-                        dataset.data = newData;
-                    } else {
-                        // Se o dataset não existir, crie um novo
-                        myBarChart.data.datasets.push({
-                            label: chartData[0][i - 2],
-                            data: newData,
-                            fill: false,
-                            tension: 0.1
-                        });
-                    }
-                }
-
-                // Atualizar o gráfico com os novos dados
-                myBarChart.update();
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching chart data:', error);
+        const data = await api(`/data/charts/${projectId}/device/${selectedDevice()}/length/${length}`);
+        const names = data[0], labels = data[1], series = data.slice(2);
+        const key = JSON.stringify([selectedDevice(), length, labels.length, labels[labels.length - 1], series.map(s => s[s.length - 1])]);
+        if (!force && key === lastChartKey) return;
+        lastChartKey = key;
+        const dev = devices.find(d => d.deviceIndex === selectedDevice());
+        chart.options.plugins.title.text = dev ? dev.name : '';
+        chart.data.labels = labels;
+        chart.data.datasets = series.map((s, i) => ({
+            label: names[i],
+            data: s.map(v => v === '' ? null : Number(v)),
+            fill: false,
+            tension: 0.1
+        }));
+        chart.update();
+    } catch (e) {
+        console.error(e);
     }
 }
-
 
 function updateViews() {
-    if (document.getElementById('setTimeOff').checked == true) {
-        localStorage.setItem('autoUpdate', 'on');
-    } else {
-        localStorage.setItem('autoUpdate', 'off');
-    }
-
-    localStorage.setItem('dataLength', document.querySelector("#length").value);
+    localStorage.setItem('autoUpdate', document.getElementById('setTimeOff').checked ? 'on' : 'off');
+    localStorage.setItem('dataLength', document.getElementById('length').value);
+    updateCodeLink();
     generateCards();
-    prepareCharts();
+    updateCharts(true);
 }
 
-// ***************************************************************************************************
-// Atualizando a guia de exportação dos dados
+// ---- Dispositivos -----------------------------------------------------------------------------
 
-function openExportTab() {
-    alert("Será aberta uma nova guia com o relatório dos dados");
-    window.open("./export.html", '_blank').focus();
+function fmtDate(s) {
+    return s ? new Date(s).toLocaleString('pt-BR') : 'nunca';
 }
 
-setInterval(function () {
-
-    if (document.getElementById('setTimeOff').checked) {
-        generateCards();
-        updateCharts();
-    }
-}, 1000); //300000 is 5minutes in ms
-
-
-function reGenerateCode() {
-    alert("Será aberta uma nova guia com o código do sistema embarcado");
-    window.open("./code.html", "_blank").focus()
-}
-
-// ***************************************************************************************************
-// Configurando a vizualização para o dispositivo escolhido
-
-deviceField = document.querySelector("#deviceSelector");
-
-deviceField.addEventListener("change", (event) => {
-    localStorage.setItem('deviceSelected', Number(document.querySelector('#deviceSelected').value));
-    updateViews();
-});
-
-
-// ***************************************************************************************************
-//Alualiza o estado da vizualização com enter
-materialField = document.querySelector("#length");
-materialField.addEventListener("keypress", (event) => {
-        if (event.key === "Enter") {
-            updateViews();
-            $('#staticBackdrop').modal('toggle');
+async function loadDevices() {
+    const list = document.getElementById('devicesList');
+    try {
+        await refreshDeviceSelector();
+        let html = `<table class='table align-middle'><thead><tr><th>Índice</th><th>Nome</th><th>Token</th><th>Último envio</th><th></th></tr></thead><tbody>`;
+        for (const d of devices) {
+            const token = d.hasToken ? `<code>${esc(d.tokenPrefix)}…</code>` : "<span class='badge text-bg-warning'>sem token</span>";
+            html += `<tr><td>${d.deviceIndex}</td>
+                <td><input class='form-control form-control-sm' value='${esc(d.name)}' onchange='renameDevice(${d.id}, this.value)'></td>
+                <td>${token}</td><td class='small'>${esc(fmtDate(d.lastSeenAt))}</td>
+                <td class='text-nowrap text-end'>
+                  <button class='btn btn-sm btn-outline-primary' onclick='newToken(${d.id})'>${d.hasToken ? 'Novo token' : 'Gerar token'}</button>
+                  <a class='btn btn-sm btn-outline-secondary' href='code.html?id=${projectId}&device=${d.id}'>Código</a>
+                  <button class='btn btn-sm btn-outline-danger' onclick='deleteDevice(${d.id})'>Excluir</button>
+                </td></tr>`;
         }
+        list.innerHTML = html + '</tbody></table>';
+    } catch (e) {
+        list.innerHTML = `<div class='alert alert-danger'>${esc(e.message)}</div>`;
     }
-);
+}
+
+function showToken(result, title) {
+    rememberToken(result.device.id, result.token);
+    const box = document.getElementById('newTokenBox');
+    box.innerHTML = `<div class='alert alert-warning'>
+        <strong>${esc(title)}</strong> — copie agora, ele não será exibido de novo:<br>
+        <code class='fs-6'>${esc(result.token)}</code>
+        <button class='btn btn-sm btn-outline-secondary ms-2' id='copyTokenBtn'>Copiar</button>
+        <a class='btn btn-sm btn-outline-primary ms-1' href='code.html?id=${projectId}&device=${result.device.id}'>Ver código com este token</a></div>`;
+    document.getElementById('copyTokenBtn').onclick = () => copyText(result.token);
+}
+
+async function newToken(deviceId) {
+    const d = devices.find(x => x.id === deviceId);
+    if (d && d.hasToken && !confirm(`Gerar um novo token para "${d.name}"? O token atual deixa de funcionar e a placa precisará ser regravada.`)) return;
+    try {
+        const r = await api(`/project/${projectId}/devices/${deviceId}/token`, { method: 'POST' });
+        showToken(r, 'Token de ' + r.device.name);
+        loadDevices();
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+async function addDevice() {
+    const input = document.getElementById('newDeviceName');
+    try {
+        const r = await api(`/project/${projectId}/devices`, { method: 'POST', body: { name: input.value } });
+        input.value = '';
+        showToken(r, 'Dispositivo criado: ' + r.device.name);
+        loadDevices();
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+async function renameDevice(deviceId, name) {
+    try {
+        await api(`/project/${projectId}/devices/${deviceId}`, { method: 'PUT', body: { name: name } });
+        await refreshDeviceSelector();
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+async function deleteDevice(deviceId) {
+    const d = devices.find(x => x.id === deviceId);
+    if (!confirm(`Excluir o dispositivo "${d ? d.name : deviceId}"? O token dele deixa de funcionar.`)) return;
+    const deleteData = confirm('Apagar também as leituras já gravadas por este dispositivo?\n\nOK = apagar, Cancelar = manter.');
+    try {
+        await api(`/project/${projectId}/devices/${deviceId}?deleteData=${deleteData}`, { method: 'DELETE' });
+        document.getElementById('newTokenBox').innerHTML = '';
+        await loadDevices();
+        updateViews();
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+init();

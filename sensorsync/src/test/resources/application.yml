@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:sensorsync;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+sensorsync:
+  mqtt:
+    enabled: false
+  ingest:
+    allow-legacy: false
+  bootstrap:
+    admin-login: admin
+    admin-password: adminadmin

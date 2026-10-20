@@ -1,13 +1,45 @@
-Spring:
+# Configuracao do SensorSync.
+# Valores sensiveis vem de variaveis de ambiente (nunca coloque senhas reais neste arquivo).
+spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/sensor_sync_data?useTimezone=true&serverTimezone=UTC
-    username: root
-    password: mws#polux2025
+    url: ${SENSORSYNC_DB_URL:jdbc:mysql://localhost:3306/sensor_sync_data?serverTimezone=America/Sao_Paulo}
+    username: ${SENSORSYNC_DB_USER:sensorsync}
+    password: ${SENSORSYNC_DB_PASSWORD:}
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
         show_sql: false
+
+server:
+  port: ${SENSORSYNC_PORT:8080}
+  servlet:
+    session:
+      timeout: 12h
+      cookie:
+        same-site: lax
+        http-only: true
+
+sensorsync:
+  # Endereco que vai no codigo gerado para os microcontroladores.
+  # Vazio = usa o endereco pelo qual o navegador acessou a plataforma.
+  public-host: ${SENSORSYNC_PUBLIC_HOST:}
+  mqtt:
+    enabled: ${SENSORSYNC_MQTT_ENABLED:true}
+    broker: ${SENSORSYNC_MQTT_BROKER:tcp://localhost:1883}
+    username: ${SENSORSYNC_MQTT_USER:}
+    password: ${SENSORSYNC_MQTT_PASSWORD:}
+    topic: ${SENSORSYNC_MQTT_TOPIC:sensorsync}
+    # Porta informada no codigo gerado para os dispositivos
+    public-port: ${SENSORSYNC_MQTT_PUBLIC_PORT:1883}
+  ingest:
+    # true = aceita o formato antigo (sem token) enquanto os dispositivos sao regravados.
+    # Deixe false assim que todos os dispositivos usarem token.
+    allow-legacy: ${SENSORSYNC_ALLOW_LEGACY_INGEST:false}
+  bootstrap:
+    # Usado somente se o banco nao tiver nenhum usuario.
+    admin-login: ${SENSORSYNC_ADMIN_LOGIN:admin}
+    admin-password: ${SENSORSYNC_ADMIN_PASSWORD:}

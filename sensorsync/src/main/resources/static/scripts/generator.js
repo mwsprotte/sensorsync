@@ -1,165 +1,74 @@
 // ***************************************************************************************************
-// Constantes de uso no código
-
-const HOST = window.location.origin;
-
-
-// ***************************************************************************************************
-// Função para gerar a lista de cadastro de dados
+// Tela de criacao de projeto
 
 function loadDataInput() {
-    var dataNumber = parseInt(document.getElementById('dataNumber').value);
-    var cards = "";
+    const dataNumber = Math.min(20, Math.max(1, parseInt(document.getElementById('dataNumber').value) || 1));
+    // Preserva o que ja foi digitado ao mudar a quantidade
+    const previous = [];
+    for (let i = 0; i < 20; i++) {
+        const d = document.getElementById('cardDesc' + i);
+        if (!d) break;
+        previous.push({ desc: d.value, card: document.getElementById('useCard' + i).checked, chart: document.getElementById('useChart' + i).checked });
+    }
+    if (previous.length === dataNumber) return;  // nada mudou: nao recria os campos
+    let cards = "";
     for (let index = 0; index < dataNumber; index++) {
-        var ref = index + 1;
-        cards = cards +
+        const ref = index + 1;
+        const prev = previous[index] || { desc: 'Dado ' + ref, card: true, chart: true };
+        cards +=
             "<div class='col-md-12'><p class='text-center fw-semibold'>Dado " + ref + "</p></div>" +
-            "<div class='col-md-6'><label class='form-label'>Descrição</label><input type='text' class='form-control' id='cardDesc" + index + "'  value='Unidade " + ref + "'></div>" +
+            "<div class='col-md-6'><label class='form-label' for='cardDesc" + index + "'>Descrição</label><input type='text' class='form-control' maxlength='254' id='cardDesc" + index + "' value='" + esc(prev.desc) + "'></div>" +
             "<div class='col-md-6'><br>" +
-            "<div class='form-check form-check-inline'><input class='form-check-input' type='checkbox' id='useCard" + index + "'value='' checked><label class='form-check-label' for='inlineCheckbox1'>Card</label></div>" +
-            "<div class='form-check form-check-inline'><input class='form-check-input' type='checkbox' id='useChart" + index + "'value=''><label class='form-check-label' for='inlineCheckbox2'>Gráfico</label></div>" +
-            "</div>" +
-            "<div class='col-md-6'><br></div>" +
+            "<div class='form-check form-check-inline'><input class='form-check-input' type='checkbox' id='useCard" + index + "' " + (prev.card ? 'checked' : '') + "><label class='form-check-label' for='useCard" + index + "'>Card</label></div>" +
+            "<div class='form-check form-check-inline'><input class='form-check-input' type='checkbox' id='useChart" + index + "' " + (prev.chart ? 'checked' : '') + "><label class='form-check-label' for='useChart" + index + "'>Gráfico</label></div>" +
             "</div><div><hr></div>";
-
     }
-
-    document.getElementById('cardsSet').innerHTML = cards
+    document.getElementById('cardsSet').innerHTML = cards;
 }
 
-document.querySelector("#dataNumber").addEventListener("change", loadDataInput); //escutanto o campo de imputs de dados para disparar a função
+document.querySelector("#dataNumber").addEventListener("change", loadDataInput);
 
-function loadDataDesc(index) {
-    try {
-        var auxRead = document.getElementById("cardDesc" + index).value;
-        if (auxRead == null) {
-            return "";
-        } else {
-            return document.getElementById("cardDesc" + index).value;
-        }
-    } catch (error) {
-        return "";
-    }
-
+function selected(name) {
+    return document.querySelector(`input[name='${name}']:checked`).value;
 }
 
-function loadDataUseCard(index) {
-    try {
-        var auxRead = document.getElementById("useCard" + index).checked;
-        if (auxRead == false) {
-            return 0;
-        } else {
-            return 1;
-        }
-    } catch (error) {
-        return 0;
+async function saveProject() {
+    const name = document.getElementById('projetctName').value.trim();
+    if (!name) {
+        alert("Insira um nome para o projeto!");
+        return;
     }
-
-}
-
-function loadDataUseChart(index) {
-    try {
-        var auxRead = document.getElementById("useChart" + index).checked;
-        if (auxRead == false) {
-            return 0;
-        } else {
-            return 1;
-        }
-    } catch (error) {
-        return 0;
-    }
-}
-
-// ***************************************************************************************************
-// Método para criar a requisição de salvar projetos
-
-
-function saveProject() {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", HOST + "/project");
-    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-
-    if (document.getElementById('projetctName').value != "") {
-
-        const body = JSON.stringify({
-            name: document.getElementById('projetctName').value,
-            sensorNumber: parseInt(document.getElementById('sensorNumber').value),
-            dataNumber: parseInt(document.getElementById('dataNumber').value),
+    const dataNumber = parseInt(document.getElementById('dataNumber').value);
+    const variables = [];
+    for (let i = 0; i < dataNumber; i++) {
+        variables.push({
+            dataDesc: document.getElementById('cardDesc' + i).value,
+            useCard: document.getElementById('useCard' + i).checked,
+            useChart: document.getElementById('useChart' + i).checked
         });
-
-        xhr.onload = () => {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-
-                try {
-                    var response = JSON.parse(xhr.responseText)
-                    console.log(`Projeto: ` + response.id);
-                    saveMetadata(response.id);
-                } catch (e) {
-                    alert("Esse projeto já existe!")
-                    window.location.reload();
-                }
-
-            } else {
-                console.log(`Error: ${xhr.status}`);
-            }
-        };
-        xhr.send(body);
-    } else {
-        window.alert("Insira um nome para o projeto!")
     }
-}
-
-function saveMetadata(id) {
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", HOST + "/metadata/list");
-    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-
-    var metadataAll = '[';
-    for (let index = 0; index < parseInt(document.getElementById('dataNumber').value); index++) {
-        metadataAll = metadataAll + '{"projectID": ' + id + ',"dataIndex": ' + index + ',"dataDesc": "' + document.getElementById("cardDesc" + index).value + '","useCard": ' + loadDataUseCard(index) + ',"useChart": ' + loadDataUseChart(index) + '}';
-        if (index < parseInt(document.getElementById('dataNumber').value - 1)) {
-            metadataAll = metadataAll + ",";
+    const btn = document.getElementById('createBtn');
+    btn.disabled = true;
+    try {
+        const created = await api('/project', {
+            method: 'POST',
+            body: { name: name, devices: parseInt(document.getElementById('sensorNumber').value), variables: variables }
+        });
+        // Os tokens so existem nesta resposta: guarda na aba para a tela de codigo
+        for (const d of created.devices) {
+            rememberToken(d.device.id, d.token);
         }
+        const params = new URLSearchParams({
+            id: created.project.id,
+            board: selected('deviceSelector'),
+            protocol: selected('protocolSelector'),
+            novo: '1'
+        });
+        window.location.href = './code.html?' + params.toString();
+    } catch (e) {
+        alert('Não foi possível criar o projeto: ' + e.message);
+        btn.disabled = false;
     }
-    metadataAll = metadataAll + "]";
-
-    // console.log(metadataAll);
-    const body = metadataAll;
-
-    xhr.onload = () => {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            window.alert("Criado o projeto " + document.getElementById('projetctName').value);
-            alert("Será aberta uma nova guia com o código do sistema embarcado");
-            saveEmbeddedCodeInfos(id);
-            window.open("./code.html", '_blank').focus();
-            window.location.href = "./index.html";
-        } else {
-            window.alert(`Não foi possível criar o projeto! Erro ${xhr.status}`);
-
-            // console.log(`Error: ${xhr.status}`);
-        }
-    };
-    xhr.send(body);
-
 }
 
-function saveEmbeddedCodeInfos(projectID) {
-    var device = 0;
-    if (document.querySelector("#ESP32Device").checked == true) {
-        device = 1;
-    } else if (document.querySelector("#ArduinoDevice").checked == true) {
-        device = 2;
-    }
-    localStorage.setItem("device", device);
-
-    var protocol = 0;
-    if (document.querySelector("#MQTTSelect").checked == true) {
-        protocol = 1;
-    }
-    localStorage.setItem("protocol", protocol);
-
-    localStorage.setItem("projectGenerated", projectID);
-}
-
-// ***************************************************************************************************
+loadCurrentUser();

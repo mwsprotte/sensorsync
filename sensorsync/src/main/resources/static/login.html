@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SensorSync - Entrar</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <script src="scripts/dark_mode.js"></script>
+</head>
+<body class="bg-body-tertiary">
+<div class="container" style="max-width: 420px;">
+    <div class="text-center mt-5 mb-4">
+        <img src="img/if_logo.png" alt="Logo" width="72" height="72">
+        <h1 class="h4 mt-3">SensorSync - IFSC Rau</h1>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <div id="loginError" class="alert alert-danger d-none" role="alert">Login ou senha incorretos.</div>
+            <div id="loginOut" class="alert alert-success d-none" role="alert">Você saiu da plataforma.</div>
+            <form method="post" action="/login">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Login</label>
+                    <input type="text" class="form-control" id="username" name="username" autocomplete="username" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+        </div>
+    </div>
+    <p class="text-center text-body-secondary small mt-3">Sem acesso? Peça uma conta ao administrador do laboratório.</p>
+</div>
+<script src="scripts/login.js"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "data")
+@Table(name = "data", indexes = @Index(name = "idx_data_lookup", columnList = "projectid, sensor_index, data_index, id"))
 public class Data implements Serializable {
 
     private static final long serialVersionUID = 1L;

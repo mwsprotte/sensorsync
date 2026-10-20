@@ -1,0 +1,23 @@
+# /etc/systemd/system/sensorsync.service
+# sudo systemctl daemon-reload && sudo systemctl enable --now sensorsync
+[Unit]
+Description=SensorSync - plataforma IoT
+After=network-online.target mysql.service mosquitto.service
+Wants=network-online.target
+
+[Service]
+User=sensorsync
+Group=sensorsync
+WorkingDirectory=/opt/sensorsync
+EnvironmentFile=/etc/sensorsync/sensorsync.env
+# Raspberry Pi 3 (1 GB): limita o heap para sobrar memoria ao MySQL
+ExecStart=/usr/bin/java -Xmx384m -jar /opt/sensorsync/sensorsync.jar
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

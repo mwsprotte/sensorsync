@@ -1,77 +1,50 @@
 package com.mws.sensorsync;
 
-
 import com.mws.sensorsync.model.UserHuman;
+import com.mws.sensorsync.security.AccessService;
 import com.mws.sensorsync.services.UserHumanService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
+/** Gerenciamento de usuarios. Somente ADMIN (regra em SecurityConfig). A senha nunca e devolvida. */
 @RestController
 @RequestMapping("user")
 public class UserHumanController {
 
-    @Autowired
-    private UserHumanService userHumanService;
+    private final UserHumanService userHumanService;
+    private final AccessService access;
 
-
-//    *********************************************************************************************
-//    Endpoints do Crud básico
+    public UserHumanController(UserHumanService userHumanService, AccessService access) {
+        this.userHumanService = userHumanService;
+        this.access = access;
+    }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserHuman> findall() {
+    public List<UserHuman> findAll() {
         return userHumanService.findAll();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserHuman findByID(@PathVariable(value = "id") Long id) {
+    public UserHuman findByID(@PathVariable("id") Long id) {
         return userHumanService.findById(id);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public boolean save(@RequestBody UserHuman user) {
-        if (userHumanService.getUserByLogin(user.getLogin()) == null && !user.getPassword().isEmpty()) {
-            userHumanService.save(user);
-            return true;
-        } else {
-            return false;
-        }
+    public UserHuman create(@RequestBody UserHumanService.UserForm form) {
+        return userHumanService.create(form);
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserHuman update(@RequestBody UserHuman dataPackage) {
-        return userHumanService.update(dataPackage);
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public UserHuman update(@PathVariable("id") Long id, @RequestBody UserHumanService.UserForm form) {
+        return userHumanService.update(id, form, access.currentUser());
     }
 
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
-        userHumanService.delete(id);
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        userHumanService.delete(id, access.currentUser());
         return ResponseEntity.noContent().build();
     }
-
-    //  *********************************************************************************************
-//  Endpoint para checar o login
-    @GetMapping(value = "/check/login/{login}/password/{password}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean checkUser(@PathVariable(value = "login") String login, @PathVariable(value = "password") String password) {
-        var entity = userHumanService.getUserByLogin(login);
-
-        try {
-            boolean verify = (Objects.equals(entity.getPassword(), password));
-
-            if (verify) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-
-    }
-
 }

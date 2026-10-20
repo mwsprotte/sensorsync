@@ -1,228 +1,180 @@
 package com.mws.sensorsync;
 
+import com.mws.sensorsync.exceptions.ApiException;
 import com.mws.sensorsync.model.Data;
+import com.mws.sensorsync.model.Metadata;
+import com.mws.sensorsync.model.Project;
+import com.mws.sensorsync.security.AccessService;
 import com.mws.sensorsync.services.DataService;
 import com.mws.sensorsync.services.MetadataService;
-import com.mws.sensorsync.services.ProjectService;
 import com.mws.sensorsync.views.CardView;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Leitura dos dados (interface humana e interface maquina). Todas as rotas exigem login e
+ * so devolvem dados de projetos do usuario (ou de qualquer projeto, para admin).
+ * A gravacao de dados fica em ingest/IngestController (autenticada por token de dispositivo).
+ */
 @RestController
 @RequestMapping("/data")
 public class DataController {
 
-    @Autowired
-    private DataService dataServices;
+    private static final long MAX_LENGTH = 10_000;
 
-    @Autowired
-    private MetadataService metadataService;
+    private final DataService dataServices;
+    private final MetadataService metadataService;
+    private final AccessService access;
 
-    @Autowired
-    private ProjectService projectService;
-
-    /**
-     * Endpoints do Crud básico
-     */
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Data> findall() {
-        return dataServices.findAll();
+    public DataController(DataService dataServices, MetadataService metadataService, AccessService access) {
+        this.dataServices = dataServices;
+        this.metadataService = metadataService;
+        this.access = access;
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Data findByID(@PathVariable(value = "id") Long id) {
-        return dataServices.findById(id);
-    }
-
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Data save(@RequestBody Data data) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
-        data.setReadTime(dtf.format(LocalDateTime.now()));
-        return dataServices.save(data);
-    }
-
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Data update(@RequestBody Data dataPackage) {
-        return dataServices.update(dataPackage);
-    }
-
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
-        dataServices.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping(value = "cleanProject/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteAll(@PathVariable(value = "id") Long id) {
-        dataServices.deleteAllData(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Recebendo uma lista de dados para salvar no banco
-     */
-    @PostMapping(value = "/saveList", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public boolean saveList(@RequestBody List<Data> dataList) {
-        try {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
-            for (Data data : dataList) {
-                data.setReadTime(dtf.format(LocalDateTime.now()));
-                dataServices.save(data);
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
+    private static long checkLength(Long length) {
+        if (length == null || length < 1 || length > MAX_LENGTH) {
+            throw ApiException.badRequest("length deve estar entre 1 e " + MAX_LENGTH);
         }
+        return length;
     }
 
-    /**
-     * RETORNA TODOS OS CARDS PARA UM PROJETO
-     */
-    @GetMapping(value = "/cards/{projectID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CardView> findDataCards(@PathVariable(value = "projectID") Long id) {
-        List<CardView> cards = new ArrayList<>();
-        for (Long i = 0L; i < projectService.findById(id).getSensorNumber(); i++) {
-            for (Long j = 0L; j < (projectService.findById(id).getDataNumber()); j++) {
-                if (metadataService.findByProjectIdAndDataIndex(id, j).isUseCard()) {
-                    var entity = dataServices.findForCard(id, i, j);
-                    CardView dataToAdd = new CardView();
-                    dataToAdd.setData(entity.getData());
-                    dataToAdd.setReadTime(entity.getReadTime());
-                    dataToAdd.setSensorDescription(entity.getSensorDescription());
-                    dataToAdd.setSensorIndex(entity.getSensorIndex());
-                    dataToAdd.setDataDesc(metadataService.findByProjectIdAndDataIndex(id, j).getDataDesc());
-                    cards.add(dataToAdd);
-                }
-            }
-        }
-        return cards;
-    }
-
-    /**
-     * RETORNA TODOS OS CARDS PARA UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO
-     */
+    /** Ultimo valor de cada variavel marcada como card, para um dispositivo. */
     @GetMapping(value = "/cards/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CardView> findDataCardsByDevice(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device) {
+    public List<CardView> findDataCardsByDevice(@PathVariable("projectID") Long id, @PathVariable("device") Long device) {
+        access.requireProject(id);
         List<CardView> cards = new ArrayList<>();
-        for (Long j = 0L; j < (projectService.findById(id).getDataNumber()); j++) {
-            if (metadataService.findByProjectIdAndDataIndex(id, j).isUseCard()) {
-                var entity = dataServices.findForCard(id, device, j);
-                CardView dataToAdd = new CardView();
-                dataToAdd.setData(entity.getData());
-                dataToAdd.setReadTime(entity.getReadTime());
-                dataToAdd.setSensorDescription(entity.getSensorDescription());
-                dataToAdd.setSensorIndex(entity.getSensorIndex());
-                dataToAdd.setDataDesc(metadataService.findByProjectIdAndDataIndex(id, j).getDataDesc());
-                cards.add(dataToAdd);
+        for (Metadata m : metadataService.findByProjectId(id)) {
+            if (!m.isUseCard()) {
+                continue;
             }
+            Data entity = dataServices.findForCard(id, device, m.getDataIndex());
+            CardView card = new CardView();
+            card.setSensorIndex(device);
+            card.setDataDesc(m.getDataDesc());
+            if (entity != null) {
+                card.setData(entity.getData());
+                card.setReadTime(entity.getReadTime());
+                card.setSensorDescription(entity.getSensorDescription());
+            }
+            cards.add(card);
         }
         return cards;
     }
 
     /**
-     * RETORNA OS DADOS PARA O GRÁFICO DE UM PROJETO DE ACORDO COM O DISPOSITIVO ESCOLHIDO
+     * Series para o grafico: [ [nomes das series], [rotulos do eixo x], [serie 1], [serie 2], ... ].
+     * Cada ponto do eixo x e um envio do dispositivo; "" = variavel ausente naquele envio.
      */
     @GetMapping(value = "/charts/{projectID}/device/{device}/length/{length}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<List<String>> findDataCharts(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device, @PathVariable(value = "length") Long length) {
-        List<List<String>> dataForCharts = new ArrayList<>();
+    public List<List<String>> findDataCharts(@PathVariable("projectID") Long id, @PathVariable("device") Long device,
+                                             @PathVariable("length") Long length) {
+        Project p = access.requireProject(id);
+        long n = checkLength(length);
+        List<Metadata> metas = metadataService.findByProjectId(id);
+        List<Metadata> charted = metas.stream().filter(Metadata::isUseChart).toList();
 
-//        Iterando para carregar os títulos das curvas
-        List<String> labels = new ArrayList<>();
-        var entityDesc = metadataService.findByProjectId(id);
-        for (int i = 0; i < entityDesc.size(); i++) {
-            if (entityDesc.get(i).isUseChart()) {
-                labels.add(entityDesc.get(i).getDataDesc());
-            }
+        // Busca as ultimas n*variaveis leituras do dispositivo e agrupa por envio
+        List<Data> recent = new ArrayList<>(dataServices.findByProjectIDandDevice(id, device, n * Math.max(1, p.getDataNumber())));
+        recent.sort(Comparator.comparingLong(Data::getId));
+        Map<Long, Integer> column = new HashMap<>();
+        for (int i = 0; i < charted.size(); i++) {
+            column.put(charted.get(i).getDataIndex(), i + 1);
+        }
+        List<String[]> rows = group(recent, column, charted.size() + 1);
+        if (rows.size() > n) {
+            rows = rows.subList(rows.size() - (int) n, rows.size());
         }
 
-        dataForCharts.add(labels);
-
-//      Iterando para carregar o eixo x
-        List<String> labelsX = new ArrayList<>();
-        var entityX = dataServices.findForChart(id, device, 0L, length);
-        for (int i = 0; i < entityX.size(); i++) {
-            labelsX.add(entityX.get(i).getReadTime());
+        List<List<String>> result = new ArrayList<>();
+        result.add(charted.stream().map(Metadata::getDataDesc).toList());
+        result.add(rows.stream().map(r -> r[0]).toList());
+        for (int c = 1; c <= charted.size(); c++) {
+            final int col = c;
+            result.add(rows.stream().map(r -> r[col] == null ? "" : r[col]).toList());
         }
-        Collections.reverse(labelsX);
-        dataForCharts.add(labelsX);
-
-//        Iterando para carregar os conjuntos de dados para cada grandeza
-        int maxIndex = (int) projectService.findById(id).getDataNumber();
-        for (int i = 0; i < maxIndex; i++) {
-            if (metadataService.findByProjectId(id).get(i).isUseChart()) {
-                List<String> labelsY = new ArrayList<>();
-                var entityY = dataServices.findForChart(id, device, Long.valueOf(i), length);
-                for (int j = 0; j < entityY.size(); j++) {
-                    labelsY.add(String.valueOf(entityY.get(j).getData()));
-                }
-                Collections.reverse(labelsY);
-                dataForCharts.add(labelsY.stream().toList());
-
-            }
-
-        }
-        return dataForCharts;
+        return result;
     }
 
     /**
-     * Retornar todos os dados de determinado projeto para gerar um relatório
+     * Relatorio completo de um dispositivo: primeira linha = cabecalho ("Instante" + variaveis),
+     * demais linhas = um envio por linha (vazio quando a variavel nao veio naquele envio).
      */
     @GetMapping(value = "/report/{projectID}/device/{device}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<List<String>> findAllDataReport(@PathVariable(value = "projectID") Long id, @PathVariable(value = "device") Long device) {
-        List<List<String>> dataForReport = new ArrayList<>();
-
-        List<String> labels = new ArrayList<>();
-        labels.add("Instante");
-
-        var projectInfo = projectService.findById(id);
-        var entityDesc = metadataService.findByProjectId(id);
-        for (int i = 0; i < entityDesc.size(); i++) {
-            labels.add(entityDesc.get(i).getDataDesc());
+    public List<List<String>> findAllDataReport(@PathVariable("projectID") Long id, @PathVariable("device") Long device) {
+        access.requireProject(id);
+        List<Metadata> metas = metadataService.findByProjectId(id);
+        Map<Long, Integer> column = new HashMap<>();
+        List<String> header = new ArrayList<>();
+        header.add("Instante");
+        for (Metadata m : metas) {
+            column.put(m.getDataIndex(), header.size());
+            header.add(m.getDataDesc());
         }
 
-        dataForReport.add(labels);
-
-        List<Data> allData = dataServices.findAllByProjectAndSensor(id, device);
-
-        for (int i = 0; i < allData.size(); i++) {
-            HashMap<Integer, String> map = new HashMap<>();
-            map.put(0, allData.get(i).getReadTime());
-            for (int j = i; j < allData.size(); j++) {
-                map.put((int) allData.get(j).getDataIndex() + 1, String.valueOf(allData.get(j).getData()));
-                if (map.size() == projectInfo.getDataNumber() + 1) {
-                    i = j;
-                    break;
-                }
-            }
-            dataForReport.add(map.values().stream().toList());
+        List<List<String>> report = new ArrayList<>();
+        report.add(header);
+        List<Data> all = new ArrayList<>(dataServices.findAllByProjectAndSensor(id, device));
+        all.sort(Comparator.comparingLong(Data::getId));
+        for (String[] row : group(all, column, header.size())) {
+            report.add(toList(row));
         }
-
-        return dataForReport;
+        return report;
     }
 
     /**
-     * Endpoints da interface máquina
+     * Agrupa leituras (ordenadas por id) em linhas: uma linha por envio. Comeca uma nova linha
+     * quando muda o instante ou quando a variavel ja foi preenchida na linha atual.
+     */
+    private static List<String[]> group(List<Data> sorted, Map<Long, Integer> column, int width) {
+        List<String[]> rows = new ArrayList<>();
+        String[] row = null;
+        for (Data d : sorted) {
+            Integer col = column.get(d.getDataIndex());
+            if (col == null) {
+                continue;
+            }
+            if (row == null || !Objects.equals(row[0], d.getReadTime()) || row[col] != null) {
+                row = new String[width];
+                row[0] = d.getReadTime();
+                rows.add(row);
+            }
+            row[col] = String.valueOf(d.getData());
+        }
+        return rows;
+    }
+
+    private static List<String> toList(String[] row) {
+        List<String> l = new ArrayList<>(row.length);
+        for (String s : row) {
+            l.add(s == null ? "" : s);
+        }
+        return l;
+    }
+
+    /*
+     * Interface maquina (M2M). Para scripts externos, use HTTP Basic com usuario e senha da plataforma:
+     *   curl -u login:senha http://servidor:8080/data/project/1/length/10
      */
     @GetMapping(value = "project/{project_id}/length/{n}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Data> findByProjectID(@PathVariable(value = "project_id") Long project_id, @PathVariable(value = "n") Long length) {
-        return dataServices.findByProject(project_id, length);
+    public List<Data> findByProjectID(@PathVariable("project_id") Long projectId, @PathVariable("n") Long length) {
+        access.requireProject(projectId);
+        return dataServices.findByProject(projectId, checkLength(length));
     }
 
     @GetMapping(value = "project/{project_id}/device/{y}/length/{n}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Data> findByProjectIDandDevice(@PathVariable(value = "project_id") Long project_id, @PathVariable(value = "y") Long device, @PathVariable(value = "n") Long length) {
-        return dataServices.findByProjectIDandDevice(project_id, device, length);
+    public List<Data> findByProjectIDandDevice(@PathVariable("project_id") Long projectId, @PathVariable("y") Long device,
+                                               @PathVariable("n") Long length) {
+        access.requireProject(projectId);
+        return dataServices.findByProjectIDandDevice(projectId, device, checkLength(length));
     }
 
     @GetMapping(value = "project/{project_id}/device/{y}/data/{z}/length/{n}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Data> findByProjectIDandDeviceandData(@PathVariable(value = "project_id") Long project_id, @PathVariable(value = "y") Long device, @PathVariable(value = "z") Long dataIndex, @PathVariable(value = "n") Long length) {
-        return dataServices.findByProjectIDandDeviceandData(project_id, device, dataIndex, length);
+    public List<Data> findByProjectIDandDeviceandData(@PathVariable("project_id") Long projectId, @PathVariable("y") Long device,
+                                                      @PathVariable("z") Long dataIndex, @PathVariable("n") Long length) {
+        access.requireProject(projectId);
+        return dataServices.findByProjectIDandDeviceandData(projectId, device, dataIndex, checkLength(length));
     }
-
 }

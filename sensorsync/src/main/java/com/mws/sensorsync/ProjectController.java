@@ -1,429 +1,155 @@
 package com.mws.sensorsync;
 
-import com.mws.sensorsync.model.Metadata;
+import com.mws.sensorsync.exceptions.ApiException;
+import com.mws.sensorsync.model.Device;
 import com.mws.sensorsync.model.Project;
-import com.mws.sensorsync.services.DataService;
+import com.mws.sensorsync.security.AccessService;
+import com.mws.sensorsync.services.CodeGenerator;
+import com.mws.sensorsync.services.DeviceService;
 import com.mws.sensorsync.services.MetadataService;
 import com.mws.sensorsync.services.ProjectService;
-import com.mws.sensorsync.services.UserHumanService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 @RestController
 @RequestMapping("project")
-
 public class ProjectController {
 
-    public enum DeviceType {
-        ESP8266(0),
-        ESP32(1),
-        ARDUINO(2);
+    private final ProjectService projectService;
+    private final MetadataService metadataService;
+    private final DeviceService deviceService;
+    private final CodeGenerator codeGenerator;
+    private final AccessService access;
+    private final String publicHost;
+    private final int mqttPublicPort;
 
-        private final int value;
+    public ProjectController(ProjectService projectService, MetadataService metadataService, DeviceService deviceService,
+                             CodeGenerator codeGenerator, AccessService access,
+                             @Value("${sensorsync.public-host:}") String publicHost,
+                             @Value("${sensorsync.mqtt.public-port:1883}") int mqttPublicPort) {
+        this.projectService = projectService;
+        this.metadataService = metadataService;
+        this.deviceService = deviceService;
+        this.codeGenerator = codeGenerator;
+        this.access = access;
+        this.publicHost = publicHost;
+        this.mqttPublicPort = mqttPublicPort;
+    }
 
-        DeviceType(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public static DeviceType fromInt(int value) {
-            for (DeviceType type : DeviceType.values()) {
-                if (type.getValue() == value) {
-                    return type;
-                }
-            }
-            throw new IllegalArgumentException("Invalid device type: " + value);
+    /** Dispositivo com o token em texto puro (so aparece nesta resposta). */
+    public record DeviceTokenView(Device device, String token) {
+        static DeviceTokenView of(DeviceService.DeviceWithToken d) {
+            return new DeviceTokenView(d.device(), d.token());
         }
     }
 
-    public enum ProtocolType {
-        HTTP(0),
-        MQTT(1);
-
-        private final int value;
-
-        ProtocolType(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public static ProtocolType fromInt(int value) {
-            for (ProtocolType type : ProtocolType.values()) {
-                if (type.getValue() == value) {
-                    return type;
-                }
-            }
-            throw new IllegalArgumentException("Invalid protocol type: " + value);
-        }
+    public record CreatedProjectView(Project project, List<DeviceTokenView> devices) {
     }
 
-    @Autowired
-    private ProjectService projectService;
+    // ---- Projetos ---------------------------------------------------------------
 
-    @Autowired
-    private MetadataService metadataService;
-
-    @Autowired
-    private DataService dataServices;
-
-    @Autowired
-    private UserHumanService userHumanService;
-
-
-//    *********************************************************************************************
-//    Endpoints do Crud básico
-
+    /** Projetos do usuario logado (admin ve todos). */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Project> findall() {
-        return projectService.findAll();
+    public List<Project> findAll() {
+        return projectService.findVisibleTo(access.currentUser());
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Project findByID(@PathVariable(value = "id") Long id) {
-        return projectService.findById(id);
+    public Project findByID(@PathVariable("id") Long id) {
+        return access.requireProject(id);
     }
 
+    /**
+     * Cria projeto + variaveis + dispositivos em uma unica operacao.
+     * Corpo: {"name": "...", "devices": 2, "variables": [{"dataDesc": "Temperatura", "useCard": true, "useChart": true}]}
+     */
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Project save(@RequestBody Project dataPackage) {
-        return projectService.save(dataPackage);
+    public CreatedProjectView create(@RequestBody ProjectService.CreateProjectForm form) {
+        ProjectService.CreatedProject created = projectService.create(form, access.currentUser());
+        return new CreatedProjectView(created.project(), created.devices().stream().map(DeviceTokenView::of).toList());
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Project update(@RequestBody Project dataPackage) {
-        return projectService.update(dataPackage);
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Project rename(@PathVariable("id") Long id, @RequestBody Map<String, String> body) {
+        return projectService.rename(access.requireProject(id), body.get("name"));
     }
 
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
-        projectService.delete(id);
+    /** Exclui o projeto com todos os dados, variaveis e dispositivos. */
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        projectService.deleteAll(access.requireProject(id));
         return ResponseEntity.noContent().build();
     }
-//    *********************************************************************************************
 
-    //Endpoint para deletar todos os dados relacionados a um id específico
-    @DeleteMapping(value = "/deleteAll/{id}/user/{user}/password/{password}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean deleteAll(@PathVariable(value = "id") Long projectID, @PathVariable(value = "user") String user, @PathVariable(value = "password") String password) {
-
-        if (Objects.equals(userHumanService.getUserByLogin(user).getPassword(), password)) {
-            projectService.delete(projectID);
-            metadataService.deleteAllMetadata(projectID);
-            dataServices.deleteAllData(projectID);
-            return true;
-        } else {
-            return false;
-        }
+    /** Apaga apenas as leituras gravadas, mantendo projeto e dispositivos. */
+    @DeleteMapping(value = "/{id}/data")
+    public ResponseEntity<Void> deleteData(@PathVariable("id") Long id) {
+        projectService.deleteData(access.requireProject(id));
+        return ResponseEntity.noContent().build();
     }
 
-    //  Endpoint para deletar todos os dados relacionados a um id específico
-//  *********************************************************************************************
-    @GetMapping(value = "/generateCode/{id}/device/{deviceType}/protocol/{protocol}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<String> generateCode(@PathVariable(value = "id") Long projectID, @PathVariable(value = "deviceType") int deviceType, @PathVariable(value = "protocol") int protocol) {
-        List<String> codes = new ArrayList<>();
+    // ---- Dispositivos -----------------------------------------------------------
 
-        Project p = projectService.findById(projectID);
-        List<Metadata> metadataList = metadataService.findByProjectId(projectID);
-        String dataToSend = "";
-
-        switch (DeviceType.fromInt(deviceType)) {
-            case ESP8266:
-
-                for (int i = 0; i < p.getDataNumber(); i++) {
-                    dataToSend = dataToSend + "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99);";
-                }
-                StringBuilder esp8266Code = new StringBuilder();
-                esp8266Code.append("// CÓDIGO ESP8266 - ").append(protocol == ProtocolType.HTTP.getValue() ? "HTTP" : "MQTT").append(" | TEMPLATE GERADO VIA API SENSORSYNC\n")
-                        .append("\n")
-                        .append("#include \"Arduino.h\"\n")
-                        .append("#include \"ESP8266WiFi.h\"\n")
-                        .append("#include \"ESP8266HTTPClient.h\"\n")
-                        .append("#include \"PubSubClient.h\"\n")
-                        .append("#include \"sensor_sync/sensor_sync.hpp\"\n");
-
-
-                esp8266Code.append("\n")
-                        .append("#define wifi_ssid \"Sistema_IoT\"  // ATUALIZAR PARA AS CREDENCIAIS DA SUA REDE\n")
-                        .append("#define wifi_password \"entrarentrar\"  // ATUALIZAR PARA AS CREDENCIAIS DA SUA REDE\n")
-                        .append("#define project ").append(p.getId()).append("\n")
-                        .append("#define device 0  // ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n")
-                        .append("#define dataNumber ").append(p.getDataNumber()).append("\n")
-                        .append("#define server \"10.0.0.104\"  // Servidor MQTT\n")
-                        .append("\n")
-                        .append("char *URL = \"http://10.0.0.104:8080/data/saveList\";  // URL do servidor HTTP\n")
-                        .append("String desc[").append(p.getDataNumber()).append("];  // Descrições dos sensores\n")
-                        .append("float data[").append(p.getDataNumber()).append("];   // Dados dos sensores\n")
-                        .append("\n")
-                        .append("// Objetos globais para as classes HTTP e MQTT\n");
-
-                if (protocol == ProtocolType.HTTP.getValue()) {
-                    esp8266Code.append("HTTPConnection httpConn;\n");
-
-                } else {
-                    esp8266Code.append("MQTTConnection mqttConn;\n");
-
-                }
-
-                esp8266Code.append("\n")
-                        .append("void setup() {\n")
-                        .append("  Serial.begin(9600);  // Inicializa o monitor serial com a taxa de transmissão 57600\n")
-                        .append("\n")
-                        .append("  // Configuração Wi-Fi usando a função global\n")
-                        .append("  setup_wifi(wifi_ssid, wifi_password); \n")
-                        .append("\n")
-                        .append("  delay(1500);\n");
-
-                if (protocol != ProtocolType.HTTP.getValue()) {
-                    esp8266Code.append("  // Configuração do cliente MQTT\n")
-                            .append("  mqttConn.setServer(server, 1883);\n");
-                }
-
-                esp8266Code.append("\n")
-                        .append("  // **********************************************************************************************\n")
-                        .append("  // ESPAÇO DESTINADO PARA INICIALIZAÇÃO DOS SENSORES\n")
-                        .append("\n")
-                        .append("  // **********************************************************************************************\n")
-                        .append("}\n")
-                        .append("\n")
-                        .append("void loop() {\n")
-                        .append("  // **********************************************************************************************\n")
-                        .append("  // ESPAÇO DESTINADO PARA AQUISIÇÃO DOS DADOS\n")
-                        .append(dataToSend)
-                        .append("\n")
-                        .append("  // **********************************************************************************************\n")
-                        .append("\n");
-
-                if (protocol == ProtocolType.HTTP.getValue()) {
-                    esp8266Code.append("  // Enviar dados via HTTP\n")
-                            .append("httpConn.sendData(project, device, dataNumber, desc, data, URL);\n");
-                } else {
-                    esp8266Code.append("  // Enviar dados via MQTT\n")
-                            .append("  mqttConn.sendData(project, device, dataNumber, desc, data, \"sensorsync\");\n");
-                }
-
-                esp8266Code.append("\n")
-                        .append("  delay(1000);  // Atraso para o próximo ciclo de aquisição de dados\n")
-                        .append("}\n");
-
-                String esp8266CodeString = esp8266Code.toString();
-                codes.add(esp8266CodeString);
-
-                break;
-
-
-            case ESP32: //ESP32
-
-                for (int i = 0; i < p.getDataNumber(); i++) {
-                    dataToSend = dataToSend + "\ndesc[" + i + "] = \"Teste " + i + "\";\ndata[" + i + "] = random(0, 99);";
-                }
-
-                StringBuilder esp32Code = new StringBuilder();
-                esp32Code.append("// CÓDIGO ESP32 - ").append(protocol == ProtocolType.HTTP.getValue() ? "HTTP" : "MQTT").append(" | TEMPLATE GERADO VIA API SENSORSYNC\n")
-                        .append("#include \"Arduino.h\"\n")
-                        .append("#include \"WiFi.h\"\n")
-                        .append("#include \"HTTPClient.h\"\n")
-                        .append("#include \"PubSubClient.h\"\n")
-                        .append("#include \"sensor_sync/sensor_sync.hpp\"  // Incluindo o arquivo de cabeçalho com as classe de integração com o sistema\n")
-                        .append("\n")
-                        .append("#define wifi_ssid \"Sistema_IoT\"  // ATUALIZAR PARA AS CREDENCIAIS DA SUA REDE\n")
-                        .append("#define wifi_password \"entrarentrar\"  // ATUALIZAR PARA AS CREDENCIAIS DA SUA REDE\n")
-                        .append("#define project ").append(p.getId()).append("\n")
-                        .append("#define device 0  // ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n")
-                        .append("#define dataNumber ").append(p.getDataNumber()).append("\n")
-                        .append("#define server \"10.0.0.104\"  // Servidor MQTT\n")
-                        .append("char *URL = \"http://10.0.0.104:8080/data/saveList\";  // URL do servidor HTTP\n")
-                        .append("String desc[").append(p.getDataNumber()).append("];  // Descrições dos sensores\n")
-                        .append("float data[").append(p.getDataNumber()).append("];   // Dados dos sensores\n");
-                if (protocol == ProtocolType.HTTP.getValue()) {
-                    esp32Code.append("HTTPConnection httpConn;\n");
-                } else {
-                    esp32Code.append("MQTTConnection mqttConn;\n");
-                }
-
-                esp32Code.append("void setup() {\n")
-                        .append("  Serial.begin(57600);  // Inicializa o monitor serial com a taxa de transmissão 57600\n")
-                        .append("  // Configuração Wi-Fi usando a função global\n")
-                        .append("  setup_wifi(wifi_ssid, wifi_password);\n")
-                        .append("  delay(1500);\n");
-                if (protocol == ProtocolType.MQTT.getValue()) {
-                    esp32Code.append("  mqttConn.setServer(server, 1883);\n\n");
-                }
-
-                esp32Code.append("  // **********************************************************************************************\n")
-                        .append("  // ESPAÇO DESTINADO PARA INICIALIZAÇÃO DOS SENSORES\n\n\n")
-                        .append("  // **********************************************************************************************\n")
-                        .append("}\n")
-                        .append("void loop() {\n")
-                        .append("  // **********************************************************************************************\n")
-                        .append("  // ESPAÇO DESTINADO PARA AQUISIÇÃO DOS DADOS\n")
-                        .append(dataToSend)
-                        .append("\n\n// **********************************************************************************************\n");
-
-                if (protocol == ProtocolType.HTTP.getValue()) {
-                    esp32Code.append("  // Enviar os dados via HTTP\n")
-                            .append("  httpConn.sendData(project, device, dataNumber, desc, data, URL);\n");
-                } else {
-                    esp32Code.append("  // Enviar dados via MQTT\n")
-                            .append("  mqttConn.sendData(project, device, dataNumber, desc, data, \"sensorsync\");\n");
-                }
-
-                esp32Code.append("  delay(1000);  // Atraso para o próximo ciclo de aquisição de dados\n")
-                        .append("}\n");
-
-                String esp32CodeString = esp32Code.toString();
-                codes.add(esp32CodeString);
-
-
-                break;
-
-            case ARDUINO: //ESP8266 e arduino
-
-                String dataToSendArduino = "";
-                for (int i = 0; i < p.getDataNumber(); i++) {
-
-                    dataToSendArduino = dataToSendArduino +
-                            "\ndata[" + i + "] = random(0, 99)";
-                }
-
-// Código no arduino será o mesmo para os dois protocolos
-                String arduinoCode = new StringBuilder()
-                        .append("// CÓDIGO Arduino | TEMPLATE GERADO VIA API SENSORSYNC\\n\"\n")
-                        .append("// NOTA: Usar biblioteca Arduino Json na versão 5\\n\"\n")
-                        .append("#include \"SoftwareSerial.h\"\n")
-                        .append("#include \"ArduinoJson.h\"\n")
-                        .append("\n")
-                        .append("// DESIGNANDO UM PAR DE PINOS PARA O ENVIO DE DADOS VIA SERIAL\n")
-                        .append("SoftwareSerial ESP(10, 11); //(RX, TX)\n")
-                        .append("\n")
-                        .append("float data[").append(p.getDataNumber()).append("]\n")
-                        .append("\n")
-                        .append("void setup() {\n")
-                        .append("  Serial.begin(9600);\n")
-                        .append("  ESP.begin(9600);\n")
-                        .append("  delay(1000);\n")
-                        .append("\n")
-                        .append("\n")
-                        .append("// **********************************************************************************************\n")
-                        .append("// Espaço destinado para inicialização dos sensores\n")
-                        .append("\n")
-                        .append("\n")
-                        .append("\n")
-                        .append("// **********************************************************************************************\n")
-                        .append("\n")
-                        .append("}\n")
-                        .append("\n")
-                        .append("\n")
-                        .append("void loop() {\n")
-                        .append("\n")
-                        .append("  StaticJsonBuffer<1000> jsonBuffer;\n")
-                        .append("  JsonObject& data = jsonBuffer.createObject();\n")
-                        .append("\n")
-                        .append("// **********************************************************************************************\n")
-                        .append("// Espaço destinado para aquisição dos dados a serem enviados\n")
-                        .append("\n")
-                        .append(dataToSendArduino)
-                        .append("\n")
-                        .append("// **********************************************************************************************\n")
-                        .append("\n")
-                        .append("  data.printTo(ESP);\n")
-                        .append("  jsonBuffer.clear();\n")
-                        .append("\n")
-                        .append("  // delay(10000);\n")
-                        .append("}")
-                        .toString();
-
-                codes.add(arduinoCode);
-
-
-// Construção do código base para o ESP8266
-                StringBuilder esp8266CodeArduino = new StringBuilder();
-                esp8266CodeArduino.append("// CÓDIGO ESP8266 - ").append(protocol == ProtocolType.HTTP.getValue() ? "HTTP" : "MQTT").append(" | TEMPLATE GERADO VIA API SENSORSYNC\n")
-                        .append("#include \"Arduino.h\"\n")
-                        .append("#include \"ESP8266WiFi.h\"\n")
-                        .append("#include \"ESP8266HTTPClient.h\"\n")
-                        .append("#include \"PubSubClient.h\"\n")
-                        .append("#include \"ArduinoJson.h\"\n")
-                        .append("#include \"SoftwareSerial.h\"\n")
-                        .append("#include \"sensor_sync/sensor_sync.hpp\"  // Incluindo o arquivo de cabeçalho com as classes de integração com o sistema\n")
-                        .append("\n")
-                        .append("#define wifi_ssid \"Sistema_IoT\"  // ATUALIZAR PARA AS CREDENCIAIS DA SUA REDE\n")
-                        .append("#define wifi_password \"entrarentrar\"  // ATUALIZAR PARA AS CREDENCIAIS DA SUA REDE\n")
-                        .append("#define project ").append(p.getId()).append("\n")
-                        .append("#define device 0  // ATUALIZAR PARA O ÍNDICE DO DISPOSITIVO CASO EXISTA MAIS DE UM PROJETO\n")
-                        .append("#define dataNumber ").append(p.getDataNumber()).append("\n")
-                        .append("#define server \"10.0.0.104\"  // Servidor MQTT\n")
-                        .append("char *URL = \"http://10.0.0.104:8080/data/saveList\";  // URL do servidor HTTP\n")
-                        .append("String desc[").append(p.getDataNumber()).append("];  // Descrições dos sensores\n")
-                        .append("float data[").append(p.getDataNumber()).append("];   // Dados dos sensores\n");
-
-// Escolher a classe de conexão de acordo com o protocolo
-                if (protocol == ProtocolType.HTTP.getValue()) {
-                    esp8266CodeArduino.append("HTTPConnection httpConn;\n");
-                } else {
-                    esp8266CodeArduino.append("MQTTConnection mqttConn;\n");
-                }
-
-                esp8266CodeArduino.append("void setup() {\n")
-                        .append("  Serial.begin(57600);  // Inicializa o monitor serial com a taxa de transmissão 57600\n")
-                        .append("  // Configuração Wi-Fi usando a função global\n")
-                        .append("  setup_wifi(wifi_ssid, wifi_password);\n")
-                        .append("  delay(1500);\n");
-
-                if (protocol == ProtocolType.MQTT.getValue()) {
-                    esp8266CodeArduino.append("  mqttConn.setServer(server, 1883);\n\n");
-                }
-
-                esp8266CodeArduino.append("  // **********************************************************************************************\n")
-                        .append("  // ESPAÇO DESTINADO PARA INICIALIZAÇÃO DOS SENSORES\n\n\n")
-                        .append("  // **********************************************************************************************\n")
-                        .append("}\n")
-                        .append("void loop() {\n")
-                        .append("  StaticJsonBuffer<1000> jsonBuffer;\n")
-                        .append("  JsonObject& json = jsonBuffer.parseObject(Serial);\n")
-                        .append("\n")
-                        .append("  if (json.success()) {\n")
-                        .append("    for (int i = 0; i < dataNumber; i++) {\n")
-                        .append("      String key = \"data[\" + String(i) + \"]\";\n")
-                        .append("      if (json.containsKey(key.c_str())) {\n")
-                        .append("        data[i] = json[key.c_str()].as<float>();\n")
-                        .append("      }\n")
-                        .append("    }\n")
-                        .append("  }\n")
-                        .append("\n\n// **********************************************************************************************\n");
-
-// Enviar os dados via protocolo escolhido
-                if (protocol == ProtocolType.HTTP.getValue()) {
-                    esp8266CodeArduino.append("  // Enviar os dados via HTTP\n")
-                            .append("  httpConn.sendData(project, device, dataNumber, desc, data, URL);\n");
-                } else {
-                    esp8266CodeArduino.append("  // Enviar dados via MQTT\n")
-                            .append("  mqttConn.sendData(project, device, dataNumber, desc, data, \"sensorsync\");\n");
-                }
-
-                esp8266CodeArduino.append("  delay(1000);  // Atraso para o próximo ciclo de aquisição de dados\n")
-                        .append("}\n");
-
-                String esp8266CodeArduinoString = esp8266CodeArduino.toString();
-                codes.add(esp8266CodeArduinoString);
-
-
-                break;
-            default:
-        }
-
-        return codes;
+    @GetMapping(value = "/{id}/devices", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Device> devices(@PathVariable("id") Long id) {
+        return deviceService.list(access.requireProject(id));
     }
 
-//  *********************************************************************************************
+    @PostMapping(value = "/{id}/devices", produces = MediaType.APPLICATION_JSON_VALUE)
+    public DeviceTokenView addDevice(@PathVariable("id") Long id, @RequestBody(required = false) Map<String, String> body) {
+        Project p = access.requireProject(id);
+        if (deviceService.list(p).size() >= ProjectService.MAX_DEVICES) {
+            throw ApiException.badRequest("Limite de " + ProjectService.MAX_DEVICES + " dispositivos por projeto");
+        }
+        return DeviceTokenView.of(deviceService.create(p, body == null ? null : body.get("name")));
+    }
 
+    @PutMapping(value = "/{id}/devices/{deviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Device renameDevice(@PathVariable("id") Long id, @PathVariable("deviceId") Long deviceId,
+                               @RequestBody Map<String, String> body) {
+        Project p = access.requireProject(id);
+        return deviceService.rename(deviceService.get(p, deviceId), body.get("name"));
+    }
+
+    /** Gera um novo token; o anterior deixa de funcionar imediatamente. */
+    @PostMapping(value = "/{id}/devices/{deviceId}/token", produces = MediaType.APPLICATION_JSON_VALUE)
+    public DeviceTokenView regenerateToken(@PathVariable("id") Long id, @PathVariable("deviceId") Long deviceId) {
+        Project p = access.requireProject(id);
+        return DeviceTokenView.of(deviceService.regenerateToken(deviceService.get(p, deviceId)));
+    }
+
+    @DeleteMapping(value = "/{id}/devices/{deviceId}")
+    public ResponseEntity<Void> deleteDevice(@PathVariable("id") Long id, @PathVariable("deviceId") Long deviceId,
+                                             @RequestParam(value = "deleteData", defaultValue = "false") boolean deleteData) {
+        Project p = access.requireProject(id);
+        if (deviceService.list(p).size() <= 1) {
+            throw ApiException.conflict("O projeto precisa de pelo menos um dispositivo");
+        }
+        deviceService.delete(deviceService.get(p, deviceId), deleteData);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ---- Codigo embarcado -------------------------------------------------------
+
+    @GetMapping(value = "/{id}/code", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CodeGenerator.GeneratedFile> generateCode(@PathVariable("id") Long id,
+                                                          @RequestParam("board") CodeGenerator.Board board,
+                                                          @RequestParam("protocol") CodeGenerator.Protocol protocol,
+                                                          @RequestParam(value = "deviceId", required = false) Long deviceId,
+                                                          HttpServletRequest request) {
+        Project p = access.requireProject(id);
+        List<Device> devices = deviceService.list(p);
+        Device device = deviceId == null
+                ? devices.stream().findFirst().orElseThrow(() -> ApiException.badRequest("Projeto sem dispositivos"))
+                : deviceService.get(p, deviceId);
+        String host = publicHost == null || publicHost.isBlank() ? request.getServerName() : publicHost;
+        CodeGenerator.Endpoint ep = new CodeGenerator.Endpoint(host, request.getServerPort(), mqttPublicPort);
+        return codeGenerator.generate(p, metadataService.findByProjectId(id), device, board, protocol, ep);
+    }
 }

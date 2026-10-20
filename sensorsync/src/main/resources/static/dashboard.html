@@ -1,149 +1,110 @@
 <!doctype html>
-
-<!--<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
-
-<script src="scripts/imports/chart.umd.min.js"></script>
-<script src="scripts/imports/chart.js"></script>
-<script src="scripts/imports/jquery-1.11.0.js"></script>
-
 <html lang="pt-BR">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SensorSync</title>
+    <title>SensorSync - Dashboard</title>
     <link rel="icon" type="image/x-icon" href="img/logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
-
-
+    <script src="scripts/imports/chart.js"></script>
 </head>
 
-<body onload="verifyAndOpenDashboard()">
-
-
+<body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
     <div class="container-fluid">
-        <a class="navbar-brand fw-semibold" href="#" id="projectTitle">...</a>
+        <a class="navbar-brand fw-semibold" href="index.html" id="projectTitle">...</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-
-                <div id="deviceSelector">
-                    <!-- <select id="deviceSelected" class="form-select">
-                        <option value="0">Sensor 0</option>
-                        <option value="1">Sensor 1</option>
-                        <option value="2">Sensor 2</option>
-                        <option value="3">Sensor 3</option>
-                      </select> -->
-                    ...
-                </div>
-
-
-                <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
-                <!-- <a class="nav-link" href="#">Criar</a>
-                <a class="nav-link" href="#">Dashboard</a> -->
-                <!-- <a class="nav-link" aria-disabled="true" href="#">Opções</a> -->
-                <a class="nav-link" aria-disabled="true" href="#" data-bs-toggle="modal"
-                   data-bs-target="#staticBackdrop">
-                    Opções
-                </a>
-                <!-- <a class="nav-link" aria-disabled="true" href="#">Sobre</a> -->
-                <!-- <a class="nav-link" aria-disabled="true" href="#">Documentação Avançada (Swagger)</a> -->
-                <a class="nav-link" aria-disabled="true" href="#" onclick="closeProject()">Sair</a>
+            <div class="navbar-nav me-auto align-items-lg-center gap-2">
+                <div id="deviceSelector"><select id="deviceSelected" class="form-select" aria-label="Dispositivo"></select></div>
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#devicesModal" onclick="loadDevices()">Dispositivos</a>
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#optionsModal">Opções</a>
+                <a class="nav-link" href="index.html">Fechar projeto</a>
             </div>
+            <div class="navbar-nav" id="userMenu"></div>
         </div>
     </div>
 </nav>
 <br>
 
-
 <div class="container" id="dataCards">
-
     <div class="d-flex justify-content-center">
         <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">Carregando...</span>
         </div>
     </div>
-
 </div>
 
 <br>
-<div class="container">
-    <hr>
-</div>
+<div class="container"><hr></div>
 <br>
 <div class="container-xxl">
-    <div id="dataCharts">
-
-
-        <!-- <div>
-                <canvas id="dataChart1">
-
-                </canvas>
-            </div> -->
-
-
+    <div style="position: relative; height: 500px;">
+        <canvas id="dataChart"></canvas>
     </div>
 </div>
 
-<br>
-<br>
-<br>
-<hr>
-<br>
+<br><br><hr>
 <footer class="text-center">
-    <div class="text-center p-3">
-        IFSC RAU 2024 | SensorSync - API de Integração IoT escalável e multiprotocolo
-    </div>
+    <div class="text-center p-3">IFSC RAU | SensorSync - Plataforma IoT self-hosted e multiprotocolo</div>
 </footer>
 <br>
-<br>
 
-
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<!-- Opcoes de visualizacao -->
+<div class="modal fade" id="optionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="optionsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Ajustes</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h1 class="modal-title fs-5" id="optionsModalLabel">Ajustes</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="exampleRadios" id="setTimeOff"
-                           value="" checked>
-                    <label class="form-check-label" for="setTimeOff">
-                        Atualização automática dos dados
-                    </label>
+                    <input class="form-check-input" type="checkbox" id="setTimeOff" checked>
+                    <label class="form-check-label" for="setTimeOff">Atualização automática dos dados</label>
                 </div>
-
                 <hr>
-                Range para exibição dos gráficos
-                <br>
-                <br>
-                <input type="number" class="form-control" placeholder="Insira a quantidade de itens"
-                       aria-label="Insira a quantidade de itens" id="length" name="length" min="3" max="100" value="5">
+                <label for="length">Quantidade de pontos nos gráficos</label>
+                <input type="number" class="form-control mt-2" id="length" name="length" min="3" max="1000" value="20">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="updateViews()">Aplicar
-                </button>
-                <button type="button" class="btn btn-success" onclick="reGenerateCode()">Gerar Microcódigo</button>
-                <button type="button" class="btn btn-success" onclick="openExportTab()">Gerar Relatório</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="updateViews()">Aplicar</button>
+                <a class="btn btn-success" id="codeLink" href="#">Gerar microcódigo</a>
+                <a class="btn btn-success" id="exportLink" href="#" target="_blank">Gerar relatório</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dispositivos do projeto -->
+<div class="modal fade" id="devicesModal" tabindex="-1" aria-labelledby="devicesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="devicesModalLabel">Dispositivos do projeto</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-body-secondary">Cada dispositivo usa o seu próprio token e só consegue gravar dados neste projeto.
+                    O token é exibido uma única vez; se perder, gere um novo (o anterior para de funcionar).</p>
+                <div id="newTokenBox"></div>
+                <div id="devicesList"></div>
+            </div>
+            <div class="modal-footer">
+                <input type="text" class="form-control w-auto" id="newDeviceName" placeholder="Nome do novo dispositivo" maxlength="254">
+                <button type="button" class="btn btn-primary" onclick="addDevice()">Adicionar dispositivo</button>
             </div>
         </div>
     </div>
 </div>
 
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
-
-</body>
-
+<script src="scripts/app.js"></script>
 <script src="scripts/dashboard.js"></script>
-
+</body>
 </html>

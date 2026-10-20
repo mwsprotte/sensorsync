@@ -1,141 +1,58 @@
 // ***************************************************************************************************
-// Constantes de uso no código
+// Tela inicial
 
-const HOST = window.location.origin;
+const SPINNER = "<div class='d-flex justify-content-center'><div class='spinner-border' role='status'></div></div>";
 
-// ***************************************************************************************************
-
-function generateProjectsTable() {
-    var request = HOST + "/project";
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', request);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var allProjects = JSON.parse(xhr.response);
-            let projectsList = "<div class='list-group'>";
-            for (let index = 0; index < allProjects.length; index++) {
-                const element = allProjects[index];
-                projectsList = projectsList + "<a href='#' class='list-group-item list-group-item-action' onclick='return loadProjectData(" + element.id + ");'>" + element.id + " - " + element.name + "</a>";
-            }
-            projectsList = projectsList + "</div>";
-            document.getElementById('projectList').innerHTML = projectsList;
-
-        } else {
+async function loadProjects(targetId, manage) {
+    const target = document.getElementById(targetId);
+    target.innerHTML = SPINNER;
+    try {
+        const projects = await api('/project');
+        if (projects.length === 0) {
+            target.innerHTML = "<p class='text-body-secondary'>Nenhum projeto ainda. Use <a href='generator.html'>Criar</a>.</p>";
+            return;
         }
-    };
-
-}
-
-function loadProjectData(projectID) {
-    var request = HOST + "/project/" + projectID;
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', request);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-
-
-            var project = JSON.parse(xhr.response);
-
-            console.log(project);
-
-            localStorage.setItem('loadProject', "true");
-            localStorage.setItem('projectName', project.name);
-            localStorage.setItem('projectID', project.id);
-            localStorage.setItem('dataNumber', project.dataNumber);
-            localStorage.setItem('sensorNumber', project.sensorNumber);
-
-            window.alert("Você serrá direcionado para o projeto " + projectID + " (" + project.name + ")");
-            window.location.href = "./dashboard.html"
-        }
-    };
-}
-
-function verifyAndOpen() {
-
-    if (localStorage.getItem('loadProject') == "true") {
-        // window.alert("Você serrá direcionado para o projeto " + localStorage.getItem('projectID') + " (" + localStorage.getItem('projectName') + ")");
-        window.location.href = "./dashboard.html"
-    }
-
-
-}
-
-// ***************************************************************************************************
-
-function generetaDeleteList() {
-
-
-    if (document.querySelector("#login").value == "" || document.querySelector("#password").value == "") {
-
-        alert("Insira usuário e senha!")
-        window.location.reload();
-
-    } else {
-
-        const xhr = new XMLHttpRequest();
-
-        var request = HOST + "/user/check/login/" + document.querySelector("#login").value + "/password/" + document.querySelector("#password").value;
-        // var request = HOST + "/user/check/login/tese/password/senhawe";
-
-        xhr.open('GET', request);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                var check = JSON.parse(xhr.response);
-
-                if (check === true) {
-
-                    var request = HOST + "/project";
-
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('GET', request);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.send();
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            var allProjects = JSON.parse(xhr.response);
-                            let projectsList = "<div class='list-group'>";
-                            for (let index = 0; index < allProjects.length; index++) {
-                                const element = allProjects[index];
-                                projectsList = projectsList + "<a href='#' class='list-group-item list-group-item-action' onclick='return deleteProject(" + element.id + ");'> Projeto: " + element.id + " - " + element.name + "</a>";
-                            }
-                            projectsList = projectsList + "</div>";
-                            document.getElementById('projectListToDelete').innerHTML = projectsList;
-
-                        }
-                    }
-                } else {
-                    alert("Senha incorreta!")
-                    window.location.reload();
-                }
+        const showOwner = currentUser && currentUser.role === 'ADMIN';
+        let html = "<div class='list-group'>";
+        for (const p of projects) {
+            const owner = showOwner ? ` <span class='badge text-bg-light border'>${esc(p.ownerLogin)}</span>` : '';
+            if (!manage) {
+                html += `<a href='dashboard.html?id=${p.id}' class='list-group-item list-group-item-action'>${p.id} - ${esc(p.name)}${owner}</a>`;
+            } else {
+                html += `<div class='list-group-item d-flex justify-content-between align-items-center gap-2'>
+                    <span>${p.id} - ${esc(p.name)}${owner}</span>
+                    <span class='text-nowrap'>
+                      <button class='btn btn-sm btn-outline-warning' onclick='clearData(${p.id})'>Apagar dados</button>
+                      <button class='btn btn-sm btn-outline-danger' onclick='deleteProject(${p.id})'>Excluir projeto</button>
+                    </span></div>`;
             }
         }
-    }
-
-
-}
-
-function deleteProject(projectID) {
-
-    var resultado = confirm("Deseja excluir o projeto " + projectID + "?");
-
-    if (resultado == true) {
-
-        var request = HOST + "/project/deleteAll/" + projectID +"/user/" + document.querySelector("#login").value + "/password/" + document.querySelector("#password").value;
-        const xhr = new XMLHttpRequest();
-        xhr.open('DELETE', request);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send();
-        alert("Projeto excluído!");
-        window.location.reload();
-
-    } else {
-        alert("O projeto não foi excluído");
+        target.innerHTML = html + "</div>";
+    } catch (e) {
+        target.innerHTML = `<div class='alert alert-danger'>${esc(e.message)}</div>`;
     }
 }
+
+async function deleteProject(id) {
+    if (!confirm(`Excluir o projeto ${id}? Todos os dados, variáveis e dispositivos serão apagados.`)) return;
+    try {
+        await api('/project/' + id, { method: 'DELETE' });
+        loadProjects('manageList', true);
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+async function clearData(id) {
+    if (!confirm(`Apagar todas as leituras gravadas do projeto ${id}? O projeto e os dispositivos continuam.`)) return;
+    try {
+        await api('/project/' + id + '/data', { method: 'DELETE' });
+        alert('Dados apagados.');
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+loadCurrentUser().then(u => {
+    if (u.role === 'ADMIN') document.getElementById('usersCard').classList.remove('d-none');
+});
