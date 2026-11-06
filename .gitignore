@@ -30,3 +30,6 @@ deploy/*.env
 
 # Configuracao local com senhas (nunca versionar)
 config/
+
+# Biblioteca das placas servida pela plataforma (versionada de proposito)
+!sensorsync/src/main/resources/static/downloads/SensorSync.zip

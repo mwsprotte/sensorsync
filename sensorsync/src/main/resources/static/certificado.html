@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SensorSync - Certificado do servidor</title>
+    <link rel="icon" type="image/png" href="img/if_logo.png">
+    <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
+    <script src="scripts/dark_mode.js"></script>
+</head>
+<body>
+<main class="container py-4" style="max-width: 720px;">
+    <p class="mb-3"><a href="login.html"><i class="bi bi-arrow-left me-1"></i>Voltar para o login</a></p>
+
+    <div class="ss-card p-4">
+        <h1 class="h5 fw-semibold mb-1"><i class="bi bi-shield-lock me-2"></i>Certificado do servidor</h1>
+
+        <div id="tlsOff" class="d-none">
+            <p class="ss-muted mb-0">Este servidor está sem TLS (HTTP puro), então não há certificado para instalar.</p>
+        </div>
+
+        <div id="tlsOn" class="d-none">
+            <p class="ss-muted">
+                A conexão com a plataforma já é criptografada. O aviso <strong>"Não seguro"</strong> aparece só porque o
+                certificado foi criado pelo próprio servidor do laboratório, e o computador ainda não o conhece.
+                Instale uma vez em cada computador e o aviso some.
+            </p>
+
+            <h2 class="h6 fw-semibold mt-4">Windows (Edge e Chrome): um comando</h2>
+            <ol class="small mb-2">
+                <li>Abra o <strong>PowerShell</strong> (menu Iniciar › digite "PowerShell"; não precisa ser administrador).</li>
+                <li>Copie o comando abaixo (é uma linha só), cole no PowerShell e tecle <strong>Enter</strong>.</li>
+                <li>No aviso de segurança do Windows, confira se a impressão digital (Thumbprint) é a <strong>SHA-1</strong>
+                    mostrada no fim desta página e clique em <strong>Sim</strong>.</li>
+                <li>Feche <strong>todas</strong> as janelas do navegador e abra de novo.</li>
+            </ol>
+            <div class="position-relative">
+                <pre id="psCommand" class="bg-body-tertiary border rounded p-3 small mb-2" style="white-space: pre-wrap; max-height: 12rem; overflow: auto;"></pre>
+                <button id="copyBtn" type="button" class="btn btn-primary btn-sm">
+                    <i class="bi bi-clipboard me-1"></i><span>Copiar comando</span>
+                </button>
+            </div>
+
+            <h2 class="h6 fw-semibold mt-4">Outras formas</h2>
+            <p class="mb-2">
+                <a id="downloadBtn" class="btn btn-outline-secondary btn-sm" href="ca.crt" download="sensorsync-ca.crt">
+                    <i class="bi bi-download me-1"></i>Baixar certificado (sensorsync-ca.crt)</a>
+            </p>
+            <details class="small mb-2">
+                <summary>Windows, pelo assistente (sem PowerShell)</summary>
+                <ol class="mt-2">
+                    <li>Baixe o certificado pelo botão acima e dê dois cliques no arquivo.</li>
+                    <li><strong>Instalar Certificado…</strong> › <strong>Usuário Atual</strong> › Avançar.</li>
+                    <li><strong>Colocar todos os certificados no repositório a seguir</strong> › Procurar ›
+                        <strong>Autoridades de Certificação Raiz Confiáveis</strong> › OK › Avançar › Concluir.</li>
+                    <li>Confira a impressão digital SHA-1 no aviso e clique em <strong>Sim</strong>. Reabra o navegador.</li>
+                </ol>
+            </details>
+            <details class="small mb-2">
+                <summary>Firefox</summary>
+                <ol class="mt-2">
+                    <li>Baixe o certificado pelo botão acima.</li>
+                    <li><em>Configurações › Privacidade e Segurança › Certificados › Ver certificados › Autoridades › Importar…</em></li>
+                    <li>Escolha o arquivo e marque <strong>Confiar nesta CA para identificar sites</strong>.</li>
+                </ol>
+            </details>
+            <details class="small mb-2">
+                <summary>Celular Android</summary>
+                <ol class="mt-2">
+                    <li>Abra esta página no celular e toque em <strong>Baixar certificado</strong>.</li>
+                    <li><em>Configurações › Segurança › Mais configurações › Instalar do armazenamento › Certificado CA</em>
+                        (o caminho varia por fabricante; procure por "certificado CA" na busca das configurações).</li>
+                </ol>
+            </details>
+
+            <h2 class="h6 fw-semibold mt-4">Conferir antes de instalar</h2>
+            <p class="ss-muted small mb-2">Se a impressão digital do aviso do Windows não for igual à daqui, não instale e avise o
+                administrador do laboratório.</p>
+            <table class="table table-sm small mb-0">
+                <tbody>
+                <tr><th class="fw-semibold" style="width: 9rem;">Nome</th><td id="caSubject"></td></tr>
+                <tr><th class="fw-semibold">SHA-1</th><td><code id="caSha1" style="word-break: break-all;"></code>
+                    <div class="ss-muted">No Windows (Thumbprint): <code id="caThumb" style="word-break: break-all;"></code></div></td></tr>
+                <tr><th class="fw-semibold">SHA-256</th><td><code id="caSha256" style="word-break: break-all;"></code></td></tr>
+                <tr><th class="fw-semibold">Válido até</th><td id="caNotAfter"></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="tlsError" class="alert alert-danger d-none small mt-3 mb-0" role="alert">
+            <i class="bi bi-exclamation-circle me-1"></i>Não foi possível ler o certificado do servidor. Avise o administrador
+            (o serviço <code>sensorsync-tls</code> pode não ter rodado).
+        </div>
+    </div>
+
+    <details class="ss-card p-3 mt-3 small">
+        <summary class="fw-semibold">Para o administrador</summary>
+        <ul class="mt-2 mb-0">
+            <li>O certificado é criado no primeiro boot por <code>sensorsync-tls.service</code>, em
+                <code>/etc/sensorsync/tls</code>. Impressão digital no servidor:
+                <code>openssl x509 -in /etc/sensorsync/tls/ca.crt -noout -fingerprint -sha1</code>.</li>
+            <li>Se o IP do servidor mudar, só o certificado do servidor é refeito; esta CA continua a mesma e não é preciso
+                reinstalar nada nos computadores nem regravar as placas.</li>
+            <li>Uma CA nova (troca de <code>SENSORSYNC_TLS_KEY</code> ou pasta apagada) exige reinstalar aqui e gerar de novo o
+                código das placas. Para remover a antiga no Windows: <code>certmgr.msc</code> › Autoridades de Certificação Raiz
+                Confiáveis › Certificados › "SensorSync CA ...".</li>
+            <li>Detalhes no README do projeto, seção TLS.</li>
+        </ul>
+    </details>
+</main>
+<script src="scripts/certificado.js"></script>
+</body>
+</html>

@@ -2,12 +2,14 @@
 # sudo systemctl daemon-reload && sudo systemctl enable --now sensorsync
 [Unit]
 Description=SensorSync - plataforma IoT
-After=network-online.target mysql.service mosquitto.service
-Wants=network-online.target
+After=network-online.target mysql.service mosquitto.service sensorsync-tls.service
+Wants=network-online.target sensorsync-tls.service
 
 [Service]
 User=sensorsync
 Group=sensorsync
+# Leitura da chave TLS do servidor (/etc/sensorsync/tls/server.key)
+SupplementaryGroups=sensorsync-tls
 WorkingDirectory=/opt/sensorsync
 EnvironmentFile=/etc/sensorsync/sensorsync.env
 # Raspberry Pi 3 (1 GB): limita o heap para sobrar memoria ao MySQL

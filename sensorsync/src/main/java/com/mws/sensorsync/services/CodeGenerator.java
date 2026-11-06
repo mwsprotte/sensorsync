@@ -23,7 +23,15 @@ public class CodeGenerator {
 
     public enum Protocol { HTTP, MQTT }
 
-    public record Endpoint(String host, int httpPort, int mqttPort) {
+    /** Onde a placa envia os dados; caPem != null = conexao com TLS validando esta CA. */
+    public record Endpoint(String host, int httpPort, int mqttPort, String caPem) {
+        public Endpoint(String host, int httpPort, int mqttPort) {
+            this(host, httpPort, mqttPort, null);
+        }
+
+        public boolean tls() {
+            return caPem != null;
+        }
     }
 
     /** Um ou dois arquivos (no modo Arduino + ESP8266 sao dois sketches). */
@@ -46,22 +54,42 @@ public class CodeGenerator {
         };
     }
 
-    private String header(Project p, Device device, String board, Protocol protocol) {
+    private String header(Project p, Device device, String board, Protocol protocol, Endpoint ep) {
         return """
-                // SensorSync | %s via %s
+                // SensorSync | %s via %s%s
                 // Projeto: %s (id %d) | Dispositivo: %s (indice %d)
                 //
                 // Requisitos (IDE Arduino > Gerenciador de Bibliotecas):
                 //   - SensorSync
                 //   - PubSubClient (instalada junto como dependencia)
 
-                """.formatted(board, protocol, oneLine(p.getName()), p.getId(), oneLine(device.getName()), device.getDeviceIndex());
+                """.formatted(board, protocol, ep.tls() ? " com TLS" : "", oneLine(p.getName()), p.getId(),
+                oneLine(device.getName()), device.getDeviceIndex());
     }
 
     private static String endpointLine(Protocol protocol, Endpoint ep) {
-        return protocol == Protocol.HTTP
+        String line = protocol == Protocol.HTTP
                 ? "sensorSync.useHTTP(SERVIDOR, %d);".formatted(ep.httpPort())
                 : "sensorSync.useMQTT(SERVIDOR, %d);".formatted(ep.mqttPort());
+        return ep.tls() ? line + "\n  sensorSync.useTLS(CA_CERT);  // criptografa e confere a identidade do servidor" : line;
+    }
+
+    /** Certificado da CA como constante C++ (raw string). */
+    private static String caConstant(Endpoint ep) {
+        if (!ep.tls()) {
+            return "";
+        }
+        String pem = ep.caPem().strip();
+        if (!pem.matches("[A-Za-z0-9+/=\\r\\n -]+")) {
+            throw ApiException.badRequest("Certificado da CA com caracteres inesperados");
+        }
+        return """
+                // Certificado da CA do servidor SensorSync (publico, nao e segredo). A placa so aceita
+                // conexao com um servidor assinado por esta CA, gerada no primeiro boot do servidor.
+                static const char CA_CERT[] = R"PEM(
+                %s
+                )PEM";
+                """.formatted(pem.replace("\r", ""));
     }
 
     private String config(Device device, Endpoint ep) {
@@ -75,11 +103,11 @@ public class CodeGenerator {
                 // Token do dispositivo "%s". Trate como senha: nao publique este arquivo com o token.
                 const char* TOKEN         = "%s";
                 const unsigned long INTERVALO_MS = 1000;      // periodo de envio
-                // --------------------------------------------------------------------
+                %s// --------------------------------------------------------------------
 
                 SensorSync sensorSync;
                 unsigned long ultimoEnvio = 0;
-                """.formatted(ep.host(), oneLine(device.getName()), TOKEN_PLACEHOLDER);
+                """.formatted(ep.host(), oneLine(device.getName()), TOKEN_PLACEHOLDER, caConstant(ep));
     }
 
     private String espStandalone(Project p, List<Metadata> vars, Device device, Board board, Protocol protocol, Endpoint ep) {
@@ -89,12 +117,16 @@ public class CodeGenerator {
         for (int i = 0; i < vars.size(); i++) {
             reads.append("    sensorSync.setValue(%d, random(0, 100));  // %s%n".formatted(i, oneLine(vars.get(i).getDataDesc() + (vars.get(i).getUnit() == null ? "" : " (" + vars.get(i).getUnit() + ")"))));
         }
-        return header(p, device, board == Board.ESP32 ? "ESP32" : "ESP8266", protocol)
+        return header(p, device, board == Board.ESP32 ? "ESP32" : "ESP8266", protocol, ep)
                 + cfg
                 + """
 
                 void setup() {
                   Serial.begin(115200);
+                  delay(200);
+                  Serial.println();
+                  Serial.println("SensorSync: iniciando");
+                  sensorSync.setDebug(Serial);  // mensagens no Monitor Serial (115200); pode remover depois
                   sensorSync.setToken(TOKEN);
                   %s
                   sensorSync.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -160,7 +192,7 @@ public class CodeGenerator {
     private String espBridge(Project p, List<Metadata> vars, Device device, Protocol protocol, Endpoint ep) {
         String cfg = config(device, ep);
         String endpointLine = endpointLine(protocol, ep);
-        return header(p, device, "ESP8266 (ponte para Arduino)", protocol)
+        return header(p, device, "ESP8266 (ponte para Arduino)", protocol, ep)
                 + cfg
                 + """
                 const int N_VALORES = %d;

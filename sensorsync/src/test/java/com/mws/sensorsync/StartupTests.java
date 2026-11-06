@@ -43,6 +43,9 @@ class StartupTests {
         // Sem login: API 401, pagina redireciona para o login
         mvc.perform(get("/project")).andExpect(status().isUnauthorized());
         mvc.perform(get("/dashboard.html")).andExpect(status().is3xxRedirection());
+        // Sem o perfil tls nao ha CA para baixar (e a rota e publica: 404, nao 401)
+        mvc.perform(get("/ca.crt")).andExpect(status().isNotFound());
+        assertEquals(false, json(get("/ca.json")).path("enabled").asBoolean(true));
 
         // Admin inicial criado pela migracao cria dois usuarios comuns
         for (String u : new String[]{"ana", "bruno"}) {

@@ -8,6 +8,7 @@ import com.mws.sensorsync.services.CodeGenerator;
 import com.mws.sensorsync.services.DeviceService;
 import com.mws.sensorsync.services.MetadataService;
 import com.mws.sensorsync.services.ProjectService;
+import com.mws.sensorsync.tls.TlsSettings;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -28,9 +29,10 @@ public class ProjectController {
     private final AccessService access;
     private final String publicHost;
     private final int mqttPublicPort;
+    private final TlsSettings tls;
 
     public ProjectController(ProjectService projectService, MetadataService metadataService, DeviceService deviceService,
-                             CodeGenerator codeGenerator, AccessService access,
+                             CodeGenerator codeGenerator, AccessService access, TlsSettings tls,
                              @Value("${sensorsync.public-host:}") String publicHost,
                              @Value("${sensorsync.mqtt.public-port:1883}") int mqttPublicPort) {
         this.projectService = projectService;
@@ -40,6 +42,7 @@ public class ProjectController {
         this.access = access;
         this.publicHost = publicHost;
         this.mqttPublicPort = mqttPublicPort;
+        this.tls = tls;
     }
 
     /** Dispositivo com o token em texto puro (so aparece nesta resposta). */
@@ -158,7 +161,11 @@ public class ProjectController {
                 ? devices.stream().findFirst().orElseThrow(() -> ApiException.badRequest("Projeto sem dispositivos"))
                 : deviceService.get(p, deviceId);
         String host = publicHost == null || publicHost.isBlank() ? request.getServerName() : publicHost;
-        CodeGenerator.Endpoint ep = new CodeGenerator.Endpoint(host, request.getServerPort(), mqttPublicPort);
+        // Com TLS ligado o codigo gerado sempre usa HTTPS/MQTTS e leva o certificado da CA,
+        // mesmo que a pagina tenha sido aberta pela porta HTTP liberada para experimentos.
+        String caPem = tls.caPem().orElse(null);
+        int httpPort = caPem != null && !request.isSecure() ? tls.httpsPort() : request.getServerPort();
+        CodeGenerator.Endpoint ep = new CodeGenerator.Endpoint(host, httpPort, mqttPublicPort, caPem);
         return codeGenerator.generate(p, metadataService.findByProjectId(id), device, board, protocol, ep);
     }
 }

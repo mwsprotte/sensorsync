@@ -1,0 +1,17 @@
+# /etc/systemd/system/sensorsync-tls.service
+# Gera/atualiza os certificados TLS a cada boot, antes do Mosquitto e da API.
+# sudo systemctl daemon-reload && sudo systemctl enable sensorsync-tls
+[Unit]
+Description=SensorSync - certificados TLS
+After=network-online.target
+Wants=network-online.target
+Before=mosquitto.service sensorsync.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=-/etc/sensorsync/sensorsync.env
+ExecStart=/opt/sensorsync/sensorsync-tls.sh
+
+[Install]
+WantedBy=multi-user.target
