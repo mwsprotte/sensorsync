@@ -33,3 +33,7 @@ config/
 
 # Biblioteca das placas servida pela plataforma (versionada de proposito)
 !sensorsync/src/main/resources/static/downloads/SensorSync.zip
+
+# Resultados dos experimentos (bench/) e log de metricas local da API
+results/
+metrics/

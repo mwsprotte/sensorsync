@@ -107,6 +107,7 @@ Tudo por variáveis de ambiente (veja `deploy/sensorsync.env.example`):
 | `SENSORSYNC_HTTPS_PORT` | `8443` | Porta HTTPS (perfil `tls`) |
 | `SENSORSYNC_PLAIN_HTTP` | `redirect` | Porta 8080 com TLS ligado: `redirect`, `allow` (experimentos) ou `off` |
 | `SENSORSYNC_MQTT_PUBLIC_PORT` | `8883` com TLS, `1883` sem | Porta MQTT no código das placas |
+| `SENSORSYNC_METRICS` / `_FILE` | `false`, `metrics/ingest-metrics.csv` | Experimentos: log CSV por mensagem (latência, perda); ver [bench/README.md](bench/README.md) |
 
 <hr>
 

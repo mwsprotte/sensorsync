@@ -12,7 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +31,9 @@ import java.util.List;
  * Formato antigo (biblioteca 0.x): lista de objetos Data com projectID/sensorIndex/dataIndex.
  * Com token, projectID e sensorIndex do payload sao ignorados e substituidos pelos do dispositivo.
  * Sem token, so e aceito se sensorsync.ingest.allow-legacy=true.
+ *
+ * Campos opcionais para experimentos: "seq" (sequencia do dispositivo) e "ts" (hora de envio, epoch ms).
+ * Nao sao gravados nos dados; vao para o log de metricas (IngestMetrics), registrado depois do commit.
  */
 @Service
 public class IngestService {
@@ -40,21 +44,52 @@ public class IngestService {
     public record Result(int saved, int ignored) {
     }
 
+    private record Outcome(Result result, Long deviceId) {
+    }
+
     private final DeviceService devices;
     private final DataRepository dataRepository;
     private final ProjectRepository projects;
     private final boolean allowLegacy;
+    private final IngestMetrics metrics;
+    private final TransactionTemplate tx;
 
     public IngestService(DeviceService devices, DataRepository dataRepository, ProjectRepository projects,
+                         IngestMetrics metrics, PlatformTransactionManager txManager,
                          @Value("${sensorsync.ingest.allow-legacy:false}") boolean allowLegacy) {
         this.devices = devices;
         this.dataRepository = dataRepository;
         this.projects = projects;
+        this.metrics = metrics;
+        this.tx = new TransactionTemplate(txManager);
         this.allowLegacy = allowLegacy;
     }
 
-    @Transactional
     public Result ingest(String token, JsonNode body) {
+        return ingest(token, body, IngestMetrics.Received.now("internal", null, 0));
+    }
+
+    /**
+     * Grava as leituras numa transacao e, depois do commit, registra a mensagem no log de metricas.
+     * Erros (token invalido, formato) tambem sao registrados, com o status correspondente.
+     */
+    public Result ingest(String token, JsonNode body, IngestMetrics.Received rx) {
+        Long seq = optionalLong(body, "seq");
+        Long ts = optionalLong(body, "ts");
+        try {
+            Outcome o = tx.execute(status -> doIngest(token, body));
+            metrics.record(rx, o.deviceId(), seq, ts, o.result().saved(), "saved");
+            return o.result();
+        } catch (ApiException e) {
+            metrics.record(rx, null, seq, ts, 0, "rejected_" + e.getStatus().value());
+            throw e;
+        } catch (RuntimeException e) {
+            metrics.record(rx, null, seq, ts, 0, "error");
+            throw e;
+        }
+    }
+
+    private Outcome doIngest(String token, JsonNode body) {
         if (body == null || body.isNull() || body.isMissingNode()) {
             throw ApiException.badRequest("Corpo vazio");
         }
@@ -67,11 +102,11 @@ public class IngestService {
                     .orElseThrow(() -> ApiException.unauthorized("Token de dispositivo invalido"));
             Result r = saveForDevice(device, body);
             devices.touch(device);
-            return r;
+            return new Outcome(r, device.getId());
         }
 
         if (allowLegacy && body.isArray()) {
-            return saveLegacy(body);
+            return new Outcome(saveLegacy(body), null);
         }
         throw ApiException.unauthorized("Token de dispositivo ausente");
     }
@@ -154,6 +189,14 @@ public class IngestService {
         d.setData(value);
         d.setReadTime(now);
         return d;
+    }
+
+    private static Long optionalLong(JsonNode body, String field) {
+        if (body == null || !body.isObject()) {
+            return null;
+        }
+        JsonNode v = body.get(field);
+        return v != null && v.canConvertToLong() ? v.asLong() : null;
     }
 
     private static String truncate(String s) {

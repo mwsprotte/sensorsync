@@ -4,19 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="update HOST references to use new IP address and fix code generation">
+    <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="feat(tls): implement TLS support with CA certificate management and HTTP redirection">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/sensorsync.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/sensorsync.env.example" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/sensorsync.service" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/sensorsync.service" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ProjectController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/IngestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/IngestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/IngestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/IngestService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/MqttIngestListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/MqttIngestListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/security/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/CodeGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/scripts/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/test/java/com/mws/sensorsync/StartupTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/test/java/com/mws/sensorsync/StartupTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/downloads/SensorSync.zip" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/downloads/SensorSync.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/static/preparar-ide.html" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/static/preparar-ide.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/test/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/test/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +53,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="feat/auth-tokens" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -65,12 +64,22 @@
     &quot;assignee&quot;: &quot;mwsprotte&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/mwsprotte/sensorsync.git&quot;,
-    &quot;accountId&quot;: &quot;05e60d4a-975a-44f3-baff-c992b7b4f466&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/mwsprotte/sensorsync.git",
+    "accountId": "05e60d4a-975a-44f3-baff-c992b7b4f466"
+  },
+  "recentNewPullRequestHead": {
+    "server": {
+      "useHttp": false,
+      "host": "github.com",
+      "port": null,
+      "suffix": null
+    },
+    "owner": "mwsprotte",
+    "repository": "sensorsync"
   }
-}</component>
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -85,39 +94,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Startup.executor&quot;: &quot;Run&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Maven.sensorsync [clean,package].executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Startup (TLS).executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.Startup.executor&quot;: &quot;Run&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feat/auth-tokens&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Development/sensorsync/Integration_library&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;5a8d846313b6505a23403ea9634d0bee&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Startup.executor": "Run",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Maven.sensorsync [clean,package].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.Startup (TLS).executor": "Run",
+    "Spring Boot.Startup.executor": "Run",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "feat/metrics",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Development/sensorsync/Integration_library",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
+    "spring.configuration.checksum": "5a8d846313b6505a23403ea9634d0bee",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Development\sensorsync\Integration_library" />
@@ -147,6 +156,7 @@
       <envs>
         <env name="SENSORSYNC_TLS_DIR" value="$PROJECT_DIR$/config/tls" />
         <env name="SENSORSYNC_PUBLIC_HOST" value="192.168.100.166" />
+        <env name="SENSORSYNC_METRICS" value="true" />
       </envs>
       <module name="sensorsync" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.mws.sensorsync.Startup" />
@@ -349,7 +359,15 @@
       <option name="project" value="LOCAL" />
       <updated>1793977425734</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="feat(tls): implement TLS support with CA certificate management and HTTP redirection">
+      <option name="closed" value="true" />
+      <created>1793993435085</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1793993435085</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -368,7 +386,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update HOST references to use new IP address and fix code generation" />
-    <option name="LAST_COMMIT_MESSAGE" value="update HOST references to use new IP address and fix code generation" />
+    <MESSAGE value="feat(tls): implement TLS support with CA certificate management and HTTP redirection" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(tls): implement TLS support with CA certificate management and HTTP redirection" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
