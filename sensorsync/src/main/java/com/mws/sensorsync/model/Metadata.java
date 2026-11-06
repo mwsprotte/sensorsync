@@ -32,6 +32,13 @@ public class Metadata implements Serializable {
     @Column
     private boolean useChart;
 
+    /** Unidade de medida exibida no dashboard (ex.: "°C", "%", "V"). Opcional. */
+    @Column(length = 32)
+    private String unit;
+
+    public String getUnit() { return unit; }
+    public void setUnit(String unit) { this.unit = unit; }
+
     public Metadata() {
     }
 

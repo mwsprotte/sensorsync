@@ -71,6 +71,10 @@ public class DataService {
         logger.info("Todos os dados para o projeto " + projectID + " removidos!");
     }
 
+    public List<Data> findRecentAfter(Long projectId, Long device, Long afterId, Long length) {
+        return dataRepository.findRecentAfter(projectId, device, afterId, length);
+    }
+
     public List<Data> findByProject(Long projectId, Long length) {
         logger.info("Buscando os dados para o projeto " + projectId);
         return dataRepository.findByProject(projectId, length);

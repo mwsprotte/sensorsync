@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SensorSync - Entrar</title>
+    <link rel="icon" type="image/png" href="img/if_logo.png">
+    <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
+    <script src="scripts/dark_mode.js"></script>
+</head>
+<body class="d-flex align-items-center min-vh-100">
+<main class="container" style="max-width: 400px;">
+    <div class="text-center mb-4">
+        <img src="img/jaragua_rau_horizontal_marca2015_CMYK.png" alt="Instituto Federal de Santa Catarina - Câmpus Jaraguá do Sul - Rau" class="ss-campus-logo light-only" style="height: 64px;">
+        <img src="img/index/jaragua_rau_horizontal_marca2015_mono_branco.png" alt="Instituto Federal de Santa Catarina - Câmpus Jaraguá do Sul - Rau" class="ss-campus-logo dark-only" style="height: 64px;">
+    </div>
+    <div class="ss-card ss-login p-4">
+        <h1 class="h5 fw-semibold mb-1">SensorSync</h1>
+        <p class="ss-muted small mb-4">Plataforma IoT do laboratório. Entre com a sua conta.</p>
+        <div id="loginError" class="alert alert-danger d-none py-2 small" role="alert"><i class="bi bi-exclamation-circle me-1"></i>Login ou senha incorretos.</div>
+        <form method="post" action="/login">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="username" name="username" placeholder="login" autocomplete="username" required autofocus>
+                <label for="username">Login</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password" name="password" placeholder="senha" autocomplete="current-password" required>
+                <label for="password">Senha</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>
+        </form>
+    </div>
+    <p class="text-center ss-muted small mt-3">Sem acesso? Peça uma conta ao administrador do laboratório.</p>
+    <p class="text-center ss-muted small mb-0">Desenvolvido por <a href="https://github.com/mwsprotte" target="_blank" rel="noopener"
+        class="fw-semibold"><i class="bi bi-github me-1"></i>Matheus Willian Sprotte</a></p>
+</main>
+<script src="scripts/login.js"></script>
+</body>
+</html>

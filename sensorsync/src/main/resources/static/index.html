@@ -1,223 +1,66 @@
 <!doctype html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SensorSync</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <title>SensorSync - Projetos</title>
+    <link rel="icon" type="image/png" href="img/if_logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
-
-
 </head>
+<body>
+<nav id="appNav"></nav>
 
-<body onload="verifyAndOpen()">
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-    <div class="container-fluid">
-        <div class='navbar-brand'>
-
-            <!--            <a class='navbar-brand' href='index.html'>-->
-            <!--                <img src='./style/img/Logo-horizontal_preto_sombra.png' alt='Logo' width='202' height='67'-->
-            <!--                     class='d-inline-block align-text-mid'>-->
-            <!--                &lt;!&ndash; <img src='./style/img/Logo-horizontal_preto.png' alt='Logo' width='202' height='60' class='d-inline-block align-text-mid'> &ndash;&gt;-->
-            <!--                Configurador de Produtos | Família dos ATT - Autotransformador Trifásico-->
-            <!--            </a>-->
-
+<main class="container-xl">
+    <div class="ss-page-header d-flex flex-wrap align-items-end justify-content-between gap-3">
+        <div>
+            <p class="ss-muted mb-1" id="greeting">&nbsp;</p>
+            <h1>Seus projetos</h1>
         </div>
-        <a class="navbar-brand fw-semibold" href="#">
-            <img src='./img/if_logo.png' alt='Logo' width='60' height='60'
-                 class='d-inline-block align-text-mid'>
-            SensorSync - IFSC Rau
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-                <!-- <a class="nav-link" href="#">Criar</a>
-                <a class="nav-link" href="#">Dashboard</a> -->
-                <!--                <a class="nav-link" aria-disabled="true" href="#">Sobre</a>-->
-                <!--                <a class="nav-link" aria-disabled="true" href="#">Documentação Avançada (Swagger)</a>-->
+        <div class="d-flex gap-2">
+            <div class="input-group" style="max-width: 260px;">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="search" class="form-control" id="search" name="ss-filtro-projetos" placeholder="Buscar projeto"
+                       aria-label="Buscar projeto" autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+                       readonly onfocus="this.removeAttribute('readonly')">
             </div>
-        </div>
-    </div>
-</nav>
-<br>
-<div class="container">
-
-
-    <div class="row row-cols-1 row-cols-md-4 g-4">
-        <div class="col">
-            <div class="card">
-                <img src="img/index/1.png" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Criar Projeto 🆕</h5>
-                    <p class="card-text">Aqui você poderá criar o dashboard para seu projeto, bem como o sistema
-                        embarcado para integração com os microcontroladores ESP32 e ESP8266.</p>
-                    <!-- <a href="#" class="btn btn-primary btn-primary">Criar</a> -->
-                    <!-- <button type="button" class="btn btn-primary" href="./generator.html">Criar</button> -->
-                    <a href="./generator.html" class="btn btn-primary">Criar</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-
-            <div class="card">
-                <img src="img/index/2.png" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Acessar Dashboard 📊</h5>
-                    <p class="card-text">Acesse o dashboard de um projeto existente a partir de um ID de
-                        projeto.
-                    </p>
-                    <br>
-                    <br>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal" onclick="generateProjectsTable()">
-                        Acessar
-                    </button>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="col">
-            <div class="card">
-                <img src="img/index/3.png" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Gerenciar ⚙️</h5>
-                    <p class="card-text">Gerencie os projetos existentes na plataforma.</p>
-                    <br>
-                    <br>
-                    <!--                    <a href="#" class="btn btn-primary">-->
-                    <!--                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"-->
-                    <!--                                data-bs-target="#ModalDeleteProject" onclick="generetaDeleteList()">Projetos</button>-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#ModalLogin" onclick="">Projetos
-                    </button>
-                    <!--                    </a>-->
-                </div>
-            </div>
+            <a href="generator.html" class="btn btn-primary text-nowrap"><i class="bi bi-plus-lg me-1"></i>Novo projeto</a>
         </div>
     </div>
 
+    <div class="row g-3 mb-4" id="stats"></div>
 
+    <div class="row g-3" id="projects"></div>
+</main>
+
+<footer id="appFooter"></footer>
+
+<!-- Transferir dono do projeto (admin) -->
+<div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="transferTitle"><i class="bi bi-person-gear me-2"></i>Transferir projeto</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small ss-muted">O novo dono passa a ver e gerenciar <strong id="transferName"></strong>.
+                    Os dispositivos e tokens continuam os mesmos.</p>
+                <label class="form-label" for="transferUser">Novo dono</label>
+                <select class="form-select" id="transferUser"></select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmTransfer()">Transferir</button>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div>
-    <br><br>
-    <br><br>
-    <br><br>
-    <br><br>
-</div>
-
-<hr>
-
-<footer class="text-center">
-    <div class="text-center p-3">
-        IFSC RAU 2024 | SensorSync - API de Integração IoT escalável e multiprotocolo
-    </div>
-</footer>
 
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
-
-
-</body>
-
-<!-- Modal Para abrir um projeto -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Selecione o Projeto</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="projectList">
-
-                    <div class="d-flex justify-content-center">
-                        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-            <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div> -->
-        </div>
-    </div>
-</div>
-
-<!-- Modal Para excluir projeto -->
-<div class="modal fade" id="ModalDeleteProject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel1">Selecione o Projeto para Excluir</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="projectListToDelete">
-
-                    <div class="d-flex justify-content-center">
-                        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-            <!-- <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-        </div> -->
-        </div>
-    </div>
-</div>
-
-<!-- Modal Para excluir projeto -->
-<div class="modal fade" id="ModalLogin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLogin">Entre com o login de administrador:</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-
-                <form>
-                    <div class="mb-3">
-                        <label for="login" class="form-label">Login</label>
-                        <input type="text" class="form-control" id="login" aria-describedby="loginHelp">
-                        <div id="loginHelp" class="form-text">Somente administradores podem excluir projetos.</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="password">
-                    </div>
-                </form>
-
-                <br>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#ModalDeleteProject" onclick="generetaDeleteList()">Confirmar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+<script src="scripts/app.js"></script>
 <script src="scripts/index.js"></script>
+</body>
 </html>

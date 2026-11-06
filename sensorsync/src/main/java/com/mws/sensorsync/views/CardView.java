@@ -6,7 +6,8 @@ public class CardView {
 
     String sensorDescription, dataDesc, readTime;
 
-    double data;
+    /** Nulo quando o dispositivo ainda nao enviou essa variavel. */
+    Double data;
 
     long sensorIndex;
 
@@ -37,11 +38,11 @@ public class CardView {
         this.readTime = readTime;
     }
 
-    public double getData() {
+    public Double getData() {
         return data;
     }
 
-    public void setData(double data) {
+    public void setData(Double data) {
         this.data = data;
     }
 
@@ -58,7 +59,7 @@ public class CardView {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CardView cardView = (CardView) o;
-        return Double.compare(data, cardView.data) == 0 && sensorIndex == cardView.sensorIndex && Objects.equals(sensorDescription, cardView.sensorDescription) && Objects.equals(dataDesc, cardView.dataDesc) && Objects.equals(readTime, cardView.readTime);
+        return Objects.equals(data, cardView.data) && sensorIndex == cardView.sensorIndex && Objects.equals(sensorDescription, cardView.sensorDescription) && Objects.equals(dataDesc, cardView.dataDesc) && Objects.equals(readTime, cardView.readTime);
     }
 
     @Override

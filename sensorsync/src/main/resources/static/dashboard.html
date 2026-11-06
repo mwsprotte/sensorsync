@@ -1,149 +1,149 @@
 <!doctype html>
-
-<!--<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
-
-<script src="scripts/imports/chart.umd.min.js"></script>
-<script src="scripts/imports/chart.js"></script>
-<script src="scripts/imports/jquery-1.11.0.js"></script>
-
 <html lang="pt-BR">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SensorSync</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <title>SensorSync - Projeto</title>
+    <link rel="icon" type="image/png" href="img/if_logo.png">
     <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
     <script src="scripts/dark_mode.js"></script>
-
-
+    <script src="scripts/imports/chart.js"></script>
 </head>
+<body>
+<nav id="appNav"></nav>
 
-<body onload="verifyAndOpenDashboard()">
+<main class="container-xl">
+    <div class="ss-page-header pb-2 d-flex flex-wrap align-items-end justify-content-between gap-3">
+        <div class="min-w-0 flex-grow-1">
+            <a href="index.html" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Projetos</a>
+            <h1 class="mt-1 ss-clamp-2" id="projectTitle">...</h1>
+            <div class="small ss-muted d-flex align-items-center gap-2" id="deviceStatus">&nbsp;</div>
+        </div>
+    </div>
 
+    <ul class="nav nav-underline ss-tabs mb-3 mb-md-4" id="projectTabs" role="tablist">
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="visao" type="button" role="tab"><i class="bi bi-speedometer2 me-1 d-none d-sm-inline"></i>Visão geral</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="dispositivos" type="button" role="tab"><i class="bi bi-cpu me-1 d-none d-sm-inline"></i>Dispositivos</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="codigo" type="button" role="tab"><i class="bi bi-code-slash me-1 d-none d-sm-inline"></i>Código</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-tab="relatorio" type="button" role="tab"><i class="bi bi-table me-1 d-none d-sm-inline"></i>Relatório</button></li>
+    </ul>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-semibold" href="#" id="projectTitle">...</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
+    <!-- Selecao de dispositivos (varios na visao geral; um em codigo e relatorio) -->
+    <div id="deviceChipsWrap" class="mb-3">
+        <div class="small ss-muted mb-2" id="chipsHint"></div>
+        <div id="deviceChips" class="ss-dev-chips"></div>
+    </div>
 
-                <div id="deviceSelector">
-                    <!-- <select id="deviceSelected" class="form-select">
-                        <option value="0">Sensor 0</option>
-                        <option value="1">Sensor 1</option>
-                        <option value="2">Sensor 2</option>
-                        <option value="3">Sensor 3</option>
-                      </select> -->
-                    ...
+    <!-- ===================== Visao geral ===================== -->
+    <section data-panel="visao" class="d-none">
+        <div class="row g-3" id="dataCards">
+            <div class="col-12"><div class="d-flex justify-content-center py-5"><div class="spinner-border text-success" role="status"></div></div></div>
+        </div>
+
+        <section class="ss-card p-3 p-md-4 mt-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <h2 class="h6 fw-semibold mb-0"><i class="bi bi-graph-up me-2"></i>Histórico</h2>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <span class="small ss-muted d-none" id="multiHint"><i class="bi bi-info-circle me-1"></i>Comparando dispositivos: um gráfico por variável</span>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Tipo de gráfico" id="modeGroup">
+                        <input type="radio" class="btn-check" name="chartMode" id="modeCombined">
+                        <label class="btn btn-outline-secondary" for="modeCombined" title="Todas as variáveis no mesmo gráfico"><i class="bi bi-graph-up"></i> Único</label>
+                        <input type="radio" class="btn-check" name="chartMode" id="modeSplit">
+                        <label class="btn btn-outline-secondary" for="modeSplit" title="Um gráfico por variável, cada um com sua escala"><i class="bi bi-grid"></i> Por variável</label>
+                    </div>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Quantidade de envios">
+                        <input type="radio" class="btn-check" name="len" id="len20" value="20"><label class="btn btn-outline-primary" for="len20">20</label>
+                        <input type="radio" class="btn-check" name="len" id="len50" value="50"><label class="btn btn-outline-primary" for="len50">50</label>
+                        <input type="radio" class="btn-check" name="len" id="len200" value="200"><label class="btn btn-outline-primary" for="len200">200</label>
+                        <input type="radio" class="btn-check" name="len" id="len1000" value="1000"><label class="btn btn-outline-primary" for="len1000">1000</label>
+                    </div>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="setTimeOff" checked>
+                        <label class="form-check-label small" for="setTimeOff">Tempo real</label>
+                    </div>
+                    <button class="btn btn-sm btn-link text-body-secondary p-0" title="Baixar imagem do gráfico" onclick="downloadChart(0)" id="chartPngBtn"><i class="bi bi-image"></i></button>
                 </div>
-
-
-                <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
-                <!-- <a class="nav-link" href="#">Criar</a>
-                <a class="nav-link" href="#">Dashboard</a> -->
-                <!-- <a class="nav-link" aria-disabled="true" href="#">Opções</a> -->
-                <a class="nav-link" aria-disabled="true" href="#" data-bs-toggle="modal"
-                   data-bs-target="#staticBackdrop">
-                    Opções
-                </a>
-                <!-- <a class="nav-link" aria-disabled="true" href="#">Sobre</a> -->
-                <!-- <a class="nav-link" aria-disabled="true" href="#">Documentação Avançada (Swagger)</a> -->
-                <a class="nav-link" aria-disabled="true" href="#" onclick="closeProject()">Sair</a>
             </div>
-        </div>
-    </div>
-</nav>
-<br>
+            <div id="chartCombinedWrap" class="ss-chart-main"><canvas id="dataChart"></canvas></div>
+            <div id="chartSplit" class="row g-3 d-none"></div>
+            <p class="small ss-muted mb-0 mt-2 d-none" id="noChart">Nenhuma variável marcada como gráfico neste projeto.</p>
+            <p class="small ss-muted mb-0 mt-2 d-none" id="noData"><i class="bi bi-hourglass-split me-1"></i>Aguardando os primeiros envios deste dispositivo.</p>
+        </section>
+    </section>
 
-
-<div class="container" id="dataCards">
-
-    <div class="d-flex justify-content-center">
-        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-
-</div>
-
-<br>
-<div class="container">
-    <hr>
-</div>
-<br>
-<div class="container-xxl">
-    <div id="dataCharts">
-
-
-        <!-- <div>
-                <canvas id="dataChart1">
-
-                </canvas>
-            </div> -->
-
-
-    </div>
-</div>
-
-<br>
-<br>
-<br>
-<hr>
-<br>
-<footer class="text-center">
-    <div class="text-center p-3">
-        IFSC RAU 2024 | SensorSync - API de Integração IoT escalável e multiprotocolo
-    </div>
-</footer>
-<br>
-<br>
-
-
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Ajustes</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="exampleRadios" id="setTimeOff"
-                           value="" checked>
-                    <label class="form-check-label" for="setTimeOff">
-                        Atualização automática dos dados
-                    </label>
+    <!-- ===================== Dispositivos ===================== -->
+    <section data-panel="dispositivos" class="d-none">
+        <div class="ss-card p-3 p-md-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                <p class="small ss-muted mb-0" style="max-width: 640px;">Cada dispositivo usa o próprio token e só consegue gravar neste projeto.
+                    O token aparece uma única vez; se perder, gere outro (o anterior para de funcionar).</p>
+                <div class="input-group" style="max-width: 380px;">
+                    <input type="text" class="form-control" id="newDeviceName" placeholder="Nome do novo dispositivo" maxlength="254">
+                    <button type="button" class="btn btn-primary" onclick="addDevice()"><i class="bi bi-plus-lg me-1"></i>Adicionar</button>
                 </div>
-
-                <hr>
-                Range para exibição dos gráficos
-                <br>
-                <br>
-                <input type="number" class="form-control" placeholder="Insira a quantidade de itens"
-                       aria-label="Insira a quantidade de itens" id="length" name="length" min="3" max="100" value="5">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="updateViews()">Aplicar
-                </button>
-                <button type="button" class="btn btn-success" onclick="reGenerateCode()">Gerar Microcódigo</button>
-                <button type="button" class="btn btn-success" onclick="openExportTab()">Gerar Relatório</button>
+            <div id="newTokenBox"></div>
+            <div id="devicesList"></div>
+        </div>
+    </section>
+
+    <!-- ===================== Codigo ===================== -->
+    <section data-panel="codigo" class="d-none">
+        <div id="tokensBox"></div>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <section class="ss-card p-4 mb-4">
+                    <h2 class="h6 fw-semibold mb-3"><i class="bi bi-sliders me-2"></i>Opções</h2>
+                    <div class="mb-3">
+                        <label class="form-label small" for="board">Placa</label>
+                        <select class="form-select" id="board">
+                            <option value="ESP8266">ESP8266</option>
+                            <option value="ESP32">ESP32</option>
+                            <option value="ARDUINO_ESP8266">Arduino + ESP8266</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label small" for="protocol">Protocolo</label>
+                        <select class="form-select" id="protocol">
+                            <option value="HTTP">HTTP</option>
+                            <option value="MQTT">MQTT</option>
+                        </select>
+                    </div>
+                    <p class="small ss-muted mt-3 mb-0">O código é gerado para o dispositivo escolhido acima.</p>
+                </section>
+                <section class="ss-card p-4">
+                    <h2 class="h6 fw-semibold mb-3"><i class="bi bi-list-check me-2"></i>Como gravar</h2>
+                    <ol class="small ps-3 mb-0 d-flex flex-column gap-2">
+                        <li>Na IDE Arduino, instale a biblioteca <strong>SensorSync</strong> em <em>Ferramentas › Gerenciar Bibliotecas</em>. A PubSubClient vem junto.</li>
+                        <li>Baixe o <code>.ino</code> e preencha <code>WIFI_SSID</code> e <code>WIFI_PASSWORD</code>. O ESP só conecta em redes de 2,4 GHz.</li>
+                        <li>Substitua os <code>random()</code> pelas leituras dos sensores.</li>
+                        <li>Grave a placa e acompanhe pelo Monitor Serial (115200).</li>
+                    </ol>
+                </section>
+            </div>
+            <div class="col-lg-8"><div id="codeGenerated"></div></div>
+        </div>
+    </section>
+
+    <!-- ===================== Relatorio ===================== -->
+    <section data-panel="relatorio" class="d-none">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <div class="small ss-muted" id="reportInfo">&nbsp;</div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" onclick="loadReport()"><i class="bi bi-arrow-clockwise me-1"></i>Atualizar</button>
+                <button class="btn btn-primary" onclick="downloadCsv()"><i class="bi bi-filetype-csv me-1"></i>Baixar CSV</button>
             </div>
         </div>
-    </div>
-</div>
+        <section class="ss-card overflow-hidden"><div id="tableDataDiv"></div></section>
+    </section>
+</main>
+
+<footer id="appFooter"></footer>
 
 <script src="scripts/imports/bootstrap.bundle.min.js"></script>
-
-</body>
-
+<script src="scripts/app.js"></script>
 <script src="scripts/dashboard.js"></script>
-
+</body>
 </html>

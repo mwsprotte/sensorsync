@@ -1,49 +1,17 @@
 <!doctype html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SensorSync</title>
-    <link rel="icon" type="image/x-icon" href="img/logo.png">
-    <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
-    <script src="scripts/dark_mode.js"></script>
-
-
+    <!-- Pagina antiga: agora e uma aba da pagina do projeto. Mantida para links e favoritos antigos. -->
+    <script>
+        (function () {
+            var q = new URLSearchParams(window.location.search);
+            var id = q.get('id') || '';
+            q.delete('device');
+            window.location.replace('dashboard.html?' + q.toString() + '#codigo');
+        })();
+    </script>
 </head>
-
-<body onload="generateCode()">
-
-<div class="container">
-    <div>
-        <p>
-        <h1>
-            <div id="codeTitle">Código do Sistema Embarcado</div>
-        </h1>
-        </p>
-    </div>
-
-
-    <div>
-
-
-    <pre>
-        <code>
-            <div id="codeGenerated">
-
-
-            </div>
-        </code>
-    </pre>
-
-    </div>
-
-</div>
-
-<script src="scripts/imports/bootstrap.bundle.min.js"></script>
-
-</body>
-
-<script src="scripts/code.js"></script>
-
+<body></body>
 </html>

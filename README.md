@@ -1,237 +1,156 @@
-# sensorsync - API REST para integração MQTT/REST de microcontroladores a Banco de Dados MySQL
+# SensorSync — plataforma IoT self-hosted
 
-Este projeto é uma plataforma de desenvolvimento IoT de fácil uso que possibilita automatizar a criação de projetos IoT
-através de geração de microcódigo, geração de dashboard e integração automática com banco de dados MySQL.
-Ou seja, múltiplos projetos IoT são suportados, vinculados a múltiplos controladores conectados (possuí biblioteca de integração para ESP8266 e ESP32), 
-que submetem e leem múltiplos dados (via protocolos HTTP e MQTT, inclusive simultaneamente). 
+Plataforma para criar projetos IoT sem programar o backend: a interface web gera o dashboard, o banco de dados
+e o código do microcontrolador (ESP8266/ESP32). Os dispositivos enviam dados por **HTTP** ou **MQTT**.
+Roda em hardware de baixo custo (testado em Raspberry Pi 3) com Java 21, MySQL e Mosquitto.
 
-Essa plataforma é implementada sob a seguinte stack: Java 21, Banco de dados MySQL e Mosquitto Broker. 
-A seguir, é apresentada um documentação a respeito do uso desse sistema em ambiente de produção (Raspberry PI 3 com Ubuntu Server embarcado, na rede do laboratório de pesquisa do IFSC - Rau)
-e da implementação do mesmo e sua stack em Ubuntu Server e Windows. 
+Artigo: M. W. Sprotte, P. D. da Silva, A. A. de Melo, *An Easy-to-Use Platform for IoT Systems on Low-Cost Hardware*,
+SIoT 2025, doi: [10.1109/SIoT68426.2025.11368827](https://doi.org/10.1109/SIoT68426.2025.11368827).
 
-<hr>
+Biblioteca para as placas: [sensorsync_lib](https://github.com/mwsprotte/sensorsync_lib) (IDE Arduino › Gerenciar Bibliotecas › "SensorSync").
 
-#### Sumário:
+#### Sumário
 
-[Uso em ambiente de produção](#uso-do-sistema-em-ambiente-de-produção-laboratório-de-pesquisa-do-ifsc-rau)
-
-[Inicializar o sistema no ambiente de produção](#inicializar-o-sistema-no-ambiente-de-produção)
-
-[Implementar a Stack em Raspberry PI com Ubuntu Server](#implementar-a-stack-em-raspberry-pi-com-ubuntu-server)
-
-[Implementar a Stack em Computador Windows](#implementar-a-stack-em-computador-windows)
+- [Como usar](#como-usar)
+- [Instalação no servidor (Linux / Raspberry Pi)](#instalação-no-servidor-linux--raspberry-pi)
+- [Atualizando da versão 0.x](#atualizando-da-versão-0x)
+- [Ambiente de desenvolvimento (Windows)](#ambiente-de-desenvolvimento-windows)
+- [API](#api)
 
 <hr>
 
-## Uso do sistema em ambiente de produção (Laboratório de pesquisa do IFSC Rau)
+## Como usar
 
-#### Acesso do sistema
+1. **Entrar.** Acesse `http://<servidor>:8080` e faça login. Contas são criadas por um administrador em *Usuários*.
+   Cada usuário vê apenas os próprios projetos; administradores veem todos.
+2. **Criar projeto.** Informe nome, quantidade de dispositivos e as variáveis (ex.: Temperatura, Umidade), escolha a placa
+   e o protocolo. A plataforma gera o código do microcontrolador já com o endereço do servidor e o **token** de cada dispositivo.
 
-- Para acessar o sistema é necessário estar na rede do laboratório. Faça o acesso conforme as credenciais abaixo:
+   ![create.png](img/create.png)
 
-Nome:
+3. **Guardar os tokens.** O token aparece uma única vez (o servidor guarda só o hash). Se perder, gere um novo em
+   *Dashboard › Dispositivos* — o antigo para de funcionar.
+4. **Gravar a placa.** Instale a biblioteca **SensorSync** pela IDE Arduino, preencha o Wi-Fi no código gerado e grave.
+5. **Acompanhar.** O dashboard mostra o último valor de cada variável (cards) e o histórico (gráfico), por dispositivo.
+   Em *Opções* há o relatório completo com exportação CSV.
 
-```
-Sistema_IoT
-```
+   ![dashboard.png](img/dashboard.png)
 
-Senha:
-
-```
-entrarentrar
-```
-
-- Dentro dessa rede, o sistema estará disponível no seguinte link (pode ser acessado a partir de qualquer navegador):
-
-```
-http://localhost:8080/
-```
-
-- Ao acessar o sistema, será aberta a seguinte tela inicial:
-
-![home.png](img/home.png)
-
-#### Criação de projetos IoT
-
-- Acesse o menu 1 destacado na imagem anterior, será aberta uma tela conforme a figura a seguir:
-
-![create.png](img/create.png)
-
-- Para criar seu projeto IoT, basta preencher os dados conforme seus requisitos de projeto e então pressione o botão "Criar" destacado na imagem acima. A seguir será aberta uma nova guia com o código do sistema embarcado para o controlador definido. 
-
-> :bulb: **Atenção:** Para que a integração funcione, é necessário baixar a biblioteca de integração disponível neste [repositório](https://github.com/mwsprotte/sensorsync_lib) (link [alternativo](https://1drv.ms/f/s!Aun1_-xL9pS4jY01hmCQVaL5HULldw?e=g9c7Ec)). Basta salvá-la no diretório de compilação do seu sistema embarcado.
-
-Uma vez que o projeto foi criado, é possível acessar seu dashboard conforme o tópico a seguir. 
-
-#### Acessar Projetos IoT
-
-- Para acessar um projeto, basta clicar no botão 2 ("Acessar") destaco da primeira figura. Ao fazer isso, será aberta uma janela com a lista dos sistemas cadastrados. Basta clicar no seu sistema e seu dashboard será aberto, A figura abaixo ilustra um dashboard que já recebeu alguns dados do controlador.
-
-![dashbaord.png](img/dashboard.png)
-
-> :bulb: **Atenção:** Ao clicar no botão "Opções", destacado na imagem acima, é aberta uma janela com ajustes para as visualizações dos dados. Como range do gráfico e atualização em tempo real.
-
-
-#### Gerenciar projetos IoT
-
-- É possível excluir projetos IoT através ao clicar no botão 3 ("Gerenciar") destacado na figura da tela inicial. Somente administradores podem acessar essa janela.   
+Cada dispositivo só consegue gravar no próprio projeto: o servidor identifica projeto e dispositivo pelo token,
+ignorando o que vier no corpo da mensagem.
 
 <hr>
 
+## Instalação no servidor (Linux / Raspberry Pi)
 
-## Inicializar o sistema no ambiente de produção
+Testado com Ubuntu Server (use uma versão LTS), Java 21, MySQL 8 e Mosquitto 2.
 
-- Para inicializar o sistema e sua stack, é necessário acessar o servidor Raspberry PI 3. Isso pode
-ser feito de duas maneiras: acessá-lo remotamente via SSH ou diretamente, conectando ao mesmo monitor e teclado.
-
-#### Acesso via SSH
-
-- Acesse a rede do sistema de acordo com os passos iniciais da seção anterior, certifique-se que o Rasberry está ligado e conectado na rede.
-
-> :bulb: **Atenção:** Dentro dessa rede, entre com o comando `ping localhost` para saber se o Rasberry está ligado 
-> e conectado ou não. Caso aconteça algum erro, proceda o acesso da outra forma apresentada no próxima [subseção](#acesso-direto).
-
-
-- Através de um terminal em seu computador, insira o seguinte comando:
-
-
-```
-ssh ubuntu@localhost
-```
-- Digite a senha para entrar na conexão:
-
-
-```
-raspberry
+```bash
+sudo apt install openjdk-21-jre-headless mysql-server mosquitto mosquitto-clients
 ```
 
-A partir de então esse terminal estará representando o acesso no servidor.
+**Banco de dados** — crie um usuário próprio (não use o root):
 
-#### Acesso direto
-
-- Conecte um monitor e um teclado no Raspberry e então o ligue na tomara. O Ubuntu Server iniciará e será solicitada um senha de usuário. 
-Entre com as credenciais abaixo.
-
-Login:
-```
-ubuntu
+```sql
+CREATE DATABASE sensor_sync_data;
+CREATE USER 'sensorsync'@'localhost' IDENTIFIED BY 'uma-senha-forte';
+GRANT ALL ON sensor_sync_data.* TO 'sensorsync'@'localhost';
 ```
 
-Senha:
-```
-raspberry
-```
-
-- Digite o comando abaixo para carregar o layout de teclado correto:
+**Mosquitto** — para aceitar conexões das placas na rede, crie `/etc/mosquitto/conf.d/sensorsync.conf`:
 
 ```
-sudo loadkeys br
+listener 1883
+allow_anonymous true
 ```
 
-Será solicitada a senha para realizar esse comando. Entre com a senha anterior.
+> O broker ainda é anônimo: qualquer máquina da rede pode publicar ou ler o tópico. Mensagens sem token válido
+> são descartadas pela plataforma, mas restrinja a porta 1883 à rede do laboratório no firewall.
 
-#### Subir a API
+**Aplicação**
 
-- Primeiramente é necessário checar o horário do servidor através do comando abaixo:
-
-```
-date
-```
-
-- Caso seja necessário alterar o horário, ajuste com o seguinte comando (substitua a data e hora pelos valores atuais):
-
-```
-sudo date --set="2024-07-1 10:59:59.990"
-```
-
-- Os elementos da stack do sistema já inicializam automaticamente com o sistema operacional e o arquivo da API já está no diretório inicial. Para iniciar a API basta executar o seguinte comando:
-
-
-```
-java jar sensorsync-0.0.1-SNAPSHOT.jar
+```bash
+sudo useradd --system --home /opt/sensorsync sensorsync
+sudo mkdir -p /opt/sensorsync /etc/sensorsync
+sudo cp sensorsync.jar /opt/sensorsync/
+sudo cp deploy/sensorsync.env.example /etc/sensorsync/sensorsync.env   # edite as senhas
+sudo chmod 600 /etc/sensorsync/sensorsync.env
+sudo cp deploy/sensorsync.service /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now sensorsync
+journalctl -u sensorsync -f        # na primeira execução mostra a senha do admin, se não definida
 ```
 
-> :bulb: **Dica:** Evite desligar o servidor para não perder esses ajustes.
+**Relógio.** O Raspberry Pi não tem relógio próprio; as leituras recebem a hora do servidor. Garanta NTP
+(`timedatectl status` deve mostrar *System clock synchronized: yes*); se a rede bloquear NTP externo,
+aponte para o servidor NTP da instituição em `/etc/systemd/timesyncd.conf`.
 
+### Configuração
 
+Tudo por variáveis de ambiente (veja `deploy/sensorsync.env.example`):
+
+| Variável | Padrão | Uso |
+|---|---|---|
+| `SENSORSYNC_DB_URL` / `_USER` / `_PASSWORD` | `localhost/sensor_sync_data`, `sensorsync`, vazio | Banco MySQL |
+| `SENSORSYNC_PUBLIC_HOST` | endereço usado no navegador | Servidor que vai no código das placas |
+| `SENSORSYNC_MQTT_BROKER` / `_USER` / `_PASSWORD` / `_TOPIC` | `tcp://localhost:1883`, vazio, vazio, `sensorsync` | Broker MQTT |
+| `SENSORSYNC_ADMIN_LOGIN` / `_PASSWORD` | `admin`, aleatória | Primeiro administrador (só se o banco não tiver usuários) |
+| `SENSORSYNC_ALLOW_LEGACY_INGEST` | `false` | Aceitar placas com a biblioteca 0.x (sem token) |
+| `SENSORSYNC_PORT` | `8080` | Porta HTTP |
 
 <hr>
 
-## Implementar a Stack em Raspberry PI com Ubuntu Server
+## Atualizando da versão 0.x
 
-> :bulb: **Atenção:** Para isso é necessário um conhecimento básico de bash (essa [documentação](https://github.com/mwsprotte/shell-lessons) apresenta um resumo de comandos que pode ser útil). 
-
-- Instalar a imagem do Ubuntu server para Raspberry PI 3 através da [ferramenta](https://www.raspberrypi.com/software/) oficial.
-
-- Conectar na internet, instalar o Java 21 e o banco de dados MySQL de acordo com esta [documentação](https://medium.com/geekculture/turn-your-raspberry-pi-into-a-server-to-run-your-java-spring-mvc-app-862214279587) (fazer até a etapa de instalar o banco de dados, atente-se para instalar o Java 21 e não o padrão conforme a documentação faz).
-
-> :bulb: **Atenção:** Use `senhasenha` como senha para usuário `root` do banco de dados para que o sistema possa acessá-lo (será feita a configuração da senha no momento de instalação do banco).
-
-- Instalar o serviço Mosquitto MQTT Broker seguindo essa [documentação](https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/) (inclusive até a etapa de desabilitar a autenticação ("Mosquitto Broker Enable Remote Access (No Authentication)", uma vez que a API não usa esse recurso).
-
-- Copiar o arquivo `.jar` do sistema para o servidor (esse arquivo está disponível no seguinte [link](https://1drv.ms/f/s!Aun1_-xL9pS4jY03s0lt3ZXq9kZU0g?e=G1Tx0P)). Isso pode ser feito por meio de [pendrive](https://pt.linux-console.net/?p=9786)) ou via [SSH](https://utilidadenices.com.br/copiar-arquivo-ou-pasta-via-ssh-servidor-local-remoto/).
-
-- Com as serviços da stack já instalados e o arquivo da API no servidor, basta executar o sistema seguindo os passos do [capítulo anterior](#inicializar-o-sistema-no-ambiente-de-produção). 
+1. **Backup:** `mysqldump -u root -p sensor_sync_data > backup.sql`.
+2. Instale como descrito acima, apontando para o mesmo banco.
+3. Na primeira execução a plataforma migra o banco automaticamente:
+   - senhas em texto puro viram hash BCrypt (todos continuam entrando com a mesma senha);
+   - usuários antigos viram **administradores** (na 0.x todos tinham acesso de administrador) — rebaixe quem não deve ser;
+   - projetos passam a pertencer ao primeiro administrador; transfira recriando quando necessário;
+   - cada índice de dispositivo já usado vira um dispositivo **sem token**.
+4. Enquanto as placas não forem regravadas, use `SENSORSYNC_ALLOW_LEGACY_INGEST=true`.
+5. Em cada projeto, *Dashboard › Dispositivos › Gerar token*, copie o código gerado e regrave a placa com a biblioteca 1.x.
+6. Com todas as placas atualizadas, volte `SENSORSYNC_ALLOW_LEGACY_INGEST=false`.
 
 <hr>
 
-## Implementar a Stack em Computador Windows
+## Ambiente de desenvolvimento (Windows)
 
-#### Mosquitto Broker
+- Instale [Java 21](https://adoptium.net/), [MySQL Server](https://dev.mysql.com/downloads/mysql/) e
+  [Mosquitto](https://mosquitto.org/download/) (`mosquitto -v` para subir o broker).
+- Crie o banco e o usuário como na seção do servidor.
+- Rode com as variáveis de ambiente (PowerShell):
 
-- Instalar moquitto broker conforme
-  esta [documentação](https://cedalo.com/blog/how-to-install-mosquitto-mqtt-broker-on-windows/?utm_source=in_page&utm_medium=Cedalo&utm_campaign=publer).
-  Não é necessário configurar autenticação para os testes, porém é necessário seguir os passos para configurar a
-  variavel de ambiente do mosquitto.
-
-- Abrir o prompt de comandos e iniciar o broker através do seguinte comando:
-
-```
-mosquitto -v
+```powershell
+$env:SENSORSYNC_DB_PASSWORD="uma-senha-forte"; $env:SENSORSYNC_ADMIN_PASSWORD="admin12345"
+.\mvnw.cmd spring-boot:run
 ```
 
-- Em uma nova janela do prompt de comando, fazer o subscribe em um tópico qualquer para testes:
+- Build do `.jar`: `.\mvnw.cmd package` (gera `target/sensorsync.jar`; os testes usam H2 em memória).
 
-```
-mosquitto_sub -t NOME_DO_TOPICO
-```
-> :bulb: **Atenção:** Fazendo dessa forma ele usará o localhost (IP local) e a porta 1883 como padrão. Para usar outras possibilidades, conulte esta [documentação](https://team-ethernet.github.io/guides/How%20to%20install%20and%20use%20Mosquitto%20for%20Windows.pdf).
+<hr>
 
+## API
 
-- Para publicar um dado no tópico criado na etapa anterior, basta abrir uma nova janela no prompt e dar o seguinte
-  comando:
+Autenticação de usuário: sessão (navegador) ou HTTP Basic (scripts), ex.: `curl -u login:senha ...`.
 
-```
-mosquitto_pub -t NOME_DO_TOPICO -m "MENSAGEM" 
-```
+**Ingestão (dispositivos, autenticação por token)**
 
-O segundo prompt aberto (subscribe) retornará a mensagem passada.
+| Método | Rota | Corpo |
+|---|---|---|
+| POST | `/api/ingest` com `Authorization: Bearer <token>` | `{"values":[21.5, 60.2, null]}` |
+| MQTT | tópico `sensorsync` | `{"token":"<token>","values":[21.5, 60.2]}` |
 
-> :bulb: **Atenção:** Se acontecer erro 'ao publicar a mensagem, é necessário permitir publicações anônima de acordo com
-> esta [documentação](https://mosquitto.org/man/mosquitto-conf-5.html).
+**Leitura (interface máquina)** — retornam os últimos `n` registros:
 
-#### Banco de dados MSQL
+- `GET /data/project/{projeto}/length/{n}`
+- `GET /data/project/{projeto}/device/{indice}/length/{n}`
+- `GET /data/project/{projeto}/device/{indice}/data/{variavel}/length/{n}`
 
-- Para subir o banco de dados é necessário primeiramente instalar o [MySQL Server](https://dev.mysql.com/downloads/mysql/). Na instalação, configure a seguinte senha para o usuário `root`: 
+**Projetos e dispositivos**
 
+- `GET /project` · `POST /project` · `PUT /project/{id}` · `DELETE /project/{id}` · `DELETE /project/{id}/data`
+- `GET|POST /project/{id}/devices` · `PUT|DELETE /project/{id}/devices/{deviceId}` · `POST /project/{id}/devices/{deviceId}/token`
+- `GET /project/{id}/code?board=ESP32|ESP8266|ARDUINO_ESP8266&protocol=HTTP|MQTT&deviceId=`
 
-```
-senhasenha
-```
-
-#### Java
-
-- Instalar o [Java 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
-
-
-
-- Baixar o arquivo `.jar` do sistema (esse arquivo está disponível no seguinte [link](https://1drv.ms/f/s!Aun1_-xL9pS4jY03s0lt3ZXq9kZU0g?e=G1Tx0P)). 
-
-- Abrir um terminal na pasta onde o arquivo foi salvo e executar o seguinte comando:
-
-
-```
-java jar sensorsync-0.0.1-SNAPSHOT.jar
-```
-
-> :bulb: **Atenção:** Use o IP do seu computador como host no código de integração dos microcontroladores nesse caso.
+**Usuários** (somente administrador): `GET|POST /user`, `PUT|DELETE /user/{id}`. Próprio usuário: `GET /api/me`, `POST /api/me/password`.
