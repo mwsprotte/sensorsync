@@ -37,3 +37,8 @@ config/
 # Resultados dos experimentos (bench/) e log de metricas local da API
 results/
 metrics/
+__pycache__/
+
+# Credenciais do laboratorio (so na maquina local)
+ACESSO-LAB.md
+README-ANTIGO.md

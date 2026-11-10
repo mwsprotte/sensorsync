@@ -18,7 +18,8 @@ import java.io.IOException;
 
 /**
  * Com TLS ligado, a API escuta em HTTPS (server.port, 8443) e abre tambem a porta HTTP antiga
- * (8080) para nao quebrar enderecos salvos: por padrao ela so redireciona para HTTPS.
+ * (8080) para nao quebrar enderecos salvos: por padrao ela so redireciona para HTTPS
+ * (modo "dispositivos": aceita sem TLS apenas o envio das placas antigas, durante a transicao).
  * O certificado da CA (/ca.crt) e servido tambem em HTTP, para instalar no navegador.
  */
 @Configuration
@@ -55,8 +56,11 @@ public class PlainHttpConfig {
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
                 throws ServletException, IOException {
+            String uri = request.getRequestURI();
+            boolean deviceIngest = "/api/ingest".equals(uri) || "/data/saveList".equals(uri);
             if (request.isSecure() || tls.plainHttp() == TlsSettings.PlainHttp.ALLOW
-                    || "/ca.crt".equals(request.getRequestURI())) {
+                    || (tls.plainHttp() == TlsSettings.PlainHttp.DEVICES && deviceIngest)
+                    || "/ca.crt".equals(uri)) {
                 chain.doFilter(request, response);
                 return;
             }

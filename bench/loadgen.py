@@ -64,7 +64,8 @@ class Api:
         self.check_login(r)
         r.raise_for_status()
         data = r.json()
-        return data["project"]["id"], [(d["device"]["id"], d["token"]) for d in data["devices"]]
+        pid = data["project"]["id"]
+        return pid, [(d["device"]["id"], d["token"], pid, d["device"]["deviceIndex"]) for d in data["devices"]]
 
     def delete_project(self, pid):
         self.s.delete(f"{self.base}/project/{pid}", timeout=60, verify=self.verify)
@@ -94,7 +95,13 @@ class Device(threading.Thread):
         self.count = int(args.duration * args.rate)
 
     def payload(self, seq, ts, with_token):
-        body = {"values": [round(random.uniform(0, 100), 2) for _ in range(self.args.values)], "seq": seq, "ts": ts}
+        values = [round(random.uniform(0, 100), 2) for _ in range(self.args.values)]
+        if self.args.legacy:
+            # Formato da biblioteca 0.x: lista sem token (nao tem lugar para seq/ts)
+            body = [{"projectID": self.project_id, "sensorIndex": self.device_index, "dataIndex": i, "data": v}
+                    for i, v in enumerate(values)]
+            return json.dumps(body, separators=(",", ":"))
+        body = {"values": values, "seq": seq, "ts": ts}
         if with_token:
             body["token"] = self.token
         return json.dumps(body, separators=(",", ":"))
@@ -114,7 +121,9 @@ class HttpDevice(Device):
         a = self.args
         url = f"{a.base}/api/ingest"
         s = requests.Session()
-        s.headers.update({"Authorization": f"Bearer {self.token}", "Content-Type": "application/json"})
+        s.headers.update({"Content-Type": "application/json"})
+        if not a.legacy:
+            s.headers["Authorization"] = f"Bearer {self.token}"
         for k in range(self.count):
             self.wait_slot(k)
             seq, sent = k + 1, now_ms()
@@ -151,7 +160,7 @@ class MqttDevice(Device):
         for k in range(self.count):
             self.wait_slot(k)
             seq, sent = k + 1, now_ms()
-            info = c.publish(a.topic, self.payload(seq, sent, True), qos=a.qos)
+            info = c.publish(a.topic, self.payload(seq, sent, not a.legacy), qos=a.qos)
             if a.qos > 0:
                 try:
                     info.wait_for_publish(timeout=a.timeout)
@@ -182,6 +191,9 @@ def main():
     p.add_argument("--api-port", type=int, help="porta da API para chamadas administrativas (padrao = --http-port)")
     p.add_argument("--mqtt-port", type=int)
     p.add_argument("--no-reuse", dest="reuse", action="store_false", help="HTTP: nova conexao a cada envio")
+    p.add_argument("--legacy", action="store_true",
+                   help="E2: formato antigo, sem token (API com SENSORSYNC_ALLOW_LEGACY_INGEST=true); "
+                        "a analise compara so contagem e tempo no servidor")
     p.add_argument("--timeout", type=float, default=10)
     p.add_argument("--keep", action="store_true", help="nao apagar o projeto de teste no fim")
     p.add_argument("--out", required=True, help="pasta de saida da rodada")
@@ -221,8 +233,10 @@ def main():
     start_at = time.time() + 2.0
     cls = HttpDevice if a.protocol == "http" else MqttDevice
     # Dispositivos defasados dentro do periodo, para nao enviarem todos no mesmo instante
-    threads = [cls(i, did, tok, a, start_at + period * i / a.devices, period, rows, lock)
-               for i, (did, tok) in enumerate(creds)]
+    threads = [cls(i, c[0], c[1], a, start_at + period * i / a.devices, period, rows, lock)
+               for i, c in enumerate(creds)]
+    for t, c in zip(threads, creds):
+        t.project_id, t.device_index = c[2], c[3]
     print(f"Enviando: {a.protocol}{' TLS' if a.tls else ''}, {a.devices} disp. x {a.rate}/s por {a.duration:.0f} s "
           f"({len(threads) * threads[0].count} mensagens)...")
     started = time.time()
@@ -252,6 +266,8 @@ def main():
         for pid in projects:
             api.delete_project(pid)
     print(f"Pronto em {elapsed:.1f} s: {run['client_ok']}/{len(rows)} enviados com sucesso. Resultados em {a.out}")
+    if a.legacy and rows and all(r[5] == "http_401" for r in rows):
+        print("ATENCAO: tudo recusado (401). Suba a API com SENSORSYNC_ALLOW_LEGACY_INGEST=true para o modo --legacy")
     print(f"Analise: python bench/analyze.py {a.out}")
 
 

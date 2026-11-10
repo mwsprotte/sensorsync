@@ -29,7 +29,7 @@ sensorsync:
   tls:
     enabled: true
     ca-file: ${SENSORSYNC_TLS_DIR:/etc/sensorsync/tls}/ca.crt
-    # Porta HTTP sem TLS: redirect | allow | off
+    # Porta HTTP sem TLS: redirect | dispositivos (so envio das placas antigas) | allow | off
     plain-http: ${SENSORSYNC_PLAIN_HTTP:redirect}
     plain-http-port: ${SENSORSYNC_PLAIN_HTTP_PORT:8080}
   mqtt:

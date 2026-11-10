@@ -33,6 +33,11 @@ public class TlsSettings {
         REDIRECT,
         /** Aceita HTTP puro (so para experimentos de comparacao). */
         ALLOW,
+        /**
+         * Transicao: HTTP puro so para o envio das placas antigas (/api/ingest e /data/saveList);
+         * paginas e o resto da API sao redirecionados para HTTPS.
+         */
+        DEVICES,
         /** Porta fechada. */
         OFF
     }
@@ -53,7 +58,8 @@ public class TlsSettings {
                        @Value("${server.port:8080}") int httpsPort) {
         this.enabled = enabled;
         this.caFile = Path.of(caFile);
-        this.plainHttp = PlainHttp.valueOf(plainHttp.trim().toUpperCase(Locale.ROOT));
+        String mode = plainHttp.trim().toUpperCase(Locale.ROOT);
+        this.plainHttp = PlainHttp.valueOf("DISPOSITIVOS".equals(mode) ? "DEVICES" : mode);
         this.plainHttpPort = plainHttpPort;
         this.httpsPort = httpsPort;
     }

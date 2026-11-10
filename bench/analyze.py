@@ -63,14 +63,25 @@ def main():
     if not client:
         sys.exit("client.csv vazio")
 
+    client_all = client
     t_start = min(int(r["sent_ms"]) for r in client) + a.skip * 1000
     client = [r for r in client if int(r["sent_ms"]) >= t_start]
     sent_keys = {(int(r["device_id"]), int(r["seq"])) for r in client}
     sent_ts = {(int(r["device_id"]), int(r["seq"])): int(r["sent_ms"]) for r in client}
 
+    legacy = bool(run.get("legacy"))
+    total_saved = 0
     saved = {}
     dup = 0
     other_status = {}
+    if legacy:
+        # Sem token nao ha seq: conta as gravadas na janela da rodada (o log e zerado no inicio de cada rodada)
+        for r in server:
+            if r["status"] != "saved":
+                other_status[r["status"]] = other_status.get(r["status"], 0) + 1
+            elif float(r["received_ms"]) >= t_start:
+                saved[len(saved)] = r
+        server = []
     for r in server:
         if r["status"] != "saved":
             other_status[r["status"]] = other_status.get(r["status"], 0) + 1
@@ -90,6 +101,8 @@ def main():
     # Fora de ordem: por dispositivo, seq gravado menor que um seq gravado antes
     by_dev = {}
     for r in sorted(saved.values(), key=lambda r: (float(r["committed_ms"]), float(r["received_ms"]))):
+        if legacy:
+            break
         by_dev.setdefault(num(r["device_id"]), []).append(num(r["seq"]))
     out_of_order = 0
     for seqs in by_dev.values():
@@ -100,6 +113,11 @@ def main():
             top = max(top, s)
 
     lost = len(sent_keys) - len(saved)
+    if legacy:
+        # Perda por contagem na rodada inteira (o corte por tempo difere entre cliente e servidor na fronteira)
+        total_saved = sum(1 for r in read_csv(os.path.join(a.run, "server.csv")) if r["status"] == "saved")
+        sent_keys = set(range(len(client_all)))
+        lost = len(client_all) - total_saved
     if saved:
         commits = [float(r["committed_ms"]) for r in saved.values()]
         span = max((max(commits) - min(commits)) / 1000, 1e-9)
@@ -117,7 +135,8 @@ def main():
         "qos": run.get("qos") if run["protocol"] == "mqtt" else "",
         "devices": run["devices"], "rate_per_device": run["rate"], "values": run["values"],
         "http_reuse": run.get("reuse") if run["protocol"] == "http" else "",
-        "sent": len(sent_keys), "saved": len(saved), "lost": lost,
+        "legacy_no_token": legacy,
+        "sent": len(sent_keys), "saved": total_saved if legacy else len(saved), "lost": lost,
         "loss_pct": 100 * lost / len(sent_keys) if sent_keys else float("nan"),
         "duplicates": dup, "out_of_order": out_of_order,
         "throughput_msg_s": throughput,
@@ -133,6 +152,8 @@ def main():
         return (f"  {name:<22} n={s['n']:<6} media={s['mean']:8.2f}  p50={s['p50']:8.2f}  p95={s['p95']:8.2f}  "
                 f"p99={s['p99']:8.2f}  max={s['max']:8.2f} ms")
 
+    if legacy:
+        print("  (modo legado, sem token: sem seq -> perda por contagem, sem latencia ponta a ponta)")
     print(f"Rodada {summary['run']}: {summary['protocol']}{' QoS ' + str(summary['qos']) if summary['qos'] != '' else ''}, "
           f"{summary['devices']} disp. x {summary['rate_per_device']}/s, {summary['values']} valores")
     print(f"  enviadas={summary['sent']}  gravadas={summary['saved']}  perdidas={lost} ({summary['loss_pct']:.3f}%)  "

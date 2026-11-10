@@ -101,6 +101,17 @@ class TlsTests {
         filter.doFilter(secure, new MockHttpServletResponse(), chain2);
         assertNotNull(chain2.getRequest());
 
+        // Modo "dispositivos" (transicao): so o envio das placas passa sem TLS
+        var devices = config.plainHttpRedirect(new TlsSettings(true, "/x", "dispositivos", 8080, 8443)).getFilter();
+        for (String path : new String[]{"/api/ingest", "/data/saveList"}) {
+            MockFilterChain c = new MockFilterChain();
+            devices.doFilter(new MockHttpServletRequest("POST", path), new MockHttpServletResponse(), c);
+            assertNotNull(c.getRequest(), path);
+        }
+        MockHttpServletResponse page = new MockHttpServletResponse();
+        devices.doFilter(new MockHttpServletRequest("GET", "/login.html"), page, new MockFilterChain());
+        assertEquals(301, page.getStatus());
+
         // Modo "allow" (experimentos) nao redireciona
         var allow = config.plainHttpRedirect(new TlsSettings(true, "/x", "allow", 8080, 8443)).getFilter();
         MockFilterChain chain3 = new MockFilterChain();

@@ -56,7 +56,10 @@ python bench/analyze.py results/E1_http_1
 
 Parâmetros principais: `--protocol http|mqtt`, `--tls --ca config/tls/ca.crt`, `--devices N`, `--rate msg/s por
 dispositivo`, `--duration s`, `--values k`, `--qos 0|1`, `--no-reuse` (HTTP: conexão nova a cada envio, ou seja, um
-handshake TLS por mensagem). Rode `python bench/loadgen.py -h` para todos.
+handshake TLS por mensagem), `--legacy` (E2: formato antigo, sem token). Rode `python bench/loadgen.py -h` para todos.
+
+**Aquecimento e ordem:** a JVM fica mais rápida nos primeiros minutos; rode uma rodada de aquecimento depois de
+subir a API e, ao comparar duas configurações (com/sem token, com/sem TLS), alterne a ordem entre as repetições.
 
 Varredura (PowerShell), por exemplo E1 em HTTP com 1, 5, 10, 20 e 50 dispositivos:
 
@@ -74,7 +77,7 @@ A tabela `results/summary.csv` junta todas as rodadas (uma linha por pasta), pro
 | # | Pergunta | Como |
 |---|---|---|
 | E1 | Latência e perda reais | `--protocol http` e `mqtt --qos 0/1`, sem TLS, `--devices 1 5 10 20 50`, `--rate 1`, 10 min, 3 repetições |
-| E2 | Custo do token | Igual ao E1 com `SENSORSYNC_ALLOW_LEGACY_INGEST=true` e payload antigo (ainda não suportado pelo `loadgen.py`) contra o modo com token |
+| E2 | Custo do token | API com `SENSORSYNC_ALLOW_LEGACY_INGEST=true`; mesma carga com token e com `--legacy` (formato 0.x, sem token), em ordem alternada. Compare o **tempo no servidor** (sem `seq` no legado não há ponta a ponta; a perda é por contagem). Obs.: o caminho legado também busca o projeto no banco |
 | E3 | Custo do TLS no servidor | Igual ao E1 com `--tls`; repetir com `SENSORSYNC_TLS_KEY=rsa`; vazão máxima subindo `--rate` até a latência disparar ou aparecer perda |
 | E4 | Custo do TLS nas placas | `Benchmark.ino` (biblioteca) em ESP32 e ESP8266, HTTP/MQTT, com e sem TLS, `REUSAR_CONEXAO` true/false; `serial_log.py`. Flash e RAM estática: saída da compilação |
 | E5 | Recuperação | `loadgen.py` rodando enquanto derruba o Mosquitto, reinicia a API ou o Raspberry; perda e tempo sem gravar aparecem no `analyze.py` e no gráfico |

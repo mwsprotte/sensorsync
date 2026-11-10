@@ -12,6 +12,7 @@ Biblioteca para as placas: [sensorsync_lib](https://github.com/mwsprotte/sensors
 #### Sumário
 
 - [Como usar](#como-usar)
+- [Laboratório do IFSC Rau (produção)](#laboratório-do-ifsc-rau-produção)
 - [Instalação no servidor (Linux / Raspberry Pi)](#instalação-no-servidor-linux--raspberry-pi)
 - [TLS (HTTPS e MQTT criptografados)](#tls-https-e-mqtt-criptografados)
   - [Instalar a CA no navegador](#instalar-a-ca-no-navegador-tirar-o-aviso-não-seguro)
@@ -46,7 +47,55 @@ ignorando o que vier no corpo da mensagem.
 
 <hr>
 
+## Laboratório do IFSC Rau (produção)
+
+A plataforma roda num Raspberry Pi 3 com Ubuntu Server, na rede do laboratório de pesquisa do IFSC (campus
+Jaraguá do Sul - Rau). Para usar é preciso estar conectado a essa rede.
+
+> **Senhas e IPs** (Wi-Fi do laboratório, Raspberry, MySQL) ficam no arquivo `ACESSO-LAB.md` na raiz do projeto,
+> só na máquina local (ignorado pelo Git, porque este repositório é público). O README antigo completo, como era,
+> está em `README-ANTIGO.md` (também local) e no histórico do branch `main`.
+
+- **Plataforma:** `https://IP_DO_RASPBERRY:8443` (versão nova) ou `http://IP_DO_RASPBERRY:8080` (versão 0.x).
+
+  ![home.png](img/home.png)
+
+  *Tela inicial da versão 0.x.*
+
+- **Acesso ao Raspberry** de duas formas:
+  - **SSH**, de um PC na rede do laboratório: `ssh ubuntu@IP_DO_RASPBERRY`.
+  - **Direto**, com monitor e teclado: entre com o usuário `ubuntu`; para o teclado em português, `sudo loadkeys br`.
+- **Atualizar da versão 0.x para a nova:** guia [deploy/lab/README.md](deploy/lab/README.md).
+- **Testar o Mosquitto** (no Raspberry ou no PC com Mosquitto instalado): num terminal, escute o tópico usado
+  pelas placas; em outro, publique uma mensagem de teste. O primeiro terminal deve mostrar a mensagem.
+
+  ```bash
+  mosquitto_sub -h IP_DO_RASPBERRY -t sensorsync -v
+  mosquitto_pub -h IP_DO_RASPBERRY -t sensorsync -m "teste"
+  ```
+
+  Se a publicação der erro de autorização, o broker não está aceitando clientes anônimos
+  (opção `allow_anonymous`, ver a [documentação do mosquitto.conf](https://mosquitto.org/man/mosquitto-conf-5.html)).
+  Com a versão nova em modo final, a 1883 só aceita conexões de dentro do Raspberry; use `-p 8883 --cafile ca.crt`.
+
+**Links de apoio**
+
+| Para quê | Link |
+|---|---|
+| Comandos básicos de bash (resumo) | [mwsprotte/shell-lessons](https://github.com/mwsprotte/shell-lessons) |
+| Gravar o Ubuntu Server no cartão do Raspberry | [Raspberry Pi Imager](https://www.raspberrypi.com/software/) |
+| Java 21 | [Adoptium Temurin 21](https://adoptium.net/temurin/releases/?version=21) · [Oracle JDK 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) |
+| Java e MySQL no Raspberry (tutorial usado na versão 0.x) | [Medium: Raspberry Pi como servidor Java](https://medium.com/geekculture/turn-your-raspberry-pi-into-a-server-to-run-your-java-spring-mvc-app-862214279587) |
+| Mosquitto no Raspberry | [Random Nerd Tutorials](https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/) |
+| Mosquitto no Windows | [Cedalo](https://cedalo.com/blog/how-to-install-mosquitto-mqtt-broker-on-windows/) · [guia em PDF](https://team-ethernet.github.io/guides/How%20to%20install%20and%20use%20Mosquitto%20for%20Windows.pdf) |
+| Copiar arquivos para o Raspberry | [pendrive](https://pt.linux-console.net/?p=9786) · [SSH (scp)](https://utilidadenices.com.br/copiar-arquivo-ou-pasta-via-ssh-servidor-local-remoto/) |
+| Versão 0.x: `.jar` e biblioteca antiga | [.jar (OneDrive)](https://1drv.ms/f/s!Aun1_-xL9pS4jY03s0lt3ZXq9kZU0g?e=G1Tx0P) · [biblioteca (OneDrive)](https://1drv.ms/f/s!Aun1_-xL9pS4jY01hmCQVaL5HULldw?e=g9c7Ec) |
+
+<hr>
+
 ## Instalação no servidor (Linux / Raspberry Pi)
+
+> Já existe a versão antiga instalada? Use o guia [deploy/lab/README.md](deploy/lab/README.md) em vez dos passos abaixo.
 
 Testado com Ubuntu Server (use uma versão LTS), Java 21, MySQL 8 e Mosquitto 2.
 
@@ -180,6 +229,10 @@ Confiáveis › Certificados › apague "SensorSync CA ...".
 <hr>
 
 ## Atualizando da versão 0.x
+
+> **Raspberry do laboratório:** siga o guia [deploy/lab/README.md](deploy/lab/README.md). Ele tem scripts que fazem
+> inventário, backup, instalação em modo de transição (placas antigas continuam funcionando) e desfazer, e foi
+> ensaiado com um banco criado pela versão antiga.
 
 1. **Backup:** `mysqldump -u root -p sensor_sync_data > backup.sql`.
 2. Instale como descrito acima, apontando para o mesmo banco.
