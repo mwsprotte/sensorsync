@@ -31,6 +31,7 @@ public class MqttIngestListener implements MqttCallbackExtended {
     private static final Logger log = LoggerFactory.getLogger(MqttIngestListener.class);
 
     private final IngestService ingest;
+    private final IngestMetrics metrics;
     private final ObjectMapper mapper;
     private final boolean enabled;
     private final String broker;
@@ -44,13 +45,14 @@ public class MqttIngestListener implements MqttCallbackExtended {
     });
     private MqttClient client;
 
-    public MqttIngestListener(IngestService ingest, ObjectMapper mapper,
+    public MqttIngestListener(IngestService ingest, IngestMetrics metrics, ObjectMapper mapper,
                               @Value("${sensorsync.mqtt.enabled:true}") boolean enabled,
                               @Value("${sensorsync.mqtt.broker:tcp://localhost:1883}") String broker,
                               @Value("${sensorsync.mqtt.username:}") String username,
                               @Value("${sensorsync.mqtt.password:}") String password,
                               @Value("${sensorsync.mqtt.topic:sensorsync}") String topic) {
         this.ingest = ingest;
+        this.metrics = metrics;
         this.mapper = mapper;
         this.enabled = enabled;
         this.broker = broker;
@@ -110,15 +112,23 @@ public class MqttIngestListener implements MqttCallbackExtended {
 
     @Override
     public void messageArrived(String t, MqttMessage message) {
+        IngestMetrics.Received rx = IngestMetrics.Received.now("mqtt", message.getQos(), message.getPayload().length);
         String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
+        JsonNode body;
         try {
-            JsonNode body = parse(payload);
-            IngestService.Result r = ingest.ingest(null, body);
+            body = parse(payload);
+        } catch (Exception e) {
+            metrics.record(rx, null, null, null, 0, "invalid");
+            log.warn("Mensagem MQTT invalida: {}", e.getMessage());
+            return;
+        }
+        try {
+            IngestService.Result r = ingest.ingest(null, body, rx);
             log.debug("MQTT: {} valores gravados, {} ignorados", r.saved(), r.ignored());
         } catch (ApiException e) {
             log.warn("Mensagem MQTT rejeitada: {}", e.getMessage());
         } catch (Exception e) {
-            log.warn("Mensagem MQTT invalida: {}", e.getMessage());
+            log.warn("Falha ao gravar mensagem MQTT: {}", e.getMessage());
         }
     }
 

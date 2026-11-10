@@ -12,6 +12,9 @@ sensorsync:
     enabled: false
   ingest:
     allow-legacy: false
+  metrics:
+    enabled: true
+    file: target/test-metrics/ingest-metrics.csv
   bootstrap:
     admin-login: admin
     admin-password: adminadmin

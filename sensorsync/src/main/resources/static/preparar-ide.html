@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SensorSync - Preparar a IDE Arduino</title>
+    <link rel="icon" type="image/png" href="img/if_logo.png">
+    <link href="scripts/imports/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="styles/app.css" rel="stylesheet">
+    <script src="scripts/dark_mode.js"></script>
+</head>
+<body>
+<main class="container py-4" style="max-width: 760px;">
+    <p class="mb-3"><a href="javascript:history.back()"><i class="bi bi-arrow-left me-1"></i>Voltar</a></p>
+
+    <div class="ss-card p-4">
+        <h1 class="h5 fw-semibold mb-1"><i class="bi bi-tools me-2"></i>Preparar a IDE Arduino</h1>
+        <p class="ss-muted">Faça uma vez em cada computador. Depois é só baixar o código gerado pela plataforma, preencher o
+            Wi-Fi e gravar.</p>
+
+        <h2 class="h6 fw-semibold mt-4">1. Suporte às placas ESP32 / ESP8266</h2>
+        <ol class="small">
+            <li>Instale a <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">IDE Arduino 2</a>, se ainda não tiver.</li>
+            <li><em>Arquivo › Preferências › URLs adicionais para Gerenciadores de Placas</em>: cole as duas linhas abaixo
+                (uma por linha) e clique em OK.
+                <pre class="bg-body-tertiary border rounded p-2 mt-2 mb-0 small" style="white-space: pre-wrap;">https://espressif.github.io/arduino-esp32/package_esp32_index.json
+https://arduino.esp8266.com/stable/package_esp8266com_index.json</pre>
+            </li>
+            <li><em>Ferramentas › Placa › Gerenciador de Placas</em>: instale <strong>esp32</strong> (Espressif Systems) e/ou
+                <strong>esp8266</strong> (ESP8266 Community).</li>
+            <li>Escolha a placa em <em>Ferramentas › Placa</em>: <strong>ESP32 Dev Module</strong> para ESP32 comum, ou
+                <strong>NodeMCU 1.0 (ESP-12E Module)</strong> para ESP8266 NodeMCU.</li>
+        </ol>
+
+        <h2 class="h6 fw-semibold mt-4">2. Bibliotecas</h2>
+        <p class="small mb-2">São só duas. Wi-Fi, HTTP e TLS já vêm com o suporte à placa.</p>
+        <div class="table-responsive">
+            <table class="table table-sm small align-middle">
+                <thead><tr><th>Biblioteca</th><th>Como instalar</th></tr></thead>
+                <tbody>
+                <tr>
+                    <td><strong>SensorSync</strong><br><span class="ss-muted">versão 1.2 (com TLS)</span></td>
+                    <td>
+                        <a class="btn btn-primary btn-sm mb-2" href="downloads/SensorSync.zip" download>
+                            <i class="bi bi-download me-1"></i>Baixar SensorSync.zip</a>
+                        <div>Na IDE: <em>Sketch › Incluir Biblioteca › Adicionar biblioteca .ZIP…</em> e escolha o arquivo
+                            (não descompacte). Para atualizar, apague antes a pasta
+                            <code>Documentos\Arduino\libraries\SensorSync</code>.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>PubSubClient</strong><br><span class="ss-muted">Nick O'Leary</span></td>
+                    <td><em>Ferramentas › Gerenciar Bibliotecas</em>, procure "PubSubClient" e instale a de
+                        <strong>Nick O'Leary</strong>. Necessária mesmo se você usar só HTTP.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="small mb-0">Confira em <em>Arquivo › Exemplos › SensorSync</em>: devem aparecer HTTP_Basico, MQTT_Basico,
+            TLS_Basico e WiFi_Externo. Se houver uma pasta antiga <code>sensor_sync</code> em <code>libraries</code>, apague.</p>
+
+        <h2 class="h6 fw-semibold mt-4">3. A placa não aparece em Ferramentas › Porta?</h2>
+        <ul class="small">
+            <li>Use um cabo USB <strong>de dados</strong> (muitos cabos só carregam).</li>
+            <li>Instale o driver do conversor USB da placa: <strong>CP210x</strong> (Silicon Labs) ou <strong>CH340</strong>
+                (WCH). O nome do chip costuma estar impresso perto do conector USB.</li>
+            <li>Se a gravação parar em "Connecting....", segure o botão <strong>BOOT</strong> da placa até começar a gravar.</li>
+        </ul>
+
+        <h2 class="h6 fw-semibold mt-4">4. Mensagens no Monitor Serial (115200)</h2>
+        <div class="table-responsive">
+            <table class="table table-sm small mb-0">
+                <thead><tr><th>Mensagem</th><th>O que fazer</th></tr></thead>
+                <tbody>
+                <tr><td>Fica em <code>Conectando ao Wi-Fi</code></td><td>Confira <code>WIFI_SSID</code> e <code>WIFI_PASSWORD</code>. O ESP só conecta em redes de 2,4 GHz.</td></tr>
+                <tr><td><code>Broker inacessivel</code> / <code>Servidor inacessivel</code></td><td>Servidor desligado, endereço errado no código ou firewall bloqueando as portas 8443/8883. Avise o administrador.</td></tr>
+                <tr><td><code>Token recusado (401)</code></td><td>O token foi trocado ou digitado errado. Gere um novo na aba Dispositivos do projeto e baixe o código de novo.</td></tr>
+                <tr><td><code>Servidor pede HTTPS</code></td><td>O código é de antes do TLS. Baixe o código de novo na aba Código.</td></tr>
+                <tr><td><code>TLS ...</code> (certificado, nome)</td><td>O endereço do servidor no código não bate com o certificado, ou o servidor gerou uma CA nova. Baixe o código de novo; se continuar, avise o administrador.</td></tr>
+                <tr><td>Nada aparece</td><td>Confira a velocidade 115200 no Monitor Serial e se a gravação terminou ("Done uploading"); aperte o botão EN/RST da placa.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

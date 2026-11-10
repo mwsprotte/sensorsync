@@ -35,6 +35,11 @@ sensorsync:
     topic: ${SENSORSYNC_MQTT_TOPIC:sensorsync}
     # Porta informada no codigo gerado para os dispositivos
     public-port: ${SENSORSYNC_MQTT_PUBLIC_PORT:1883}
+  metrics:
+    # Experimentos: uma linha CSV por mensagem recebida (latencia, perda). Desligado em uso normal.
+    # Baixar/zerar: GET/DELETE /admin/metrics.csv (administrador). Ver bench/README.md.
+    enabled: ${SENSORSYNC_METRICS:false}
+    file: ${SENSORSYNC_METRICS_FILE:metrics/ingest-metrics.csv}
   ingest:
     # true = aceita o formato antigo (sem token) enquanto os dispositivos sao regravados.
     # Deixe false assim que todos os dispositivos usarem token.

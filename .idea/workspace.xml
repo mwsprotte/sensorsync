@@ -4,9 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="update HOST references to use new IP address and fix code generation">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="feat(tls): implement TLS support with CA certificate management and HTTP redirection">
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/.gitattributes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bench/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/bench/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bench/analyze.py" beforeDir="false" afterPath="$PROJECT_DIR$/bench/analyze.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bench/loadgen.py" beforeDir="false" afterPath="$PROJECT_DIR$/bench/loadgen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/tls/PlainHttpConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/tls/PlainHttpConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/tls/TlsSettings.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/tls/TlsSettings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/application-tls.yml" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/application-tls.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/test/java/com/mws/sensorsync/TlsTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/test/java/com/mws/sensorsync/TlsTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +53,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="feat/auth-tokens" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -59,6 +68,16 @@
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/mwsprotte/sensorsync.git&quot;,
     &quot;accountId&quot;: &quot;05e60d4a-975a-44f3-baff-c992b7b4f466&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;mwsprotte&quot;,
+    &quot;repository&quot;: &quot;sensorsync&quot;
   }
 }</component>
   <component name="MarkdownSettingsMigration">
@@ -75,38 +94,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Startup.executor": "Run",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Maven.sensorsync [clean,package].executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Spring Boot.Startup.executor": "Run",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "feat/auth-tokens",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Development/sensorsync/Integration_library",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
-    "spring.configuration.checksum": "5a8d846313b6505a23403ea9634d0bee",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Startup.executor&quot;: &quot;Run&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Maven.sensorsync [clean,package].executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.Startup (TLS).executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.Startup.executor&quot;: &quot;Run&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat/metrics&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Development/sensorsync/Integration_library&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;5a8d846313b6505a23403ea9634d0bee&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Development\sensorsync\Integration_library" />
@@ -130,14 +150,35 @@
       <command value="mvn clean package" />
     </option>
   </component>
-  <component name="RunManager">
-    <configuration name="Startup" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+  <component name="RunManager" selected="Spring Boot.Startup (TLS)">
+    <configuration name="Startup (TLS)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <option name="ACTIVE_PROFILES" value="tls" />
+      <envs>
+        <env name="SENSORSYNC_TLS_DIR" value="$PROJECT_DIR$/config/tls" />
+        <env name="SENSORSYNC_PUBLIC_HOST" value="192.168.100.166" />
+        <env name="SENSORSYNC_METRICS" value="true" />
+        <env name="SENSORSYNC_ALLOW_LEGACY_INGEST" value="true" />
+      </envs>
       <module name="sensorsync" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.mws.sensorsync.Startup" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Startup" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="sensorsync" />
+      <selectedOptions>
+        <option name="environmentVariables" />
+      </selectedOptions>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.mws.sensorsync.Startup" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Spring Boot.Startup" />
+      <item itemvalue="Spring Boot.Startup (TLS)" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -311,7 +352,31 @@
       <option name="project" value="LOCAL" />
       <updated>1792501577205</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="update HOST references to use new IP address and fix code generation">
+      <option name="closed" value="true" />
+      <created>1793977425734</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1793977425734</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat(tls): implement TLS support with CA certificate management and HTTP redirection">
+      <option name="closed" value="true" />
+      <created>1793993435085</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1793993435085</updated>
+    </task>
+    <task id="LOCAL-00005" summary="feat(tls): implement TLS support with CA certificate management and HTTP redirection">
+      <option name="closed" value="true" />
+      <created>1793998187110</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1793998187110</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -330,7 +395,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update HOST references to use new IP address and fix code generation" />
-    <option name="LAST_COMMIT_MESSAGE" value="update HOST references to use new IP address and fix code generation" />
+    <MESSAGE value="feat(tls): implement TLS support with CA certificate management and HTTP redirection" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(tls): implement TLS support with CA certificate management and HTTP redirection" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

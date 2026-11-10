@@ -116,7 +116,12 @@
                 <section class="ss-card p-4">
                     <h2 class="h6 fw-semibold mb-3"><i class="bi bi-list-check me-2"></i>Como gravar</h2>
                     <ol class="small ps-3 mb-0 d-flex flex-column gap-2">
-                        <li>Na IDE Arduino, instale a biblioteca <strong>SensorSync</strong> em <em>Ferramentas › Gerenciar Bibliotecas</em>. A PubSubClient vem junto.</li>
+                        <li><strong>Primeira vez neste computador?</strong> Prepare a IDE Arduino (placas e bibliotecas SensorSync e PubSubClient):
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <a class="btn btn-primary btn-sm" href="preparar-ide.html"><i class="bi bi-tools me-1"></i>Guia passo a passo</a>
+                                <a class="btn btn-outline-secondary btn-sm" href="downloads/SensorSync.zip" download><i class="bi bi-download me-1"></i>SensorSync.zip</a>
+                            </div>
+                        </li>
                         <li>Baixe o <code>.ino</code> e preencha <code>WIFI_SSID</code> e <code>WIFI_PASSWORD</code>. O ESP só conecta em redes de 2,4 GHz.</li>
                         <li>Substitua os <code>random()</code> pelas leituras dos sensores.</li>
                         <li>Grave a placa e acompanhe pelo Monitor Serial (115200).</li>

@@ -30,3 +30,15 @@ deploy/*.env
 
 # Configuracao local com senhas (nunca versionar)
 config/
+
+# Biblioteca das placas servida pela plataforma (versionada de proposito)
+!sensorsync/src/main/resources/static/downloads/SensorSync.zip
+
+# Resultados dos experimentos (bench/) e log de metricas local da API
+results/
+metrics/
+__pycache__/
+
+# Credenciais do laboratorio (so na maquina local)
+ACESSO-LAB.md
+README-ANTIGO.md

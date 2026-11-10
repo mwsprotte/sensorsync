@@ -18,7 +18,8 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 /**
  * Regras de acesso:
  * - Paginas e API exigem usuario logado (sessao via formulario, ou HTTP Basic para scripts).
- * - /user/** somente ADMIN.
+ * - /user/** e /admin/** (log de metricas) somente ADMIN.
+ * - /ca.crt, /ca.json e certificado.html (certificado publico da CA, perfil tls) sao abertos.
  * - Ingestao de dados (/api/ingest e /data/saveList) e publica no nivel do Spring Security,
  *   mas o controller exige o token do dispositivo.
  *
@@ -41,9 +42,10 @@ public class SecurityConfig {
                         .requestMatchers("/login.html", "/login", "/error",
                                 "/img/**", "/scripts/imports/**", "/scripts/dark_mode.js", "/scripts/login.js",
                                 "/vendor/**", "/styles/**",
-                                "/favicon.ico").permitAll()
+                                "/favicon.ico", "/ca.crt", "/ca.json",
+                                "/certificado.html", "/scripts/certificado.js").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/ingest", "/data/saveList").permitAll()
-                        .requestMatchers("/user/**", "/users.html", "/scripts/users.js").hasRole("ADMIN")
+                        .requestMatchers("/user/**", "/users.html", "/scripts/users.js", "/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login.html")

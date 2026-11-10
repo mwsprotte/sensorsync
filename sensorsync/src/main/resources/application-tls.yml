@@ -1,0 +1,37 @@
+# Perfil "tls": HTTPS na API e MQTT com TLS para as placas.
+# Ativado por SPRING_PROFILES_ACTIVE=tls (ver deploy/sensorsync.env.example).
+# Os arquivos sao gerados por deploy/tls/sensorsync-tls.sh.
+spring:
+  ssl:
+    bundle:
+      pem:
+        sensorsync:
+          # Se o certificado do servidor for reemitido (IP mudou), o Tomcat recarrega sem reiniciar
+          reload-on-update: true
+          keystore:
+            certificate: ${SENSORSYNC_TLS_DIR:/etc/sensorsync/tls}/server.crt
+            private-key: ${SENSORSYNC_TLS_DIR:/etc/sensorsync/tls}/server.key
+
+server:
+  port: ${SENSORSYNC_HTTPS_PORT:8443}
+  ssl:
+    bundle: sensorsync
+  servlet:
+    session:
+      cookie:
+        secure: true
+  tomcat:
+    # Placas reaproveitam a conexao HTTPS entre envios: evita um handshake TLS a cada leitura
+    keep-alive-timeout: 60s
+    max-keep-alive-requests: -1
+
+sensorsync:
+  tls:
+    enabled: true
+    ca-file: ${SENSORSYNC_TLS_DIR:/etc/sensorsync/tls}/ca.crt
+    # Porta HTTP sem TLS: redirect | dispositivos (so envio das placas antigas) | allow | off
+    plain-http: ${SENSORSYNC_PLAIN_HTTP:redirect}
+    plain-http-port: ${SENSORSYNC_PLAIN_HTTP_PORT:8080}
+  mqtt:
+    # Porta que vai no codigo gerado para as placas (listener TLS do Mosquitto)
+    public-port: ${SENSORSYNC_MQTT_PUBLIC_PORT:8883}

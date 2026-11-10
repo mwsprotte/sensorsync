@@ -1,0 +1,4 @@
+# Scripts do servidor precisam de LF mesmo quando clonados no Windows
+*.sh text eol=lf
+# Tudo em deploy/ roda no Linux (scripts, .env, units, conf): sempre LF, mesmo no Windows
+deploy/** text eol=lf
