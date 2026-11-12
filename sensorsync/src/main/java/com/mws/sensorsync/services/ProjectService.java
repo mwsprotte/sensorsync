@@ -132,6 +132,7 @@ public class ProjectService {
         metadataRepository.deleteAlLByProjectID(Math.toIntExact(p.getId()));
         deviceRepository.deleteAllByProject(p.getId());
         projectRepository.delete(p);
+        deviceService.invalidateTokenCache();
     }
 
     @Transactional

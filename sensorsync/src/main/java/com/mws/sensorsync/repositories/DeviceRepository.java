@@ -26,6 +26,10 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
     long maxIndex(@Param("projectId") long projectId);
 
     @Modifying
+    @Query("UPDATE Device d SET d.lastSeenAt = :at WHERE d.id = :id")
+    int updateLastSeen(@Param("id") long id, @Param("at") java.time.LocalDateTime at);
+
+    @Modifying
     @Transactional
     @Query("DELETE FROM Device d WHERE d.project.id = :projectId")
     void deleteAllByProject(@Param("projectId") long projectId);

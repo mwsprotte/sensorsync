@@ -100,6 +100,26 @@ ok "endereco do servidor: $IP (confira se e o IP fixo da rede do laboratorio)"
 info "modo: $MODO   TLS: $TLS"
 
 # =============================================================================================
+# Raspberry Pi 3 (1 GB): sem swap, Java + MySQL esgotam a memoria e o sistema trava ("systemctl: Connection timed out")
+MEM_MB=$(awk '/^MemTotal:/ {print int($2/1024)}' /proc/meminfo)
+if [ "${MEM_MB:-0}" -lt 1800 ]; then
+    if [ "$(awk 'NR>1' /proc/swaps | wc -l)" -eq 0 ] && [ ! -e /swapfile ]; then
+        aviso "so ${MEM_MB} MB de memoria e nenhum swap: o Raspberry pode travar com Java + MySQL"
+        if confirma "Criar 1 GB de swap em /swapfile (permanente)?"; then
+            fallocate -l 1G /swapfile && chmod 600 /swapfile && mkswap /swapfile >/dev/null && swapon /swapfile
+            grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+            ok "swap de 1 GB ativo"
+        fi
+    else
+        ok "swap presente"
+    fi
+    if [ -d /etc/mysql/mysql.conf.d ] && [ ! -f /etc/mysql/mysql.conf.d/zz-sensorsync-pi.cnf ]; then
+        printf '# SensorSync: economiza ~100-200 MB no Raspberry (diagnostico do MySQL, nao usado)\n[mysqld]\nperformance_schema=OFF\n' \
+            > /etc/mysql/mysql.conf.d/zz-sensorsync-pi.cnf
+        ok "MySQL: performance_schema desligado (vale no proximo reinicio do MySQL)"
+    fi
+fi
+
 titulo "2. Usuario e pastas"
 id sensorsync >/dev/null 2>&1 || useradd --system --home "$APP_DIR" --shell /usr/sbin/nologin sensorsync
 getent group sensorsync-tls >/dev/null || groupadd --system sensorsync-tls
@@ -223,6 +243,10 @@ install -m 644 "$REPO/deploy/sensorsync-tls.service" /etc/systemd/system/sensors
 install -m 644 "$REPO/deploy/sensorsync.service" /etc/systemd/system/sensorsync.service
 sed -i 's/\r$//' /etc/systemd/system/sensorsync-tls.service /etc/systemd/system/sensorsync.service
 sed -i "s|^WorkingDirectory=.*|WorkingDirectory=$DATA_DIR|" /etc/systemd/system/sensorsync.service
+# usa o mesmo java conferido acima (ex.: Temurin em /usr/local/bin/java), nao necessariamente o /usr/bin/java
+JAVA_BIN=$(readlink -f "$(command -v java)")
+sed -i "s|^ExecStart=[^ ]*java |ExecStart=$JAVA_BIN |" /etc/systemd/system/sensorsync.service
+ok "API vai rodar com $JAVA_BIN"
 sysctl_ daemon-reload
 sysctl_ enable sensorsync-tls sensorsync >/dev/null 2>&1 || sysctl_ enable sensorsync-tls sensorsync
 ok "sensorsync-tls.service (certificados) e sensorsync.service (API) habilitados no boot"
@@ -233,9 +257,25 @@ if $CHRONY; then
     fi
     if [ -f /etc/chrony/chrony.conf ]; then
         REDE=$(echo "$IP" | awk -F. '{print $1"."$2".0.0/16"}')
-        grep -q "^allow $REDE" /etc/chrony/chrony.conf || echo "allow $REDE   # SensorSync: serve hora para PC e placas" >> /etc/chrony/chrony.conf
-        sysctl_ restart chrony
-        ok "chrony servindo hora para $REDE"
+        # o chrony nao aceita comentario no fim da linha: o comentario vai numa linha propria
+        sed -i "s|^allow $REDE .*# SensorSync.*|allow $REDE|" /etc/chrony/chrony.conf
+        grep -q "^allow $REDE" /etc/chrony/chrony.conf \
+            || printf '# SensorSync: serve hora para o PC e as placas\nallow %s\n' "$REDE" >> /etc/chrony/chrony.conf
+        if sysctl_ restart chrony; then
+            ok "chrony servindo hora para $REDE"
+            # o chrony substitui o systemd-timesyncd: sem fonte de hora, o Raspberry (sem relogio proprio) volta
+            # para uma data antiga no boot e os certificados ficam "ainda nao validos"
+            if $SYSTEMD && command -v chronyc >/dev/null; then
+                info "esperando o chrony acertar a hora (ate 2 min)..."
+                if chronyc waitsync 12 1 >/dev/null 2>&1; then
+                    ok "hora sincronizada: $(date '+%Y-%m-%d %H:%M:%S')"
+                else
+                    aviso "o chrony NAO conseguiu acertar a hora (a rede bloqueia NTP?). Veja o guia, 'Hora errada'."
+                fi
+            fi
+        else
+            aviso "chrony nao subiu: veja 'sudo journalctl -u chrony -n 30 --no-pager' (o resto da instalacao continua)"
+        fi
     fi
 fi
 

@@ -4,18 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="feat(tls): implement TLS support with CA certificate management and HTTP redirection">
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="27ea1246-1917-415b-9667-e60d11c3fec1" name="Changes" comment="feat(metrics): update configuration for plain HTTP handling and add new scripts for server management">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bench/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/bench/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bench/analyze.py" beforeDir="false" afterPath="$PROJECT_DIR$/bench/analyze.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bench/loadgen.py" beforeDir="false" afterPath="$PROJECT_DIR$/bench/loadgen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/tls/PlainHttpConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/tls/PlainHttpConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/tls/TlsSettings.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/tls/TlsSettings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/application-tls.yml" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/application-tls.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensorsync/src/test/java/com/mws/sensorsync/TlsTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/test/java/com/mws/sensorsync/TlsTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/lab/1-inventario.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/lab/1-inventario.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/lab/3-instalar.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/lab/3-instalar.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/lab/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/lab/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/lab/comum.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy/lab/comum.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/IngestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/IngestService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/MqttIngestListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/ingest/MqttIngestListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DeviceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/repositories/DeviceRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DeviceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/DeviceService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/ProjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/java/com/mws/sensorsync/services/ProjectService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensorsync/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/sensorsync/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,6 +84,9 @@
 }</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenRunner">
+    <option name="skipTests" value="true" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
@@ -376,7 +381,15 @@
       <option name="project" value="LOCAL" />
       <updated>1793998187110</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="feat(metrics): update configuration for plain HTTP handling and add new scripts for server management">
+      <option name="closed" value="true" />
+      <created>1794317667967</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1794317667967</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -396,7 +409,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update HOST references to use new IP address and fix code generation" />
     <MESSAGE value="feat(tls): implement TLS support with CA certificate management and HTTP redirection" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(tls): implement TLS support with CA certificate management and HTTP redirection" />
+    <MESSAGE value="feat(metrics): update configuration for plain HTTP handling and add new scripts for server management" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(metrics): update configuration for plain HTTP handling and add new scripts for server management" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

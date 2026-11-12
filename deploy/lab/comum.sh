@@ -43,8 +43,11 @@ confirma() {
 
 # .jar da versao antiga (qualquer sensorsync*.jar fora de /opt/sensorsync), um por linha
 jars_antigos() {
+    # ignora o jar novo instalado ($APP_DIR) e o que veio junto com estes scripts (pasta acima de deploy/)
+    local pacote
+    pacote=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." 2>/dev/null && pwd)
     find /home /root /opt /srv /usr/local -maxdepth 4 -type f -iname '*sensorsync*.jar' 2>/dev/null \
-        | grep -v "^$APP_DIR/" || true
+        | grep -v "^$APP_DIR/" | grep -v "^${pacote:-/nao-existe}/[^/]*\.jar$" || true
 }
 
 # Processos java da versao antiga (rodando fora do servico novo): "PID comando"
