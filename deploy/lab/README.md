@@ -63,6 +63,16 @@ cd C:\Development\sensorsync\sensorsync
 O arquivo sai em `C:\Development\sensorsync\sensorsync\target\sensorsync.jar` (~50 MB).
 (No IntelliJ: painel *Maven* › `sensorsync` › *Lifecycle* › `package`, com *Skip Tests* ligado.)
 
+Se der `release version 21 not supported`, o terminal está usando um Java mais antigo (`java -version`; no PC de
+casa o padrão é o 17). Aponte para o JDK 21 só nessa janela e gere de novo:
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-21"      # no cmd: set "JAVA_HOME=C:\Program Files\Java\jdk-21"
+.\mvnw.cmd -DskipTests package
+```
+
+(Para achar os JDKs instalados: `where /r "C:\Program Files" javac.exe` no cmd.)
+
 ### 2.2 Separar o que levar
 
 Você vai copiar para o Raspberry só duas coisas: a pasta `deploy` (scripts e arquivos de configuração) e o `.jar`.
@@ -222,6 +232,71 @@ A configuração (`/etc/sensorsync/sensorsync.env`), os certificados e o modo s�
 
 ## 8. Problemas comuns
 
+### SSH: "WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!"
+
+O PC guardou a chave de outra máquina que já teve esse IP (ou o Raspberry foi reformatado). Normal numa rede com
+DHCP ou depois de regravar o cartão, mas confira: no Raspberry (monitor e teclado, ou outra forma de acesso)
+`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` deve mostrar a mesma impressão `SHA256:...` da mensagem. Então,
+no PowerShell do PC, esqueça a chave antiga e conecte de novo (responda `yes`):
+
+```powershell
+ssh-keygen -R 10.0.0.104
+```
+
+Se não resolver, **apague o arquivo inteiro** (é o mais garantido): as chaves ficam em
+`C:\Users\<seu usuário>\.ssh\known_hosts` (pasta oculta). No PowerShell: `del $HOME\.ssh\known_hosts`. Não há risco:
+o SSH só volta a perguntar `yes` na primeira conexão com cada máquina. Apagar só a linha indicada na mensagem
+(`known_hosts:3`) às vezes não basta, porque pode haver mais de uma linha para o mesmo IP.
+
+### Não sei o IP do Raspberry (ou ele não tem IP no cabo)
+
+Ligue o cabo direto no PC. Mesmo sem IPv4, o Linux cria sozinho um endereço IPv6 `fe80::` na porta de rede. No PowerShell:
+
+```powershell
+ping ff02::1 -n 2
+Get-NetNeighbor -AddressFamily IPv6 | Where-Object { $_.LinkLayerAddress -match "^(B8-27-EB|DC-A6-32|E4-5F-01|D8-3A-DD|2C-CF-67)" }
+```
+
+(esses prefixos de MAC são da Raspberry Pi). Use o `IPAddress` e o `ifIndex` da linha encontrada:
+`ssh ubuntu@fe80::xxxx:xxxx:xxxx:xxxx%IFINDEX`. Lá dentro, `ip -4 a` mostra os IPv4 de cada interface
+(`eth0` cabo, `wlan0` Wi-Fi).
+
+### Raspberry muito lento, ou `systemctl` dá `Connection timed out`
+
+Falta de memória: o Pi 3 tem 1 GB e o Ubuntu vem **sem swap**; Java (API) + MySQL usam quase tudo e o sistema
+trava. `free -m` mostra `Swap: 0` e pouca memória `available`. O `3-instalar.sh` oferece criar o swap e desliga o
+`performance_schema` do MySQL; à mão:
+
+```bash
+sudo fallocate -l 1G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+printf '[mysqld]\nperformance_schema=OFF\n' | sudo tee /etc/mysql/mysql.conf.d/zz-sensorsync-pi.cnf
+sudo reboot
+```
+
+Se nem o SSH responder, espere ~2 min; se não voltar, tire da tomada e ligue de novo.
+
+### Hora errada depois de religar (data antiga, "nada funciona")
+
+O Raspberry não tem relógio com bateria: a cada boot ele volta para uma data antiga (no ensaio, **7/10/2024**, a data
+da imagem do Ubuntu) até sincronizar pela rede. Enquanto isso os certificados ficam "ainda não válidos" (navegador e
+placas recusam) e a API pode falhar na subida. Sintomas: `date` mostra outra data; o `journalctl` aparece com datas
+antigas. O `--chrony` troca o serviço de hora do Ubuntu (`systemd-timesyncd`) pelo chrony; se o chrony não subir,
+**ninguém** acerta a hora.
+
+```bash
+date; systemctl is-active chrony
+sudo journalctl -u chrony -n 20 --no-pager        # se 'failed'
+chronyc sources                                  # precisa de uma linha com '^*' (fonte em uso)
+```
+
+- chrony `failed` com erro no `allow`: o chrony não aceita comentário no fim da linha.
+  `sudo sed -i 's|^allow \([0-9./]*\) .*|allow \1|' /etc/chrony/chrony.conf && sudo systemctl restart chrony`
+- chrony ativo mas sem fonte (a rede bloqueia NTP externo): peça o servidor NTP da instituição e acrescente em
+  `/etc/chrony/chrony.conf` uma linha `server IP_DO_NTP iburst`; reinicie o chrony.
+- A hora pode levar ~1 min para acertar depois do boot. Depois dela certa: `sudo systemctl restart sensorsync`.
+- Para conferir/acertar à mão em emergência: `sudo date -s "2026-11-11 22:00"` (o chrony corrige depois).
+
 ### `$'\r': command not found` ao rodar um script
 
 Os arquivos vieram do Windows com `\r`. Rode `sed -i 's/\r$//' deploy/lab/*.sh deploy/tls/*.sh` (passo 3.2).
@@ -241,9 +316,31 @@ java -version
 
 (Raspberry com sistema de 32 bits: `uname -m` mostra `armv7l`; baixe a versão `arm` em vez de `aarch64`.)
 
-### `apt` dá erro no Ubuntu 23.10 (só se precisar instalar algo, ex.: `--chrony`)
+Se o Raspberry tiver internet, dá para baixar direto nele (sem passar pelo PC):
 
-O Ubuntu 23.10 saiu de suporte e os pacotes foram para outro servidor. Para voltar a instalar:
+```bash
+curl -4 -L -o jre21.tar.gz "https://api.adoptium.net/v3/binary/latest/21/ga/linux/aarch64/jre/hotspot/normal/eclipse"
+sudo mkdir -p /opt/java && sudo tar xzf jre21.tar.gz -C /opt/java
+sudo ln -sf /opt/java/jdk-21*-jre/bin/java /usr/local/bin/java
+hash -r; java -version        # deve mostrar "Temurin"
+```
+
+O `3-instalar.sh` configura o serviço com o `java` que estiver no caminho (o `/usr/local/bin/java` vem antes do
+`/usr/bin/java`), então não precisa desinstalar o Java do Ubuntu.
+
+### Java dá `NoClassDefFoundError` aleatório ao subir (a cada vez numa classe diferente)
+
+Exemplos: `java/lang/invoke/LambdaForm$MH`, `org/springframework/boot/loader/jar/JarFile`, `.../AbstractJarFile`,
+**antes** de aparecer o logo do Spring. Visto no Raspberry Pi 3 com o Java do Ubuntu 24.10
+(`21.0.7+6-Ubuntu-0ubuntu124.10`): com `java -Xint` (sem o compilador interno) ele sobe, e com o **Temurin** sobe
+normal. Ou seja, o defeito é dessa compilação do Java nesse processador, não do jar nem do cartão (confira o jar com
+`unzip -tq arquivo.jar`). Solução: instalar o Temurin como na seção acima. Se o Temurin também falhar, suspeite da
+fonte (Pi 3: 5 V / 2,5 A): `cat /sys/devices/platform/soc/soc:firmware/get_throttled` deve dar `0x0`.
+
+### `apt` dá erro no Ubuntu 23.10 ou 24.10 (só se precisar instalar algo, ex.: `--chrony`)
+
+O Ubuntu 23.10 (`mantic`) e o 24.10 (`oracular`) saíram de suporte e os pacotes foram para outro servidor. O
+`apt update` mostra `404 Not Found` e "no longer has a Release file". Para voltar a instalar:
 
 ```bash
 sudo sed -i 's|http://ports.ubuntu.com/ubuntu-ports|http://old-releases.ubuntu.com/ubuntu|g' \
@@ -328,3 +425,24 @@ crontab do usuário `ubuntu`, `root` do MySQL com a senha da configuração anti
 
 Não ensaiado (sem Raspberry): o tempo de subida no Pi 3, o `systemctl` de verdade (o ensaio iniciou os serviços na
 mão, na mesma ordem) e o Ubuntu 23.10.
+
+### Ensaio num Raspberry Pi 3 real (2026-11-10)
+
+Ambiente: Raspberry Pi 3 Model B, Ubuntu 24.10 (sem suporte, fontes trocadas para `old-releases`), MySQL 8.0.42,
+Mosquitto 2.0.18 (`listener 1883` + `allow_anonymous true`, como no tutorial antigo), Java **Temurin 21.0.13**
+(o Java do Ubuntu 24.10 falha no Pi 3, ver *Problemas comuns*). Versão antiga = `sensorsync-1.0.0.jar` do OneDrive
+na home, `root` / senha da configuração antiga, iniciada à mão (sem crontab). Dados: 2 usuários com senha em texto
+puro, 1 projeto, 12 leituras do dispositivo 0 (HTTP).
+
+| Verificação | Resultado |
+|---|---|
+| Inventário acha o jar e lê a senha do root; avisa do Ubuntu sem suporte | ok |
+| Backup: dump completo; contagem exata 2 usuários, 1 projeto, 12 leituras, 1 metadado | ok |
+| Instalação com `--jar` e `--ip`, serviços do systemd de verdade | ok |
+| Banco migrado: senhas → BCrypt (`$2a$10$`), usuários → ADMIN, dispositivo 0 criado sem token, 12 leituras intactas | ok |
+| Placa antiga HTTP 8080 `/data/saveList` sem token depois da migração | ok (`saved 1`) |
+| Depois de `sudo reboot`: `sensorsync-tls`, `mosquitto` e `sensorsync` sobem sozinhos | ok |
+| Login na versão nova (`https://IP:8443`) com o usuário e a senha antigos; projeto e leituras no dashboard | ok |
+
+Só são criados dispositivos para os índices que já têm leituras (aqui só o 0); os outros aparecem quando a placa
+enviar ou ao gerar token no dashboard.

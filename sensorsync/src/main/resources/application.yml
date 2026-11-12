@@ -35,6 +35,10 @@ sensorsync:
     topic: ${SENSORSYNC_MQTT_TOPIC:sensorsync}
     # Porta informada no codigo gerado para os dispositivos
     public-port: ${SENSORSYNC_MQTT_PUBLIC_PORT:1883}
+    # Gravacao em fila + lotes (uma transacao para varias mensagens). false = grava uma por vez no callback.
+    async: ${SENSORSYNC_MQTT_ASYNC:true}
+    batch-size: ${SENSORSYNC_MQTT_BATCH:100}
+    queue-size: ${SENSORSYNC_MQTT_QUEUE:10000}
   metrics:
     # Experimentos: uma linha CSV por mensagem recebida (latencia, perda). Desligado em uso normal.
     # Baixar/zerar: GET/DELETE /admin/metrics.csv (administrador). Ver bench/README.md.

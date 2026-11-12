@@ -49,6 +49,15 @@ class Api:
         self.s.auth = (user, password)
         # verify vai em cada chamada: REQUESTS_CA_BUNDLE no ambiente passaria por cima de Session.verify
         self.verify = verify
+        # nao seguir redirecionamento: o requests tiraria o usuario/senha no pulo para https (401 confuso)
+        self.s.hooks["response"].append(self._redirect)
+
+    @staticmethod
+    def _redirect(r, *args, **kwargs):
+        if r.is_redirect:
+            sys.exit(f"A API redirecionou {r.request.method} {r.url} para {r.headers.get('Location')}.\n"
+                     "Sem --tls, a 8080 precisa aceitar HTTP: no servidor, SENSORSYNC_PLAIN_HTTP=allow em "
+                     "/etc/sensorsync/sensorsync.env e 'sudo systemctl restart sensorsync'. Ou use --tls --ca ca.crt.")
 
     @staticmethod
     def check_login(r):
@@ -60,7 +69,7 @@ class Api:
     def create_project(self, name, devices, values):
         body = {"name": name, "devices": devices,
                 "variables": [{"dataDesc": f"v{i}"} for i in range(values)]}
-        r = self.s.post(f"{self.base}/project", json=body, timeout=30, verify=self.verify)
+        r = self.s.post(f"{self.base}/project", json=body, timeout=30, verify=self.verify, allow_redirects=False)
         self.check_login(r)
         r.raise_for_status()
         data = r.json()
@@ -68,17 +77,17 @@ class Api:
         return pid, [(d["device"]["id"], d["token"], pid, d["device"]["deviceIndex"]) for d in data["devices"]]
 
     def delete_project(self, pid):
-        self.s.delete(f"{self.base}/project/{pid}", timeout=60, verify=self.verify)
+        self.s.delete(f"{self.base}/project/{pid}", timeout=60, verify=self.verify, allow_redirects=False)
 
     def reset_metrics(self):
-        r = self.s.delete(f"{self.base}/admin/metrics.csv", timeout=30, verify=self.verify)
+        r = self.s.delete(f"{self.base}/admin/metrics.csv", timeout=30, verify=self.verify, allow_redirects=False)
         self.check_login(r)
         if r.status_code == 404:
             sys.exit("As metricas da API estao desligadas: suba a API com SENSORSYNC_METRICS=true")
         r.raise_for_status()
 
     def download_metrics(self, path):
-        r = self.s.get(f"{self.base}/admin/metrics.csv", timeout=120, verify=self.verify)
+        r = self.s.get(f"{self.base}/admin/metrics.csv", timeout=120, verify=self.verify, allow_redirects=False)
         r.raise_for_status()
         with open(path, "wb") as f:
             f.write(r.content)

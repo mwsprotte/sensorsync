@@ -36,6 +36,12 @@ Para comparar com e sem TLS na mesma instalação:
 
 Volte ao padrão no fim (`redirect` e `127.0.0.1`).
 
+**Ingestão MQTT (antes/depois da otimização).** Por padrão a API grava as mensagens MQTT por uma fila, em lotes
+(várias mensagens num só commit). `SENSORSYNC_MQTT_ASYNC=false` volta ao comportamento antigo (uma gravação por
+mensagem, dentro do callback do Paho), para comparar com o mesmo `.jar`. Também: `SENSORSYNC_MQTT_BATCH` (padrão 100
+mensagens por lote) e `SENSORSYNC_MQTT_QUEUE` (padrão 10000; fila cheia = mensagem descartada, status
+`dropped_queue_full` no log). Resultados anteriores à otimização: `results/pre_otimização/`.
+
 **Relógio (Raspberry):** `sudo apt install chrony`; no `/etc/chrony/chrony.conf` do Raspberry acrescente
 `allow 192.168.0.0/16` (a faixa da rede do laboratório) para ele servir hora ao PC e às placas. No Windows, aponte o
 relógio para o Raspberry (`w32tm /config /manualpeerlist:IP_DO_RASPBERRY /syncfromflags:manual /update` como
@@ -83,7 +89,9 @@ A tabela `results/summary.csv` junta todas as rodadas (uma linha por pasta), pro
 | E5 | Recuperação | `loadgen.py` rodando enquanto derruba o Mosquitto, reinicia a API ou o Raspberry; perda e tempo sem gravar aparecem no `analyze.py` e no gráfico |
 | E6 | O método de 2025 | Repetir o `curl`/`mosquitto_pub` do artigo anterior contra a mesma carga e comparar com o `loadgen.py` |
 
-Cuidados: Raspberry com dissipador e temperatura anotada (`vcgencmd measure_temp`, `vcgencmd get_throttled`);
+Cuidados: Raspberry com dissipador e temperatura anotada (no Ubuntu não há `vcgencmd`:
+`cat /sys/class/thermal/thermal_zone0/temp` em milésimos de °C e
+`cat /sys/devices/platform/soc/soc:firmware/get_throttled`, que deve dar `0x0`);
 banco limpo e API reiniciada entre rodadas; descartar os primeiros segundos (`analyze.py --skip`, padrão 5 s);
 guardar a pasta `results/` inteira e o commit usado.
 

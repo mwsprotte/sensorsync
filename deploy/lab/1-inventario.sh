@@ -26,7 +26,7 @@ info "hora:     $(date '+%Y-%m-%d %H:%M:%S %Z')"
 timedatectl 2>/dev/null | grep -E 'synchronized|NTP service' | sed 's/^ */   /'
 . /etc/os-release 2>/dev/null
 case "${VERSION_CODENAME:-}" in
-    mantic|lunar|kinetic) aviso "Ubuntu ${VERSION_ID:-} esta sem suporte: 'apt install' nao funciona sem ajustar as fontes (ver guia)";;
+    oracular|mantic|lunar|kinetic) aviso "Ubuntu ${VERSION_ID:-} esta sem suporte: 'apt install' nao funciona sem ajustar as fontes (ver guia)";;
 esac
 
 titulo "Java"
